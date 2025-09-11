@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skillence App</title>
+    <link rel="stylesheet" href="styles/style.css"
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">S</div>
+            <div class="logo-text">Skillence</div>
+        </div>
+        <div class="search-bar">
+            <div class="search-icon">🔍</div>
+            <input type="text" class="search-input" placeholder="What's on your mind?" id="searchInput">
+        </div>
+    </div>
+
+    <!-- Home Tab Content -->
+    <div class="tab-content active" id="home-tab">
+        <div class="home-content">
+            <!-- Jessica's Post -->
+            <div class="post">
+                <div class="post-header">
+                    <div class="profile-pic" style="background: linear-gradient(45deg, #ff6b6b, #feca57); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">J</div>
+                    <div class="post-author">Jessica</div>
+                    <div class="post-options">⋯</div>
+                </div>
+                <div class="post-content">just earned a Python Certificate</div>
+                <div class="post-actions">
+                    <button class="action-btn" onclick="toggleLike(this)">❤️</button>
+                    <button class="action-btn">💬</button>
+                    <button class="action-btn">🔖</button>
+                </div>
+            </div>
+
+            <!-- Lumera's Job Post -->
+            <div class="post">
+                <div class="post-header">
+                    <div class="profile-pic" style="background: linear-gradient(45deg, #3498db, #2980b9); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">L</div>
+                    <div class="post-author">Lumera</div>
+                    <div class="post-options">⋯</div>
+                </div>
+                <div class="post-content">is hiring: Product Manager</div>
+                <div class="post-actions">
+                    <button class="action-btn">🔖</button>
+                    <button class="apply-btn" onclick="applyForJob()">Apply</button>
+                </div>
+            </div>
+
+            <!-- Career Tip -->
+            <div class="career-tip">
+                <div class="tip-title">Career Tip: Top 5 skills for 2025...</div>
+                <div class="post-actions" style="margin-top: 12px;">
+                    <button class="action-btn" onclick="toggleLike(this)">❤️</button>
+                    <button class="action-btn">💬</button>
+                    <button class="action-btn">🔖</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Tab Content -->
+    <div class="tab-content" id="profile-tab">
+        <div class="profile-content">
+            <div class="profile-header">
+                <h1 class="profile-title">Profile</h1>
+                
+                <div class="profile-avatar">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='60' fill='%23e8f4fd'/%3E%3Ccircle cx='60' cy='45' r='20' fill='%236c757d'/%3E%3Cpath d='M20 100 Q20 75 60 75 Q100 75 100 100 Z' fill='%236c757d'/%3E%3C/svg%3E" alt="Profile Picture" class="avatar-img">
+                </div>
+                
+                <h2 class="profile-name">Jane Doe</h2>
+                <p class="profile-job">Software Engineer</p>
+                <p class="profile-experience">5 Years Experience</p>
+                
+                <div class="skill-score-section">
+                    <h3 class="skill-score-title">Skill Score: 75%</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat">
+                        <div class="stat-number">1.2k</div>
+                        <div class="stat-label">Followers</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">580</div>
+                        <div class="stat-label">Following</div>
+                    </div>
+                </div>
+                
+                <button class="follow-btn" onclick="toggleFollow()">Follow</button>
+            </div>
+        </div>
+    </div>
+<!-- Notifications Tab Content -->
+    <div class="tab-content" id="notifications-tab">
+        <div class="notifications-content">
+            <div class="notification-item unread" onclick="markAsRead(this)">
+                <div class="notification-icon like">❤️</div>
+                <div class="notification-content">
+                    <div class="notification-text"><strong>Mike Chen</strong> liked your post about JavaScript frameworks</div>
+                    <div class="notification-time">2 minutes ago</div>
+                </div>
+                <div class="notification-badge"></div>
+            </div>
+
+            <div class="notification-item unread" onclick="markAsRead(this)">
+                <div class="notification-icon follow">👤</div>
+                <div class="notification-content">
+                    <div class="notification-text"><strong>Sarah Williams</strong> started following you</div>
+                    <div class="notification-time">1 hour ago</div>
+                </div>
+                <div class="notification-badge"></div>
+            </div>
+
+            <div class="notification-item unread" onclick="markAsRead(this)">
+                <div class="notification-icon job">💼</div>
+                <div class="notification-content">
+                    <div class="notification-text">New job match: <strong>Senior Developer</strong> at TechCorp</div>
+                    <div class="notification-time">3 hours ago</div>
+                </div>
+                <div class="notification-badge"></div>
+            </div>
+
+            <div class="notification-item" onclick="markAsRead(this)">
+                <div class="notification-icon comment">💬</div>
+                <div class="notification-content">
+                    <div class="notification-text"><strong>Alex Rodriguez</strong> commented on your Python certificate post</div>
+                    <div class="notification-time">1 day ago</div>
+                </div>
+            </div>
+
+            <div class="notification-item" onclick="markAsRead(this)">
+                <div class="notification-icon achievement">🏆</div>
+                <div class="notification-content">
+                    <div class="notification-text">Congratulations! You've completed the <strong>React Basics</strong> course</div>
+                    <div class="notification-time">2 days ago</div>
+                </div>
+            </div>
+
+            <div class="notification-item" onclick="markAsRead(this)">
+                <div class="notification-icon like">❤️</div>
+                <div class="notification-content">
+                    <div class="notification-text"><strong>Emma Davis</strong> and <strong>3 others</strong> liked your career tip</div>
+                    <div class="notification-time">3 days ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Post Tab Content -->
+<div class="tab-content" id="add-post-tab">
+    <div class="add-post-content">
+        <div class="create-post-container">
+            <h2 class="create-post-title">Create New Post</h2>
+            
+            <div class="post-form">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%23e8f4fd'/%3E%3Ccircle cx='25' cy='18' r='8' fill='%236c757d'/%3E%3Cpath d='M8 42 Q8 32 25 32 Q42 32 42 42 Z' fill='%236c757d'/%3E%3C/svg%3E" alt="Your Avatar" class="avatar-img">
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name">Jane Doe</div>
+                        <div class="post-visibility">
+                            <select class="visibility-select">
+                                <option value="public">🌍 Public</option>
+                                <option value="connections">👥 Connections only</option>
+                                <option value="private">🔒 Only me</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="post-input-container">
+                    <textarea 
+                        class="post-textarea" 
+                        placeholder="What would you like to share with your network?"
+                        maxlength="280"
+                        oninput="updateCharCount(this)"
+                    ></textarea>
+                    <div class="char-count">
+                        <span id="char-counter">0</span>/280
+                    </div>
+                </div>
+
+                <div class="post-options">
+                    <div class="media-options">
+                        <button class="media-btn" onclick="handleMediaUpload('image')" title="Add Image">
+                            📷
+                        </button>
+                        <button class="media-btn" onclick="handleMediaUpload('video')" title="Add Video">
+                            🎥
+                        </button>
+                        <button class="media-btn" onclick="handleMediaUpload('document')" title="Add Document">
+                            📎
+                        </button>
+                        <button class="media-btn" onclick="addPoll()" title="Create Poll">
+                            📊
+                        </button>
+                        <button class="media-btn" onclick="addCelebration()" title="Celebrate">
+                            🎉
+                        </button>
+                    </div>
+                </div>
+
+                <div class="post-actions">
+                    <button class="cancel-btn" onclick="cancelPost()">Cancel</button>
+                    <button class="post-btn" onclick="publishPost()" disabled>Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <!-- Career Tab Content -->
+    <div class="tab-content" id="career-tab">
+        <div class="career-content">
+            <div class="features-grid">
+                <div class="feature-card" onclick="handleFeatureClick('cv-analyzer')">
+                    <div class="feature-icon">📋</div>
+                    <div class="feature-title">CV Analyzer</div>
+                </div>
+                
+                <div class="feature-card" onclick="handleFeatureClick('jobs')">
+                    <div class="feature-icon">💼</div>
+                    <div class="feature-title">Jobs</div>
+                </div>
+                
+                <div class="feature-card" onclick="handleFeatureClick('courses')">
+                    <div class="feature-icon">🎓</div>
+                    <div class="feature-title">Courses</div>
+                </div>
+                
+                <div class="feature-card" onclick="handleFeatureClick('career-advice')">
+                    <div class="feature-icon">💬</div>
+                    <div class="feature-title">Career Advice</div>
+                </div>
+                
+                <div class="feature-card" onclick="handleFeatureClick('career-paths')">
+                    <div class="feature-icon">🛤️</div>
+                    <div class="feature-title">Career Paths</div>
+                </div>
+                
+                <div class="feature-card" onclick="handleFeatureClick('salary-insights')">
+                    <div class="feature-icon">💰</div>
+                    <div class="feature-title">Salary Insights</div>
+                </div>
+                
+                <div class="feature-card" onclick="handleFeatureClick('interviews')">
+                    <div class="feature-icon">🖥️</div>
+                    <div class="feature-title">Interviews</div>
+                </div>
+                
+                <div class="feature-card" onclick="handleFeatureClick('resume-builder')">
+                    <div class="feature-icon">📄</div>
+                    <div class="feature-title">Resume Builder</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home')" data-tab="home">
+            <div class="nav-icon">🏠</div>
+        </div>
+        
+        <div class="nav-item" onclick="switchTab('career')" data-tab="careers">
+            <div class="nav-icon">💼</div>
+        </div>
+        
+        <button class="add-button" onclick="handleAddClick()">
+            <span>+</span>
+        </button>
+        
+        <div class="nav-item" onclick="switchTab('notifications')" data-tab="notifications">
+            <div class="nav-icon">🔔</div>
+        </div>
+        
+        <div class="nav-item" onclick="switchTab('profile')" data-tab="profile">
+            <div class="nav-icon">👤</div>
+        </div>
+    </div>
+    <script src="scripts/script.js"></script>
+ </body>
+</html>
