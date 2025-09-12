@@ -433,9 +433,9 @@
             z-index: 2;
         }
 
-        .avatar-img {
-            width: 120px;
-            height: 120px;
+        img {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             border: 4px solid white;
             object-fit: cover;
@@ -534,6 +534,7 @@
             color: white;
             border: none;
             padding: 16px 32px;
+            margin-bottom: 20px;
             border-radius: 25px;
             font-size: 18px;
             font-weight: 600;
@@ -549,7 +550,27 @@
 
         .follow-btn.following {
             background: linear-gradient(135deg, #27ae60, #2ecc71);
+            
         }
+         .sign-out-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .sign-out-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
         /* Enhanced Career Grid */
         .career-content {
             max-width: 800px;

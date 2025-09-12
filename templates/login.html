@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Authentication | Supabase</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../styles/joinus.css">
+  <style>
+
+  </style>
+</head>
+<body>
+  <div class="floating-shapes">
+    <div class="shape"></div>
+    <div class="shape"></div>
+    <div class="shape"></div>
+  </div>
+
+  <div class="auth-container">
+    <div class="logo-section">
+      <div class="logo">
+        <i class="fas fa-database"></i>
+      </div>
+      <h1 class="welcome-text">Welcome</h1>
+      <p class="subtitle">Sign in to your account</p>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <p id="loading-text">Processing...</p>
+      </div>
+    </div>
+
+    <!-- Status Message -->
+    <div id="status-message" class="status-message"></div>
+
+    <!-- Sign In/Up Form -->
+<div class="form-group" id="name-field" style="display:none;">
+  <input type="text" id="fullName" class="form-input" placeholder="Full Name" />
+</div>
+      <div class="form-group">
+        <input type="email" id="email" class="form-input" placeholder="Email address" required />
+      </div>
+      <div class="form-group">
+        <input type="password" id="password" class="form-input" placeholder="Password" required />
+      </div>
+      
+      <div class="btn-container">
+        <button id="signInBtn" class="btn btn-primary">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
+        <button id="signUpBtn" class="btn btn-secondary" style="display: none;">
+          <i class="fas fa-user-plus"></i> Sign Up
+        </button>
+      </div>
+
+      <div class="mode-toggle">
+        <span id="mode-text">Don't have an account? </span>
+        <a href="#" id="mode-link" class="mode-link">Create one</a>
+      </div>
+    </div>
+
+    <!-- Signed In State -->
+    <div id="signed-in-state" class="signed-in-state" style="display: none;">
+      <div class="user-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="user-email" id="user-email"></div>
+      <div class="user-status">You are signed in</div>
+      <button id="signOutBtn" class="btn btn-danger">
+        <i class="fas fa-sign-out-alt"></i>  Sign Out
+      </button>
+    </div>
+  </div>
+     <script src="../scripts/joinus.js"></script>
+</body>
+</html>

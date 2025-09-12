@@ -1,0 +1,57 @@
+.onboarding-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.form-group select[multiple] {
+    height: 100px;
+}
+.help-text {
+    font-size: 12px;
+    color: #666;
+}
+#submit-onboarding {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#submit-onboarding:hover {
+    background-color: #0056b3;
+}
+.status-message {
+    padding: 10px;
+    margin: 10px 0;
+    display: none;
+}
+.status-message.show {
+    display: block;
+}
+.status-error {
+    background: #ffe6e6;
+    color: #d32f2f;
+}
+.status-success {
+    background: #e6ffe6;
+    color: #2e7d32;
+}
+

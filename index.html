@@ -1,292 +1,392 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skillence App</title>
-    <link rel="stylesheet" href="styles/style.css"
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProfX Career Landing Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9fb;
+      color: #333;
+    }
+
+    /* --- HERO SECTION --- */
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+      background: linear-gradient(135deg, #6c63ff, #857dff);
+      color: #fff;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+
+    .hero button {
+      padding: 14px 30px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: #fff;
+      color: #6c63ff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .hero button:hover {
+      background: #e6e6ff;
+    }
+
+    /* --- TESTIMONIALS SECTION --- */
+    .testimonials-section {
+      text-align: center;
+      padding: 60px 20px;
+      background: #f9f9fb;
+    }
+
+    .testimonials-section h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #1a1a1a;
+    }
+
+    .subheadline {
+      color: #666;
+      margin-bottom: 40px;
+    }
+
+    .testimonials-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .testimonial-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      width: 280px;
+      text-align: left;
+    }
+
+    .quote {
+      font-style: italic;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .author img {
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+    }
+
+    .author h4 {
+      margin: 0;
+      font-size: 1rem;
+      color: #1a1a1a;
+    }
+
+    .author p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .stat-box {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      min-width: 200px;
+    }
+
+    .stat-box h3 {
+      font-size: 1.8rem;
+      color: #6c63ff;
+      margin: 0 0 10px 0;
+    }
+
+    .stat-box p {
+      font-size: 0.9rem;
+      color: #444;
+      margin: 0;
+    }
+
+    /* --- PRICING SECTION --- */
+    .pricing-section {
+      text-align: center;
+      padding: 60px 20px;
+      background: #fff;
+    }
+
+    .pricing-section h2 {
+      font-size: 2rem;
+      color: #1a1a1a;
+      margin-bottom: 10px;
+    }
+
+    .pricing-section p {
+      color: #666;
+      margin-bottom: 40px;
+    }
+
+    .pricing-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .pricing-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      width: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .pricing-card.highlight {
+      border: 3px solid #6c63ff;
+      transform: scale(1.05);
+      position: relative;
+    }
+
+    .highlight::before {
+      content: "Most Popular";
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #6c63ff;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .pricing-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+      color: #1a1a1a;
+    }
+
+    .price {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #6c63ff;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+      text-align: left;
+    }
+
+    ul li {
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+    }
+
+    ul li span {
+      font-size: 1.2rem;
+      margin-right: 8px;
+    }
+
+    .check {
+      color: #6c63ff;
+    }
+
+    .cross {
+      color: #ccc;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .btn-outline {
+      border: 2px solid #6c63ff;
+      background: #fff;
+      color: #6c63ff;
+    }
+
+    .btn-outline:hover {
+      background: #6c63ff;
+      color: #fff;
+    }
+
+    .btn-solid {
+      border: none;
+      background: #6c63ff;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .btn-solid:hover {
+      background: #5548d4;
+    }
+
+    .note {
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 5px;
+    }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">
-            <div class="logo-icon">S</div>
-            <div class="logo-text">Skillence</div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1>Get Clarity on Your Career in 15 Minutes</h1>
+    <p>Take your free skill assessment today — no credit card required.</p>
+    <button onclick="startFree()">Start Free Assessment →</button>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials-section">
+    <h2>What Professionals Are Saying</h2>
+    <p class="subheadline">Real stories from people leveling up their careers with ProfX</p>
+
+    <div class="testimonials-container">
+      <div class="testimonial-card">
+        <p class="quote">“In 15 minutes I discovered 3 career paths I hadn’t even considered — ProfX gave me clarity instantly.”</p>
+        <div class="author">
+          <img src="https://i.pravatar.cc/60?img=12" alt="User photo">
+          <div>
+            <h4>Jordan K.</h4>
+            <p>Marketing Professional</p>
+          </div>
         </div>
-        <div class="search-bar">
-            <div class="search-icon">🔍</div>
-            <input type="text" class="search-input" placeholder="What's on your mind?" id="searchInput">
+      </div>
+      <div class="testimonial-card">
+        <p class="quote">“After applying ProfX’s resume tweaks, I doubled my interview callbacks in just 3 weeks.”</p>
+        <div class="author">
+          <img src="https://i.pravatar.cc/60?img=18" alt="User photo">
+          <div>
+            <h4>Sarah M.</h4>
+            <p>Recent Graduate</p>
+          </div>
         </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="quote">“I’ve tried other career tools, but ProfX is the first one that gave me actionable next steps.”</p>
+        <div class="author">
+          <img src="https://i.pravatar.cc/60?img=30" alt="User photo">
+          <div>
+            <h4>Ahmed R.</h4>
+            <p>Software Engineer</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Home Tab Content -->
-    <div class="tab-content active" id="home-tab">
-        <div class="home-content">
-            <!-- Jessica's Post -->
-            <div class="post">
-                <div class="post-header">
-                    <div class="profile-pic" style="background: linear-gradient(45deg, #ff6b6b, #feca57); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">J</div>
-                    <div class="post-author">Jessica</div>
-                    <div class="post-options">⋯</div>
-                </div>
-                <div class="post-content">just earned a Python Certificate</div>
-                <div class="post-actions">
-                    <button class="action-btn" onclick="toggleLike(this)">❤️</button>
-                    <button class="action-btn">💬</button>
-                    <button class="action-btn">🔖</button>
-                </div>
-            </div>
-
-            <!-- Lumera's Job Post -->
-            <div class="post">
-                <div class="post-header">
-                    <div class="profile-pic" style="background: linear-gradient(45deg, #3498db, #2980b9); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">L</div>
-                    <div class="post-author">Lumera</div>
-                    <div class="post-options">⋯</div>
-                </div>
-                <div class="post-content">is hiring: Product Manager</div>
-                <div class="post-actions">
-                    <button class="action-btn">🔖</button>
-                    <button class="apply-btn" onclick="applyForJob()">Apply</button>
-                </div>
-            </div>
-
-            <!-- Career Tip -->
-            <div class="career-tip">
-                <div class="tip-title">Career Tip: Top 5 skills for 2025...</div>
-                <div class="post-actions" style="margin-top: 12px;">
-                    <button class="action-btn" onclick="toggleLike(this)">❤️</button>
-                    <button class="action-btn">💬</button>
-                    <button class="action-btn">🔖</button>
-                </div>
-            </div>
-        </div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <h3>85%</h3>
+        <p>of users discover a new career path within 30 days</p>
+      </div>
+      <div class="stat-box">
+        <h3>47%</h3>
+        <p>average increase in interview callbacks</p>
+      </div>
+      <div class="stat-box">
+        <h3>10,000+</h3>
+        <p>professionals guided with ProfX</p>
+      </div>
     </div>
+  </section>
 
-    <!-- Profile Tab Content -->
-    <div class="tab-content" id="profile-tab">
-        <div class="profile-content">
-            <div class="profile-header">
-                <h1 class="profile-title">Profile</h1>
-                
-                <div class="profile-avatar">
-                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='60' fill='%23e8f4fd'/%3E%3Ccircle cx='60' cy='45' r='20' fill='%236c757d'/%3E%3Cpath d='M20 100 Q20 75 60 75 Q100 75 100 100 Z' fill='%236c757d'/%3E%3C/svg%3E" alt="Profile Picture" class="avatar-img">
-                </div>
-                
-                <h2 class="profile-name">Jane Doe</h2>
-                <p class="profile-job">Software Engineer</p>
-                <p class="profile-experience">5 Years Experience</p>
-                
-                <div class="skill-score-section">
-                    <h3 class="skill-score-title">Skill Score: 75%</h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
-                </div>
-                
-                <div class="stats-container">
-                    <div class="stat">
-                        <div class="stat-number">1.2k</div>
-                        <div class="stat-label">Followers</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">580</div>
-                        <div class="stat-label">Following</div>
-                    </div>
-                </div>
-                
-                <button class="follow-btn" onclick="toggleFollow()">Follow</button>
-            </div>
-        </div>
+  <!-- PRICING -->
+  <section class="pricing-section">
+    <h2>Choose Your Path: Free vs Premium</h2>
+    <p>Start free. Upgrade anytime for faster results.</p>
+
+    <div class="pricing-container">
+      <div class="pricing-card">
+        <h3>Free Account</h3>
+        <p class="price">$0 / mo</p>
+        <ul>
+          <li><span class="check">✔</span> Personalized Skill Assessment</li>
+          <li><span class="check">✔</span> Top 3 Career Path Matches</li>
+          <li><span class="cross">✖</span> Resume Scorecard</li>
+          <li><span class="cross">✖</span> Weekly Coaching Calls</li>
+          <li><span class="cross">✖</span> Job Market Insights</li>
+          <li><span class="cross">✖</span> Networking Community</li>
+          <li><span class="cross">✖</span> Continuity Bonuses</li>
+        </ul>
+        <button class="btn btn-outline" onclick="startFree()">Start Free</button>
+        <p class="note">No credit card required</p>
+      </div>
+
+      <div class="pricing-card highlight">
+        <h3>Premium Career Club</h3>
+        <p class="price">$99 / mo</p>
+        <ul>
+          <li><span class="check">✔</span> Skill Assessment + Deep Analytics</li>
+          <li><span class="check">✔</span> 10+ Career Matches + Salary Data</li>
+          <li><span class="check">✔</span> AI Resume Audit + Templates</li>
+          <li><span class="check">✔</span> Weekly Group Coaching Calls</li>
+          <li><span class="check">✔</span> Job Market Trends & Insider Openings</li>
+          <li><span class="check">✔</span> Private Networking & Pods</li>
+          <li><span class="check">✔</span> Continuity Bonuses (Month 3 Resume Pack, Month 6 Strategy Call, Annual Prepay Tracker)</li>
+        </ul>
+        <button class="btn btn-solid" onclick="upgradePremium()">Upgrade to Premium →</button>
+        <p class="note">Cancel anytime</p>
+      </div>
     </div>
-<!-- Notifications Tab Content -->
-    <div class="tab-content" id="notifications-tab">
-        <div class="notifications-content">
-            <div class="notification-item unread" onclick="markAsRead(this)">
-                <div class="notification-icon like">❤️</div>
-                <div class="notification-content">
-                    <div class="notification-text"><strong>Mike Chen</strong> liked your post about JavaScript frameworks</div>
-                    <div class="notification-time">2 minutes ago</div>
-                </div>
-                <div class="notification-badge"></div>
-            </div>
+  </section>
 
-            <div class="notification-item unread" onclick="markAsRead(this)">
-                <div class="notification-icon follow">👤</div>
-                <div class="notification-content">
-                    <div class="notification-text"><strong>Sarah Williams</strong> started following you</div>
-                    <div class="notification-time">1 hour ago</div>
-                </div>
-                <div class="notification-badge"></div>
-            </div>
+  <script>
+    function startFree() {
+      window.location.href = "templates/login.html"; // replace with your link
+    }
 
-            <div class="notification-item unread" onclick="markAsRead(this)">
-                <div class="notification-icon job">💼</div>
-                <div class="notification-content">
-                    <div class="notification-text">New job match: <strong>Senior Developer</strong> at TechCorp</div>
-                    <div class="notification-time">3 hours ago</div>
-                </div>
-                <div class="notification-badge"></div>
-            </div>
+    function upgradePremium() {
+      window.location.href = "/checkout-premium"; // replace with your link
+    }
+  </script>
 
-            <div class="notification-item" onclick="markAsRead(this)">
-                <div class="notification-icon comment">💬</div>
-                <div class="notification-content">
-                    <div class="notification-text"><strong>Alex Rodriguez</strong> commented on your Python certificate post</div>
-                    <div class="notification-time">1 day ago</div>
-                </div>
-            </div>
-
-            <div class="notification-item" onclick="markAsRead(this)">
-                <div class="notification-icon achievement">🏆</div>
-                <div class="notification-content">
-                    <div class="notification-text">Congratulations! You've completed the <strong>React Basics</strong> course</div>
-                    <div class="notification-time">2 days ago</div>
-                </div>
-            </div>
-
-            <div class="notification-item" onclick="markAsRead(this)">
-                <div class="notification-icon like">❤️</div>
-                <div class="notification-content">
-                    <div class="notification-text"><strong>Emma Davis</strong> and <strong>3 others</strong> liked your career tip</div>
-                    <div class="notification-time">3 days ago</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Add Post Tab Content -->
-<div class="tab-content" id="add-post-tab">
-    <div class="add-post-content">
-        <div class="create-post-container">
-            <h2 class="create-post-title">Create New Post</h2>
-            
-            <div class="post-form">
-                <div class="user-info">
-                    <div class="user-avatar">
-                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%23e8f4fd'/%3E%3Ccircle cx='25' cy='18' r='8' fill='%236c757d'/%3E%3Cpath d='M8 42 Q8 32 25 32 Q42 32 42 42 Z' fill='%236c757d'/%3E%3C/svg%3E" alt="Your Avatar" class="avatar-img">
-                    </div>
-                    <div class="user-details">
-                        <div class="user-name">Jane Doe</div>
-                        <div class="post-visibility">
-                            <select class="visibility-select">
-                                <option value="public">🌍 Public</option>
-                                <option value="connections">👥 Connections only</option>
-                                <option value="private">🔒 Only me</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="post-input-container">
-                    <textarea 
-                        class="post-textarea" 
-                        placeholder="What would you like to share with your network?"
-                        maxlength="280"
-                        oninput="updateCharCount(this)"
-                    ></textarea>
-                    <div class="char-count">
-                        <span id="char-counter">0</span>/280
-                    </div>
-                </div>
-
-                <div class="post-options">
-                    <div class="media-options">
-                        <button class="media-btn" onclick="handleMediaUpload('image')" title="Add Image">
-                            📷
-                        </button>
-                        <button class="media-btn" onclick="handleMediaUpload('video')" title="Add Video">
-                            🎥
-                        </button>
-                        <button class="media-btn" onclick="handleMediaUpload('document')" title="Add Document">
-                            📎
-                        </button>
-                        <button class="media-btn" onclick="addPoll()" title="Create Poll">
-                            📊
-                        </button>
-                        <button class="media-btn" onclick="addCelebration()" title="Celebrate">
-                            🎉
-                        </button>
-                    </div>
-                </div>
-
-                <div class="post-actions">
-                    <button class="cancel-btn" onclick="cancelPost()">Cancel</button>
-                    <button class="post-btn" onclick="publishPost()" disabled>Post</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-    
-    <!-- Career Tab Content -->
-    <div class="tab-content" id="career-tab">
-        <div class="career-content">
-            <div class="features-grid">
-                <div class="feature-card" onclick="handleFeatureClick('cv-analyzer')">
-                    <div class="feature-icon">📋</div>
-                    <div class="feature-title">CV Analyzer</div>
-                </div>
-                
-                <div class="feature-card" onclick="handleFeatureClick('jobs')">
-                    <div class="feature-icon">💼</div>
-                    <div class="feature-title">Jobs</div>
-                </div>
-                
-                <div class="feature-card" onclick="handleFeatureClick('courses')">
-                    <div class="feature-icon">🎓</div>
-                    <div class="feature-title">Courses</div>
-                </div>
-                
-                <div class="feature-card" onclick="handleFeatureClick('career-advice')">
-                    <div class="feature-icon">💬</div>
-                    <div class="feature-title">Career Advice</div>
-                </div>
-                
-                <div class="feature-card" onclick="handleFeatureClick('career-paths')">
-                    <div class="feature-icon">🛤️</div>
-                    <div class="feature-title">Career Paths</div>
-                </div>
-                
-                <div class="feature-card" onclick="handleFeatureClick('salary-insights')">
-                    <div class="feature-icon">💰</div>
-                    <div class="feature-title">Salary Insights</div>
-                </div>
-                
-                <div class="feature-card" onclick="handleFeatureClick('interviews')">
-                    <div class="feature-icon">🖥️</div>
-                    <div class="feature-title">Interviews</div>
-                </div>
-                
-                <div class="feature-card" onclick="handleFeatureClick('resume-builder')">
-                    <div class="feature-icon">📄</div>
-                    <div class="feature-title">Resume Builder</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home')" data-tab="home">
-            <div class="nav-icon">🏠</div>
-        </div>
-        
-        <div class="nav-item" onclick="switchTab('career')" data-tab="careers">
-            <div class="nav-icon">💼</div>
-        </div>
-        
-        <button class="add-button" onclick="handleAddClick()">
-            <span>+</span>
-        </button>
-        
-        <div class="nav-item" onclick="switchTab('notifications')" data-tab="notifications">
-            <div class="nav-icon">🔔</div>
-        </div>
-        
-        <div class="nav-item" onclick="switchTab('profile')" data-tab="profile">
-            <div class="nav-icon">👤</div>
-        </div>
-    </div>
-    <script src="scripts/script.js"></script>
- </body>
+</body>
 </html>

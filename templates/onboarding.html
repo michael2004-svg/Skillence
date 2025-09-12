@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skillence - Onboarding</title>
+    <link rel="stylesheet" href="../styles/onboarding.css">
+</head>
+<body>
+    <div class="onboarding-container">
+        <h1>Welcome to Skillence!</h1>
+        <p>Let’s tailor your experience. Complete your profile below.</p>
+        <form id="onboarding-form" method="post">
+            <div class="form-group">
+                <label for="profile-picture">Profile Picture (Optional)</label>
+                <input type="file" id="profile-picture" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label for="job-title">Job Title / Role *</label>
+                <input type="text" id="job-title" placeholder="e.g., Developer, Student" required>
+            </div>
+            <div class="form-group">
+                <label for="industry">Industry / Field of Interest *</label>
+                <select id="industry" required>
+                    <option value="" disabled selected>Select an industry</option>
+                    <option value="Tech">Tech</option>
+                    <option value="Design">Design</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="experience-level">Experience Level *</label>
+                <select id="experience-level" required>
+                    <option value="" disabled selected>Select experience level</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Expert">Expert</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="top-skills">Top Skills (up to 5) *</label>
+                <input type="text" id="top-skills" placeholder="e.g., JavaScript, Python, UI/UX" required>
+                <p class="help-text">Separate skills with commas</p>
+            </div>
+            <div class="form-group">
+                <label for="goals">Goals *</label>
+                <select id="goals" multiple required>
+                    <option value="Find a job">Find a job</option>
+                    <option value="Grow my skills">Grow my skills</option>
+                    <option value="Network">Network</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <p id="status-message"></p>
+            <button type="submit" id="submit-onboarding">Complete Profile</button>
+        </form>
+    </div>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../scripts/onboarding.js"></script>
+</body>
+</html>
