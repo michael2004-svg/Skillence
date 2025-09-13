@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skillence App</title>
     <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/cv.css">
+     <!-- Use reliable CDN for pdf.js and pdf.worker.js -->
+    <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.min.js"></script>
+    <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js"></script>
+    <!-- Include jsPDF for CV download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="header">
@@ -21,7 +27,6 @@
     <!-- Home Tab Content -->
     <div class="tab-content active" id="home-tab">
         <div class="home-content">
-            <!-- Jessica's Post -->
             <div class="post">
                 <div class="post-header">
                     <div class="profile-pic" style="background: linear-gradient(45deg, #ff6b6b, #feca57); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"></div>
@@ -35,8 +40,6 @@
                     <button class="action-btn">🔖</button>
                 </div>
             </div>
-
-            <!-- Lumera's Job Post -->
             <div class="post">
                 <div class="post-header">
                     <div class="profile-pic" style="background: linear-gradient(45deg, #3498db, #2980b9); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">L</div>
@@ -49,8 +52,6 @@
                     <button class="apply-btn" onclick="applyForJob()">Apply</button>
                 </div>
             </div>
-
-            <!-- Career Tip -->
             <div class="career-tip">
                 <div class="tip-title">Career Tip: Top 5 skills for 2025...</div>
                 <div class="post-actions" style="margin-top: 12px;">
@@ -62,43 +63,46 @@
         </div>
     </div>
 
-  
     <!-- Profile Tab Content -->
-<!-- Profile Tab Content -->
-<div class="tab-content" id="profile-tab">
-    <div class="profile-content">
-        <div class="profile-header">
-            <h1 class="profile-title">Profile</h1>
-            <div class="profile-avatar">
-                <img src="../images/mike.jpg">
-            </div>
-            <h2 class="profile-name" id="profile-name">Jane Doe</h2>
-            <p class="profile-job">Software Engineer</p>
-            <p class="profile-experience">5 Years Experience</p>
-            <div class="skill-score-section">
-                <h3 class="skill-score-title">Skill Score: 75%</h3>
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
+    <div class="tab-content" id="profile-tab">
+        <div class="profile-content">
+            <div class="profile-header">
+                <h1 class="profile-title">Profile</h1>
+                <div class="profile-avatar">
+                    <img src="../images/mike.jpg" id="profileAvatar">
                 </div>
-            </div>
-            <div class="stats-container">
-                <div class="stat">
-                    <div class="stat-number">1.2k</div>
-                    <div class="stat-label">Followers</div>
+                <h2 class="profile-name" id="profile-name">Jane Doe</h2>
+                <p class="profile-job" id="profile-job">Software Engineer</p>
+                <p class="profile-experience" id="profile-experience">5 Years Experience</p>
+                <div class="skill-score-section">
+                    <h3 class="skill-score-title">Skill Score: <span id="cv-score">75%</span></h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="cv-score-progress" style="width: 75%;"></div>
+                    </div>
                 </div>
-                <div class="stat">
-                    <div class="stat-number">580</div>
-                    <div class="stat-label">Following</div>
+                <div class="cv-info">
+                    <p><strong>Industry:</strong> <span id="cv-industry">Not analyzed</span></p>
+                    <p><strong>Top Skills:</strong> <span id="cv-skills">None listed</span></p>
+                    <p><strong>Latest CV Analysis:</strong> <span id="cv-timestamp">No analysis available</span></p>
                 </div>
+                <div class="stats-container">
+                    <div class="stat">
+                        <div class="stat-number" id="followers-count">1.2k</div>
+                        <div class="stat-label">Followers</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number" id="following-count">580</div>
+                        <div class="stat-label">Following</div>
+                    </div>
+                </div>
+                <button class="follow-btn" onclick="toggleFollow()">Follow</button>
+                <button id="sign-out-btn" class="sign-out-btn">Sign Out</button>
+                <p id="status-message"></p>
             </div>
-            <button class="follow-btn" onclick="toggleFollow()">Follow</button>
-            <button id="sign-out-btn" class="sign-out-btn">Sign Out</button>
-            <p id="status-message"></p>
         </div>
     </div>
-</div>
-    
-<!-- Notifications Tab Content -->
+
+    <!-- Notifications Tab Content -->
     <div class="tab-content" id="notifications-tab">
         <div class="notifications-content">
             <div class="notification-item unread" onclick="markAsRead(this)">
@@ -109,7 +113,6 @@
                 </div>
                 <div class="notification-badge"></div>
             </div>
-
             <div class="notification-item unread" onclick="markAsRead(this)">
                 <div class="notification-icon follow">👤</div>
                 <div class="notification-content">
@@ -118,7 +121,6 @@
                 </div>
                 <div class="notification-badge"></div>
             </div>
-
             <div class="notification-item unread" onclick="markAsRead(this)">
                 <div class="notification-icon job">💼</div>
                 <div class="notification-content">
@@ -127,7 +129,6 @@
                 </div>
                 <div class="notification-badge"></div>
             </div>
-
             <div class="notification-item" onclick="markAsRead(this)">
                 <div class="notification-icon comment">💬</div>
                 <div class="notification-content">
@@ -135,7 +136,6 @@
                     <div class="notification-time">1 day ago</div>
                 </div>
             </div>
-
             <div class="notification-item" onclick="markAsRead(this)">
                 <div class="notification-icon achievement">🏆</div>
                 <div class="notification-content">
@@ -143,7 +143,6 @@
                     <div class="notification-time">2 days ago</div>
                 </div>
             </div>
-
             <div class="notification-item" onclick="markAsRead(this)">
                 <div class="notification-icon like">❤️</div>
                 <div class="notification-content">
@@ -153,71 +152,52 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Add Post Tab Content -->
-<div class="tab-content" id="add-post-tab">
-    <div class="add-post-content">
-        <div class="create-post-container">
-            <h2 class="create-post-title">Create New Post</h2>
-            
-            <div class="post-form">
-                <div class="user-info">
-                    <div class="user-avatar">
-                      <img src="../images/mike.jpg">
-                    </div>
-                    <div class="user-details">
-                        <div class="user-name">OG Mike</div>
-                        <div class="post-visibility">
-                            <select class="visibility-select">
-                                <option value="public">🌍 Public</option>
-                                <option value="connections">👥 Connections only</option>
-                                <option value="private">🔒 Only me</option>
-                            </select>
+    <div class="tab-content" id="add-post-tab">
+        <div class="add-post-content">
+            <div class="create-post-container">
+                <h2 class="create-post-title">Create New Post</h2>
+                <div class="post-form">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <img src="../images/mike.jpg">
+                        </div>
+                        <div class="user-details">
+                            <div class="user-name">OG Mike</div>
+                            <div class="post-visibility">
+                                <select class="visibility-select">
+                                    <option value="public">🌍 Public</option>
+                                    <option value="connections">👥 Connections only</option>
+                                    <option value="private">🔒 Only me</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="post-input-container">
-                    <textarea 
-                        class="post-textarea" 
-                        placeholder="What would you like to share with your network?"
-                        maxlength="280"
-                        oninput="updateCharCount(this)"
-                    ></textarea>
-                    <div class="char-count">
-                        <span id="char-counter">0</span>/280
+                    <div class="post-input-container">
+                        <textarea class="post-textarea" placeholder="What would you like to share with your network?" maxlength="280" oninput="updateCharCount(this)"></textarea>
+                        <div class="char-count">
+                            <span id="char-counter">0</span>/280
+                        </div>
                     </div>
-                </div>
-
-                <div class="post-options">
-                    <div class="media-options">
-                        <button class="media-btn" onclick="handleMediaUpload('image')" title="Add Image">
-                            📷
-                        </button>
-                        <button class="media-btn" onclick="handleMediaUpload('video')" title="Add Video">
-                            🎥
-                        </button>
-                        <button class="media-btn" onclick="handleMediaUpload('document')" title="Add Document">
-                            📎
-                        </button>
-                        <button class="media-btn" onclick="addPoll()" title="Create Poll">
-                            📊
-                        </button>
-                        <button class="media-btn" onclick="addCelebration()" title="Celebrate">
-                            🎉
-                        </button>
+                    <div class="post-options">
+                        <div class="media-options">
+                            <button class="media-btn" onclick="handleMediaUpload('image')" title="Add Image">📷</button>
+                            <button class="media-btn" onclick="handleMediaUpload('video')" title="Add Video">🎥</button>
+                            <button class="media-btn" onclick="handleMediaUpload('document')" title="Add Document">📎</button>
+                            <button class="media-btn" onclick="addPoll()" title="Create Poll">📊</button>
+                            <button class="media-btn" onclick="addCelebration()" title="Celebrate">🎉</button>
+                        </div>
                     </div>
-                </div>
-
-                <div class="post-actions">
-                    <button class="cancel-btn" onclick="cancelPost()">Cancel</button>
-                    <button class="post-btn" onclick="publishPost()" disabled>Post</button>
+                    <div class="post-actions">
+                        <button class="cancel-btn" onclick="cancelPost()">Cancel</button>
+                        <button class="post-btn" onclick="publishPost()" disabled>Post</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-    
+
     <!-- Career Tab Content -->
     <div class="tab-content" id="career-tab">
         <div class="career-content">
@@ -226,37 +206,30 @@
                     <div class="feature-icon">📋</div>
                     <div class="feature-title">CV Analyzer</div>
                 </div>
-                
                 <div class="feature-card" onclick="handleFeatureClick('jobs')">
                     <div class="feature-icon">💼</div>
                     <div class="feature-title">Jobs</div>
                 </div>
-                
                 <div class="feature-card" onclick="handleFeatureClick('courses')">
                     <div class="feature-icon">🎓</div>
                     <div class="feature-title">Courses</div>
                 </div>
-                
                 <div class="feature-card" onclick="handleFeatureClick('career-advice')">
                     <div class="feature-icon">💬</div>
                     <div class="feature-title">Career Advice</div>
                 </div>
-                
                 <div class="feature-card" onclick="handleFeatureClick('career-paths')">
                     <div class="feature-icon">🛤️</div>
                     <div class="feature-title">Career Paths</div>
                 </div>
-                
                 <div class="feature-card" onclick="handleFeatureClick('salary-insights')">
                     <div class="feature-icon">💰</div>
                     <div class="feature-title">Salary Insights</div>
                 </div>
-                
                 <div class="feature-card" onclick="handleFeatureClick('interviews')">
                     <div class="feature-icon">🖥️</div>
                     <div class="feature-title">Interviews</div>
                 </div>
-                
                 <div class="feature-card" onclick="handleFeatureClick('resume-builder')">
                     <div class="feature-icon">📄</div>
                     <div class="feature-title">Resume Builder</div>
@@ -264,16 +237,48 @@
             </div>
         </div>
     </div>
-    
-     <!-- CV Analyzer tab (SPA) -->
-        <div class="tab-content" id="cv-analyzer-tab">
-          <div class="career-content" style="padding:20px;">
-             <h2>Upload CV</h2>
-            <input type="file" id="cvUpload" accept=".pdf,.doc,.docx" />
-         <button id="uploadBtn" onclick="uploadCV()">Upload & Analyze</button>
 
-        <div id="result" style="margin-top:16px;"></div>
-      </div>
+    <!-- Enhanced CV Analyzer Section -->
+    <div class="tab-content" id="cv-analyzer-tab">
+        <div class="cv-analyzer-content">
+            <div class="cv-analyzer-header">
+                <h2 class="cv-analyzer-title">CV Analyzer</h2>
+                <p class="cv-analyzer-subtitle">Upload your CV and get instant AI-powered analysis and recommendations</p>
+            </div>
+            <div class="job-description-container">
+                <textarea id="jobDescription" class="job-description-input" placeholder="Paste job description here (optional)"></textarea>
+            </div>
+            <div class="upload-container" id="uploadContainer">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Drag & Drop Your CV Here</div>
+                <div class="upload-hint">Or click to browse files • Supports PDF, DOC, DOCX • Max 10MB</div>
+                <input type="file" id="cvUpload" class="file-input" accept=".pdf,.doc,.docx" />
+                <button class="upload-btn" onclick="document.getElementById('cvUpload').click()">
+                    Choose File
+                </button>
+                <button class="analyze-btn" id="analyzeBtn" onclick="uploadCV()" disabled>
+                    <span id="btnText">Analyze CV</span>
+                    <div class="loading-spinner" id="loadingSpinner" style="display: none;">
+                        <div class="spinner"></div>
+                        Analyzing...
+                    </div>
+                </button>
+            </div>
+            <div class="file-info" id="fileInfo">
+                <div class="file-name" id="fileName"></div>
+                <div class="file-details">
+                    <span id="fileSize"></span>
+                    <span id="fileType"></span>
+                </div>
+            </div>
+            <div class="result-container" id="result">
+                <div class="result-header">
+                    <h3 class="result-title">CV Analysis Results</h3>
+                    <p class="result-subtitle">Here's what we found in your CV</p>
+                </div>
+                <!-- Dynamic content will be populated by script.js -->
+            </div>
+        </div>
     </div>
 
     <!-- Bottom Navigation -->
@@ -281,24 +286,21 @@
         <div class="nav-item active" onclick="switchTab('home')" data-tab="home">
             <div class="nav-icon">🏠</div>
         </div>
-        
         <div class="nav-item" onclick="switchTab('career')" data-tab="career">
             <div class="nav-icon">💼</div>
         </div>
-        
         <button class="add-button" onclick="handleAddClick()">
             <span>+</span>
         </button>
-        
         <div class="nav-item" onclick="switchTab('notifications')" data-tab="notifications">
             <div class="nav-icon">🔔</div>
         </div>
-        
         <div class="nav-item" onclick="switchTab('profile')" data-tab="profile">
             <div class="nav-icon">👤</div>
         </div>
     </div>
+
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script src="../scripts/script.js"></script>
- </body>
+    <script src="../scripts/script.js"></script>
+</body>
 </html>
