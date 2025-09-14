@@ -43,25 +43,26 @@ class CVAnalyzer {
         ];
     }
 
-    analyzeCVContent(cvText, jobDescription = '') {
-        const analysis = {
-            timestamp: new Date().toISOString(),
-            overallScore: 0,
-            sections: this.analyzeSections(cvText),
-            keywords: this.analyzeKeywords(cvText, jobDescription),
-            recommendations: [],
-            hrOptimization: this.getHROptimizationTips(cvText),
-            industryMatch: this.detectIndustry(cvText),
-            experienceLevel: this.assessExperienceLevel(cvText),
-            skillsAnalysis: this.analyzeSkills(cvText),
-            formatAnalysis: this.analyzeFormat(cvText)
-        };
+    async analyzeCVContent(cvText, jobDescription = '') {
+    const analysis = {
+        timestamp: new Date().toISOString(),
+        overallScore: 0,
+        sections: this.analyzeSections(cvText),
+        keywords: this.analyzeKeywords(cvText, jobDescription),
+        recommendations: [], // Initialize as empty array
+        hrOptimization: this.getHROptimizationTips(cvText),
+        industryMatch: this.detectIndustry(cvText),
+        experienceLevel: this.assessExperienceLevel(cvText),
+        skillsAnalysis: this.analyzeSkills(cvText),
+        formatAnalysis: this.analyzeFormat(cvText)
+    };
 
-        analysis.overallScore = this.calculateOverallScore(analysis);
-        analysis.recommendations = this.generateRecommendations(analysis);
-        
-        return analysis;
-    }
+    // Await the async generateRecommendations call
+    analysis.recommendations = await this.generateRecommendations(analysis);
+    analysis.overallScore = this.calculateOverallScore(analysis);
+    
+    return analysis;
+}
 
     analyzeSections(cvText) {
         const sections = {
@@ -366,10 +367,9 @@ class CVAnalyzer {
     }
 
     // Updated generateRecommendations in CVAnalyzer
-async generateRecommendations(analysis) {
+generateRecommendations(analysis) {
     const recommendations = [];
     
-    // Add default recommendations
     if (!analysis.sections.present.includes('contactInfo')) {
         recommendations.push({
             type: 'critical',
@@ -418,29 +418,23 @@ async generateRecommendations(analysis) {
         });
     });
 
-    // AI-enhanced recommendations
-    try {
-        const response = await fetch('https://api.x.ai/grok', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                analysis,
-                prompt: 'Generate personalized CV improvement recommendations based on this analysis, target role, and industry trends.'
-            })
-        });
-        const aiRecommendations = await response.json();
-        // Ensure aiRecommendations is an array
-        if (Array.isArray(aiRecommendations)) {
-            recommendations.push(...aiRecommendations);
-        } else {
-            console.warn('AI recommendations invalid, received:', aiRecommendations);
+    // Mock AI recommendations
+    const mockAIRecommendations = [
+        {
+            type: 'medium',
+            category: 'ATS Optimization',
+            message: 'Ensure your CV uses standard fonts and avoids headers/footers for ATS compatibility'
+        },
+        {
+            type: 'low',
+            category: 'Content',
+            message: 'Highlight recent projects to showcase relevant experience'
         }
-    } catch (error) {
-        console.warn('AI recommendations failed, using default:', error);
-    }
+    ];
     
-    // Ensure recommendations is always an array
-    return Array.isArray(recommendations) ? recommendations : [];
+    recommendations.push(...mockAIRecommendations);
+    
+    return recommendations;
 }
 
     async generatePerfectCV(userInfo, targetRole = '', industry = '') {
@@ -974,55 +968,79 @@ async function uploadCV() {
 // Update Analysis Results
 function updateAnalysisResults(analysis) {
     const resultContainer = document.getElementById('result');
-    resultContainer.innerHTML = `
-        <div class="result-header">
-            <h3 class="result-title">CV Analysis Results</h3>
-            <p class="result-subtitle">Here's what we found in your CV</p>
-        </div>
-        <div class="score-section">
-            <div class="score-circle">
-                <span class="score-value">${analysis.overallScore}</span>
+    
+    if (!resultContainer) {
+        console.error('Result container (#result) not found in DOM');
+        setStatus('Error: Results container not found', 'error');
+        return;
+    }
+
+    console.log('Analysis object in updateAnalysisResults:', JSON.stringify(analysis, null, 2));
+    console.log('Recommendations type:', Array.isArray(analysis.recommendations) ? 'Array' : typeof analysis.recommendations);
+    
+    const recommendations = Array.isArray(analysis.recommendations) ? analysis.recommendations : [];
+    
+    try {
+        resultContainer.innerHTML = `
+            <div class="result-header">
+                <h3 class="result-title">CV Analysis Results</h3>
+                <p class="result-subtitle">Here's what we found in your CV</p>
             </div>
-            <div class="score-label">Overall CV Score</div>
-            <div class="progress-bar-container">
-                <div class="progress-bar-fill" style="width: ${analysis.overallScore}%"></div>
+            <div class="score-section">
+                <div class="score-circle">
+                    <span class="score-value">${analysis.overallScore || 0}</span>
+                </div>
+                <div class="score-label">Overall CV Score</div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar-fill" style="width: ${analysis.overallScore || 0}%"></div>
+                </div>
             </div>
-        </div>
-        <div class="analysis-section">
-            <h4 class="section-title"><div class="section-icon">✓</div> Strengths</h4>
-            ${analysis.sections.present.map(section => `
-                <div class="analysis-item positive">
-                    <div class="analysis-text">${section.charAt(0).toUpperCase() + section.slice(1)} section is well-structured</div>
-                </div>
-            `).join('')}
-            ${analysis.skillsAnalysis.skills.length > 5 ? `
-                <div class="analysis-item positive">
-                    <div class="analysis-text">Strong skills section with ${analysis.skillsAnalysis.skills.length} relevant skills</div>
-                </div>
-            ` : ''}
-        </div>
-        <div class="analysis-section">
-            <h4 class="section-title"><div class="section-icon">⚠</div> Areas for Improvement</h4>
-            ${analysis.sections.missing.map(section => `
-                <div class="analysis-item negative">
-                    <div class="analysis-text">Missing ${section.charAt(0).toUpperCase() + section.slice(1)} section</div>
-                </div>
-            `).join('')}
-            ${analysis.keywords.matchPercentage < 60 ? `
-                <div class="analysis-item negative">
-                    <div class="analysis-text">Low keyword match rate (${analysis.keywords.matchPercentage}%). Add: ${analysis.keywords.missingKeywords.slice(0, 3).join(', ')}</div>
-                </div>
-            ` : ''}
-        </div>
-        <div class="analysis-section">
-            <h4 class="section-title"><div class="section-icon">💡</div> Recommendations</h4>
-            ${analysis.recommendations.map(rec => `
-                <div class="analysis-item ${rec.type}" onclick="showAIExample('${rec.message}')">
-                    <div class="analysis-text">${rec.message}</div>
-                </div>
-            `).join('')}
-        </div>
-    `;
+            <div class="analysis-section">
+                <h4 class="section-title"><div class="section-icon">✓</div> Strengths</h4>
+                ${analysis.sections?.present?.map(section => `
+                    <div class="analysis-item positive">
+                        <div class="analysis-text">${section.charAt(0).toUpperCase() + section.slice(1)} section is well-structured</div>
+                    </div>
+                `).join('') || '<div class="analysis-item">No strengths identified</div>'}
+                ${analysis.skillsAnalysis?.skills?.length > 5 ? `
+                    <div class="analysis-item positive">
+                        <div class="analysis-text">Strong skills section with ${analysis.skillsAnalysis.skills.length} relevant skills</div>
+                    </div>
+                ` : ''}
+            </div>
+            <div class="analysis-section">
+                <h4 class="section-title"><div class="section-icon">⚠</div> Areas for Improvement</h4>
+                ${analysis.sections?.missing?.map(section => `
+                    <div class="analysis-item negative">
+                        <div class="analysis-text">Missing ${section.charAt(0).toUpperCase() + section.slice(1)} section</div>
+                    </div>
+                `).join('') || '<div class="analysis-item">No missing sections</div>'}
+                ${analysis.keywords?.matchPercentage < 60 ? `
+                    <div class="analysis-item negative">
+                        <div class="analysis-text">Low keyword match rate (${analysis.keywords.matchPercentage}%). Add: ${analysis.keywords.missingKeywords?.slice(0, 3).join(', ') || 'none'}</div>
+                    </div>
+                ` : ''}
+            </div>
+            <div class="analysis-section">
+                <h4 class="section-title"><div class="section-icon">💡</div> Recommendations</h4>
+                ${recommendations.length > 0 ? recommendations.map(rec => `
+                    <div class="analysis-item ${rec.type || 'medium'}" onclick="showAIExample('${rec.message || ''}')">
+                        <div class="analysis-text">${rec.message || 'No message provided'}</div>
+                    </div>
+                `).join('') : '<div class="analysis-item">No recommendations available</div>'}
+            </div>
+        `;
+        // Add .show class to make results container visible
+        resultContainer.classList.add('show');
+        console.log('Result container updated and .show class added');
+        // Ensure CV Analyzer tab is visible
+        switchTab('cv-analyzer');
+    } catch (error) {
+        console.error('Error updating result container:', error);
+        resultContainer.innerHTML = `<p class="error">Error displaying results: ${error.message}</p>`;
+        resultContainer.classList.add('show'); // Show container even on error
+        setStatus(`Error displaying results: ${error.message}`, 'error');
+    }
 }
 
 // Show AI-Generated Example for Recommendation
@@ -1036,8 +1054,8 @@ async function showAIExample(recommendation) {
                 prompt: `Provide an example implementation for this CV recommendation: ${recommendation}`
             })
         });
-        const example = await response.json();
-        setStatus(`Example: ${example}`, 'info', 10000);
+        const mockExample = `Example for "${recommendation}": Consider adding a section like: 'Developed a scalable web application using React and Node.js, increasing user engagement by 30%.'`;
+    setStatus(mockExample, 'info', 10000);
     } catch (error) {
         setStatus('Failed to load example.', 'error');
     }

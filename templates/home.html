@@ -6,11 +6,10 @@
     <title>Skillence App</title>
     <link rel="stylesheet" href="../styles/style.css">
     <link rel="stylesheet" href="../styles/cv.css">
-     <!-- Use reliable CDN for pdf.js and pdf.worker.js -->
     <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.min.js"></script>
     <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js"></script>
-    <!-- Include jsPDF for CV download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="header">
@@ -64,7 +63,7 @@
     </div>
 
     <!-- Profile Tab Content -->
-    <div class="tab-content" id="profile-tab">
+    <div class="tab-content hidden" id="profile-tab">
         <div class="profile-content">
             <div class="profile-header">
                 <h1 class="profile-title">Profile</h1>
@@ -103,7 +102,7 @@
     </div>
 
     <!-- Notifications Tab Content -->
-    <div class="tab-content" id="notifications-tab">
+    <div class="tab-content hidden" id="notifications-tab">
         <div class="notifications-content">
             <div class="notification-item unread" onclick="markAsRead(this)">
                 <div class="notification-icon like">❤️</div>
@@ -154,7 +153,7 @@
     </div>
 
     <!-- Add Post Tab Content -->
-    <div class="tab-content" id="add-post-tab">
+    <div class="tab-content hidden" id="add-post-tab">
         <div class="add-post-content">
             <div class="create-post-container">
                 <h2 class="create-post-title">Create New Post</h2>
@@ -199,10 +198,10 @@
     </div>
 
     <!-- Career Tab Content -->
-    <div class="tab-content" id="career-tab">
+    <div class="tab-content hidden" id="career-tab">
         <div class="career-content">
             <div class="features-grid">
-                <div class="feature-card" onclick="handleFeatureClick('cv-analyzer')">
+                <div class="feature-card" onclick="switchTab('cv-analyzer')">
                     <div class="feature-icon">📋</div>
                     <div class="feature-title">CV Analyzer</div>
                 </div>
@@ -238,8 +237,8 @@
         </div>
     </div>
 
-    <!-- Enhanced CV Analyzer Section -->
-    <div class="tab-content" id="cv-analyzer-tab">
+    <!-- CV Analyzer Tab Content -->
+    <div class="tab-content hidden" id="cv-analyzer-tab">
         <div class="cv-analyzer-content">
             <div class="cv-analyzer-header">
                 <h2 class="cv-analyzer-title">CV Analyzer</h2>
@@ -256,7 +255,7 @@
                 <button class="upload-btn" onclick="document.getElementById('cvUpload').click()">
                     Choose File
                 </button>
-                <button class="analyze-btn" id="analyzeBtn" onclick="uploadCV()" disabled>
+                <button class="analyze-btn" id="analyzeBtn" onclick="uploadCV()">
                     <span id="btnText">Analyze CV</span>
                     <div class="loading-spinner" id="loadingSpinner" style="display: none;">
                         <div class="spinner"></div>
@@ -271,13 +270,9 @@
                     <span id="fileType"></span>
                 </div>
             </div>
-            <div class="result-container" id="result">
-                <div class="result-header">
-                    <h3 class="result-title">CV Analysis Results</h3>
-                    <p class="result-subtitle">Here's what we found in your CV</p>
-                </div>
-                <!-- Dynamic content will be populated by script.js -->
-            </div>
+            <div class="status-message" id="statusMessage"></div>
+            <div class="result-container" id="result"></div>
+            <div class="template-container hidden"></div>
         </div>
     </div>
 
@@ -289,7 +284,7 @@
         <div class="nav-item" onclick="switchTab('career')" data-tab="career">
             <div class="nav-icon">💼</div>
         </div>
-        <button class="add-button" onclick="handleAddClick()">
+        <button class="add-button" onclick="switchTab('add-post')">
             <span>+</span>
         </button>
         <div class="nav-item" onclick="switchTab('notifications')" data-tab="notifications">
@@ -300,7 +295,6 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="../scripts/script.js"></script>
 </body>
 </html>
