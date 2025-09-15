@@ -1041,3 +1041,71 @@
 .post-btn:active:not(:disabled) {
     transform: translateY(0);
 }
+
+#feedContainer {
+    max-width: 600px;
+    margin: 0 auto;
+}
+.post, .job-post {
+    border: 1px solid #e1e8ed;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background: #fff;
+}
+.job-post {
+    background: #f8f9fa;
+}
+.post-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.profile-pic {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+.post-author {
+    font-weight: bold;
+    font-size: 16px;
+}
+.post-time {
+    color: #657786;
+    font-size: 14px;
+    margin-left: 5px;
+}
+.post-options {
+    margin-left: auto;
+    cursor: pointer;
+}
+.post-content {
+    font-size: 15px;
+    margin-bottom: 10px;
+}
+.post-actions {
+    display: flex;
+    gap: 20px;
+}
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+.action-btn.liked {
+    color: #e0245e;
+}
+.apply-btn {
+    background: #1da1f2;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 15px;
+    cursor: pointer;
+}
+.apply-btn:hover {
+    background: #1a91da;
+}

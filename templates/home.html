@@ -25,40 +25,8 @@
 
     <!-- Home Tab Content -->
     <div class="tab-content active" id="home-tab">
-        <div class="home-content">
-            <div class="post">
-                <div class="post-header">
-                    <div class="profile-pic" style="background: linear-gradient(45deg, #ff6b6b, #feca57); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;"></div>
-                    <div class="post-author">Jessica</div>
-                    <div class="post-options">⋯</div>
-                </div>
-                <div class="post-content">just earned a Python Certificate</div>
-                <div class="post-actions">
-                    <button class="action-btn" onclick="toggleLike(this)">❤️</button>
-                    <button class="action-btn">💬</button>
-                    <button class="action-btn">🔖</button>
-                </div>
-            </div>
-            <div class="post">
-                <div class="post-header">
-                    <div class="profile-pic" style="background: linear-gradient(45deg, #3498db, #2980b9); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">L</div>
-                    <div class="post-author">Lumera</div>
-                    <div class="post-options">⋯</div>
-                </div>
-                <div class="post-content">is hiring: Product Manager</div>
-                <div class="post-actions">
-                    <button class="action-btn">🔖</button>
-                    <button class="apply-btn" onclick="applyForJob()">Apply</button>
-                </div>
-            </div>
-            <div class="career-tip">
-                <div class="tip-title">Career Tip: Top 5 skills for 2025...</div>
-                <div class="post-actions" style="margin-top: 12px;">
-                    <button class="action-btn" onclick="toggleLike(this)">❤️</button>
-                    <button class="action-btn">💬</button>
-                    <button class="action-btn">🔖</button>
-                </div>
-            </div>
+        <div class="home-content" id="feedContainer">
+            <p>Loading feed...</p>
         </div>
     </div>
 
@@ -68,11 +36,13 @@
             <div class="profile-header">
                 <h1 class="profile-title">Profile</h1>
                 <div class="profile-avatar">
-                    <img src="../images/mike.jpg" id="profileAvatar">
+                    <img src="../images/default.jpg" id="profileAvatar">
                 </div>
-                <h2 class="profile-name" id="profile-name">Jane Doe</h2>
-                <p class="profile-job" id="profile-job">Software Engineer</p>
-                <p class="profile-experience" id="profile-experience">5 Years Experience</p>
+                <h2 class="profile-name" id="profile-job">Loading...</h2>
+                <p class="profile-industry" id="profile-industry">Loading...</p>
+                <p class="profile-experience" id="profile-experience">Loading...</p>
+                <p class="profile-skills" id="profile-skills">Skills: Loading...</p>
+                <p class="profile-goals" id="profile-goals">Goals: Loading...</p>
                 <div class="skill-score-section">
                     <h3 class="skill-score-title">Skill Score: <span id="cv-score">75%</span></h3>
                     <div class="progress-bar">
@@ -86,11 +56,11 @@
                 </div>
                 <div class="stats-container">
                     <div class="stat">
-                        <div class="stat-number" id="followers-count">1.2k</div>
+                        <div class="stat-number" id="followers-count">0</div>
                         <div class="stat-label">Followers</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-number" id="following-count">580</div>
+                        <div class="stat-number" id="following-count">0</div>
                         <div class="stat-label">Following</div>
                     </div>
                 </div>
@@ -112,41 +82,11 @@
                 </div>
                 <div class="notification-badge"></div>
             </div>
-            <div class="notification-item unread" onclick="markAsRead(this)">
+            <div class="notification-item" onclick="markAsRead(this)">
                 <div class="notification-icon follow">👤</div>
                 <div class="notification-content">
-                    <div class="notification-text"><strong>Sarah Williams</strong> started following you</div>
+                    <div class="notification-text"><strong>Sarah Johnson</strong> started following you</div>
                     <div class="notification-time">1 hour ago</div>
-                </div>
-                <div class="notification-badge"></div>
-            </div>
-            <div class="notification-item unread" onclick="markAsRead(this)">
-                <div class="notification-icon job">💼</div>
-                <div class="notification-content">
-                    <div class="notification-text">New job match: <strong>Senior Developer</strong> at TechCorp</div>
-                    <div class="notification-time">3 hours ago</div>
-                </div>
-                <div class="notification-badge"></div>
-            </div>
-            <div class="notification-item" onclick="markAsRead(this)">
-                <div class="notification-icon comment">💬</div>
-                <div class="notification-content">
-                    <div class="notification-text"><strong>Alex Rodriguez</strong> commented on your Python certificate post</div>
-                    <div class="notification-time">1 day ago</div>
-                </div>
-            </div>
-            <div class="notification-item" onclick="markAsRead(this)">
-                <div class="notification-icon achievement">🏆</div>
-                <div class="notification-content">
-                    <div class="notification-text">Congratulations! You've completed the <strong>React Basics</strong> course</div>
-                    <div class="notification-time">2 days ago</div>
-                </div>
-            </div>
-            <div class="notification-item" onclick="markAsRead(this)">
-                <div class="notification-icon like">❤️</div>
-                <div class="notification-content">
-                    <div class="notification-text"><strong>Emma Davis</strong> and <strong>3 others</strong> liked your career tip</div>
-                    <div class="notification-time">3 days ago</div>
                 </div>
             </div>
         </div>
@@ -160,10 +100,10 @@
                 <div class="post-form">
                     <div class="user-info">
                         <div class="user-avatar">
-                            <img src="../images/mike.jpg">
+                            <img src="../images/default.jpg" id="createPostAvatar">
                         </div>
                         <div class="user-details">
-                            <div class="user-name">OG Mike</div>
+                            <div class="user-name" id="createPostName">Loading...</div>
                             <div class="post-visibility">
                                 <select class="visibility-select">
                                     <option value="public">🌍 Public</option>
@@ -181,11 +121,16 @@
                     </div>
                     <div class="post-options">
                         <div class="media-options">
-                            <button class="media-btn" onclick="handleMediaUpload('image')" title="Add Image">📷</button>
+                            <input type="file" id="postImage" accept="image/*" style="display: none;" onchange="previewPostImage(this)">
+                            <button class="media-btn" onclick="document.getElementById('postImage').click()" title="Add Image">📷</button>
                             <button class="media-btn" onclick="handleMediaUpload('video')" title="Add Video">🎥</button>
                             <button class="media-btn" onclick="handleMediaUpload('document')" title="Add Document">📎</button>
                             <button class="media-btn" onclick="addPoll()" title="Create Poll">📊</button>
                             <button class="media-btn" onclick="addCelebration()" title="Celebrate">🎉</button>
+                        </div>
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <img id="previewImage" src="" alt="Image Preview" style="max-width: 100%; max-height: 200px;">
+                            <button class="remove-image" onclick="removePostImage()">Remove</button>
                         </div>
                     </div>
                     <div class="post-actions">
@@ -201,7 +146,7 @@
     <div class="tab-content hidden" id="career-tab">
         <div class="career-content">
             <div class="features-grid">
-                <div class="feature-card" onclick="switchTab('cv-analyzer')">
+                <div class="feature-card" onclick="handleFeatureClick('cv-analyzer')">
                     <div class="feature-icon">📋</div>
                     <div class="feature-title">CV Analyzer</div>
                 </div>
@@ -213,25 +158,22 @@
                     <div class="feature-icon">🎓</div>
                     <div class="feature-title">Courses</div>
                 </div>
-                <div class="feature-card" onclick="handleFeatureClick('career-advice')">
-                    <div class="feature-icon">💬</div>
-                    <div class="feature-title">Career Advice</div>
+                <div class="feature-card" onclick="handleFeatureClick('mentorship')">
+                    <div class="feature-icon">🤝</div>
+                    <div class="feature-title">Mentorship</div>
                 </div>
-                <div class="feature-card" onclick="handleFeatureClick('career-paths')">
-                    <div class="feature-icon">🛤️</div>
-                    <div class="feature-title">Career Paths</div>
+            </div>
+            <div class="jobs-section hidden" id="jobsSection">
+                <div class="jobs-header">
+                    <h2 class="jobs-title">Job Opportunities</h2>
+                    <div class="jobs-search">
+                        <input type="text" id="jobsSearchWhat" placeholder="Job title or keywords (e.g., Software Engineer)" class="search-input">
+                        <input type="text" id="jobsSearchWhere" placeholder="Location (e.g., London)" class="search-input">
+                        <button class="search-btn" onclick="searchJobs()">Search Jobs</button>
+                    </div>
                 </div>
-                <div class="feature-card" onclick="handleFeatureClick('salary-insights')">
-                    <div class="feature-icon">💰</div>
-                    <div class="feature-title">Salary Insights</div>
-                </div>
-                <div class="feature-card" onclick="handleFeatureClick('interviews')">
-                    <div class="feature-icon">🖥️</div>
-                    <div class="feature-title">Interviews</div>
-                </div>
-                <div class="feature-card" onclick="handleFeatureClick('resume-builder')">
-                    <div class="feature-icon">📄</div>
-                    <div class="feature-title">Resume Builder</div>
+                <div class="jobs-list" id="jobsList">
+                    <p>Loading jobs...</p>
                 </div>
             </div>
         </div>
@@ -270,7 +212,7 @@
                     <span id="fileType"></span>
                 </div>
             </div>
-            <div class="status-message" id="statusMessage"></div>
+            <div class="status-message" id="status-message"></div>
             <div class="result-container" id="result"></div>
             <div class="template-container hidden"></div>
         </div>
@@ -295,6 +237,10 @@
         </div>
     </div>
 
-    <script src="../scripts/script.js"></script>
+    <script src="../scripts/core.js"></script>
+    <script src="../scripts/cv_analyzer.js"></script>
+    <script src="../scripts/jobs.js"></script>
+    <script src="../scripts/feed.js"></script>
+    <script src="../scripts/posts.js"></script>
 </body>
 </html>

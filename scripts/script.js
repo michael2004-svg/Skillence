@@ -836,13 +836,7 @@ async function updateProfileWithCVData() {
             cvSkillsElement.textContent = cvData.skills.slice(0, 3).join(', ') || 'None listed';
         }
         if (cvTimestampElement) {
-            cvTimestampElement.textContent = new Date(cvData.timestamp).toLocaleString();
-        }
-    }
-}
-
-// Save CV Analysis to Supabase
-async function saveCVAnalysis(analysis, cvText, fileName) {
+      async function saveCVAnalysis(analysis, cvText, fileName) {
     try {
         const { data: session } = await supabase.auth.getSession();
         if (!session?.session) {
@@ -863,16 +857,29 @@ async function saveCVAnalysis(analysis, cvText, fileName) {
                 analysis_data: analysis
             });
 
-        if (error) {
-            console.error('Error saving CV analysis:', error);
-            setStatus(`Failed to save CV analysis: ${error.message}`, 'error');
-        } else {
-            setStatus('CV analysis saved successfully!', 'success');
-            updateProfileWithCVData();
-        }
-    } catch (err) {
-        console.error('Unexpected error in saveCVAnalysis:', err);
-        setStatus('Error saving CV analysis.', 'error');
+        if (error) throw error;
+
+        // Update user_interests
+        const interestsToAdd = [
+            analysis.industryMatch.industry.toLowerCase(),
+            ...analysis.skillsAnalysis.skills.slice(0, 5)
+        ].filter(v => v);
+        await supabase
+            .from('user_interests')
+            .upsert(
+                interestsToAdd.map(interest => ({ 
+                    user_id: session.session.user.id, 
+                    interest: interest.toLowerCase() 
+                })),
+                { onConflict: ['user_id', 'interest'] }
+            );
+
+        setStatus('CV analysis saved successfully!', 'success');
+        updateProfileWithCVData();
+        loadTwitterFeed(); // Refresh feed
+    } catch (error) {
+        console.error('Error saving CV analysis:', error);
+        setStatus(`Failed to save CV analysis: ${error.message}`, 'error');
     }
 }
 
@@ -1154,6 +1161,8 @@ function switchTab(tab) {
     if (navItem) {
         navItem.classList.add('active');
     }
+    refreshFeedOnTabSwitch(tab); 
+    // Call feed.js function
 }
 
 function toggleLike(button) {
@@ -1201,17 +1210,69 @@ function cancelPost() {
     switchTab('home');
 }
 
-function publishPost() {
-    alert("Post published!");
-    cancelPost();
+async function publishPost() {
+    try {
+        const userId = await getUserId();
+        if (!userId) {
+            setStatus('Please sign in to post.', 'error');
+            return;
+        }
+
+        const textarea = document.querySelector('.post-textarea');
+        const content = textarea.value.trim();
+        if (!content) {
+            setStatus('Post content cannot be empty.', 'error');
+            return;
+        }
+
+        // Extract tags
+        const profile = await fetchUserProfile();
+        const cvData = await fetchLatestCVAnalysis();
+        const tags = [
+            ...(content.match(/#[^\s]+/g)?.map(tag => tag.slice(1).toLowerCase()) || []),
+            ...(cvData?.skills?.slice(0, 3) || []),
+            profile?.job_title?.toLowerCase() || ''
+        ].filter((v, i, a) => v && a.indexOf(v) === i);
+
+        const { error } = await supabase
+            .from('posts')
+            .insert({
+                user_id: userId,
+                content,
+                tags
+            });
+        if (error) throw error;
+
+        setStatus('Post published successfully!', 'success');
+        cancelPost();
+        loadTwitterFeed(); // Refresh feed
+    } catch (error) {
+        console.error('Error publishing post:', error);
+        setStatus(`Failed to publish post: ${error.message}`, 'error');
+    }
 }
 
 function handleFeatureClick(feature) {
+    const featuresGrid = document.querySelector('.features-grid');
+    const jobsSection = document.getElementById('jobsSection');
+
     if (feature === 'cv-analyzer') {
         switchTab('cv-analyzer');
-    } else {
-        alert(`Opening ${feature}...`);
+        return;
+    } else if (feature === 'jobs') {
+        // Hide feature grid, show jobs section
+        if (featuresGrid) featuresGrid.style.display = 'none';
+        if (jobsSection) {
+            jobsSection.classList.remove('hidden');
+            jobsSection.classList.add('show');
+        }
+        // Load default jobs (e.g., general tech jobs)
+        searchJobs();  // Or pass defaults: searchJobs('software engineer', 'London');
+        return;
     }
+
+    // For other features
+    alert(`Opening ${feature}...`);
 }
 
 async function toggleFollow(profileUserId = null) {
