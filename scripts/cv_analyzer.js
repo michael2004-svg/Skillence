@@ -1,3 +1,62 @@
+// Initialize Supabase client (assumed to be global from core.js)
+const supabase = window.supabaseClient;
+
+function setStatus(message, type = 'info', duration = 5000) {
+    const statusMessage = document.getElementById('status-message');
+    if (!statusMessage) return;
+    statusMessage.textContent = message;
+    statusMessage.className = `status-message show status-${type}`;
+    setTimeout(() => {
+        statusMessage.classList.remove('show');
+    }, duration);
+}
+
+async function getUserId() {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.user?.id;
+}
+
+async function calculateSkillScore(cvData, profileData) {
+    let score = 0;
+
+    // Skills (50% of score)
+    const cvSkills = cvData?.skills || [];
+    const profileSkills = profileData?.top_skills || [];
+    const uniqueSkills = [...new Set([...cvSkills, ...profileSkills])];
+    score += Math.min(uniqueSkills.length * 5, 50); // Max 50 points for up to 10 skills
+
+    // Experience Level (30% of score)
+    const experienceLevel = profileData?.experience_level?.toLowerCase();
+    if (experienceLevel === 'expert') score += 30;
+    else if (experienceLevel === 'intermediate') score += 20;
+    else if (experienceLevel === 'beginner') score += 10;
+
+    // Industry Match (20% of score)
+    const cvIndustry = cvData?.industry?.toLowerCase();
+    const profileIndustry = profileData?.industry?.toLowerCase();
+    if (cvIndustry && profileIndustry && cvIndustry === profileIndustry) {
+        score += 20;
+    }
+
+    // Normalize to 0-100
+    score = Math.min(Math.max(Math.round(score), 0), 100);
+    return score;
+}
+
+async function storeSkillScore(userId, score) {
+    try {
+        const { error } = await supabase
+            .from('profiles')
+            .update({ skill_score: score })
+            .eq('id', userId);
+        if (error) throw error;
+        console.log('Skill score stored:', score);
+    } catch (error) {
+        console.error('Error storing skill score:', error);
+        setStatus(`Failed to store skill score: ${error.message}`, 'error');
+    }
+}
+
 // CVAnalyzer Class
 class CVAnalyzer {
     constructor() {
@@ -42,7 +101,7 @@ class CVAnalyzer {
             timestamp: new Date().toISOString(),
             overallScore: 0,
             sections: this.analyzeSections(cvText),
-            keywords: this.analyzeKeywords(cvText, jobDescription),
+            keywords: await this.analyzeKeywords(cvText, jobDescription),
             recommendations: [],
             hrOptimization: this.getHROptimizationTips(cvText),
             industryMatch: this.detectIndustry(cvText),
@@ -51,7 +110,7 @@ class CVAnalyzer {
             formatAnalysis: this.analyzeFormat(cvText)
         };
 
-        analysis.recommendations = await this.generateRecommendations(analysis);
+        analysis.recommendations = this.generateRecommendations(analysis);
         analysis.overallScore = this.calculateOverallScore(analysis);
         return analysis;
     }
@@ -331,7 +390,7 @@ class CVAnalyzer {
             recommendations.push({
                 type: 'high',
                 category: 'Keywords',
-                message: `Improve keyword match rate. Currently at ${analysis.keywords.matchPercentage}%. Add missing keywords: ${analysis.keywords.missingKeywords.slice(0, 5).join(', ')}`
+                message: `Improve keyword match rate. Currently at ${analysis.keywords.matchPercentage}%. Add: ${analysis.keywords.missingKeywords.slice(0, 5).join(', ')}`
             });
         }
         if (analysis.industryMatch.confidence < 70) {
@@ -369,48 +428,6 @@ const cvIndustryElement = document.getElementById('cv-industry');
 const cvSkillsElement = document.getElementById('cv-skills');
 const cvTimestampElement = document.getElementById('cv-timestamp');
 
-// Fetch Latest CV Analysis
-async function fetchLatestCVAnalysis() {
-    try {
-        const userId = await getUserId();
-        if (!userId) return null;
-
-        const { data, error } = await window.supabaseClient
-            .from('cv_analysis')
-            .select('score, industry, skills, timestamp')
-            .eq('user_id', userId)
-            .order('timestamp', { ascending: false })
-            .limit(1)
-            .single();
-
-        if (error) throw error;
-        return data;
-    } catch (error) {
-        console.error('CV analysis fetch error:', error);
-        return null;
-    }
-}
-
-// Update Profile with CV Analysis Data
-async function updateProfileWithCVData() {
-    const cvData = await fetchLatestCVAnalysis();
-    if (cvData) {
-        if (cvScoreElement) {
-            cvScoreElement.textContent = `${cvData.score}%`;
-            cvScoreProgress.style.width = `${cvData.score}%`;
-        }
-        if (cvIndustryElement) {
-            cvIndustryElement.textContent = cvData.industry.charAt(0).toUpperCase() + cvData.industry.slice(1);
-        }
-        if (cvSkillsElement) {
-            cvSkillsElement.textContent = cvData.skills.slice(0, 3).join(', ') || 'None listed';
-        }
-        if (cvTimestampElement) {
-            cvTimestampElement.textContent = new Date(cvData.timestamp).toLocaleString();
-        }
-    }
-}
-
 // Save CV Analysis
 async function saveCVAnalysis(analysis, cvText, fileName) {
     try {
@@ -420,7 +437,7 @@ async function saveCVAnalysis(analysis, cvText, fileName) {
             return;
         }
 
-        const { error } = await window.supabaseClient
+        const { error } = await supabase
             .from('cv_analysis')
             .insert({
                 user_id: userId,
@@ -440,7 +457,7 @@ async function saveCVAnalysis(analysis, cvText, fileName) {
             analysis.industryMatch.industry.toLowerCase(),
             ...analysis.skillsAnalysis.skills.slice(0, 5)
         ].filter(v => v);
-        await window.supabaseClient
+        await supabase
             .from('user_interests')
             .upsert(
                 interestsToAdd.map(interest => ({ user_id: userId, interest: interest.toLowerCase() })),
@@ -449,7 +466,6 @@ async function saveCVAnalysis(analysis, cvText, fileName) {
 
         setStatus('CV analysis saved successfully!', 'success');
         updateProfileWithCVData();
-        loadTwitterFeed();
     } catch (error) {
         console.error('Error saving CV analysis:', error);
         setStatus(`Failed to save CV analysis: ${error.message}`, 'error');
@@ -487,49 +503,61 @@ async function extractTextFromFile(file) {
 // CV Upload and Analysis
 async function uploadCV() {
     const cvUpload = document.getElementById('cvUpload');
-    const resultContainer = document.getElementById('result');
-    const analyzeBtn = document.getElementById('analyzeBtn');
-    const btnText = document.getElementById('btnText');
+    const result = document.getElementById('result');
     const loadingSpinner = document.getElementById('loadingSpinner');
-    const fileInfo = document.getElementById('fileInfo');
-    const fileName = document.getElementById('fileName');
-    const fileSize = document.getElementById('fileSize');
-    const fileType = document.getElementById('fileType');
+    const btnText = document.getElementById('btnText');
 
-    if (cvUpload.files.length === 0) {
-        resultContainer.innerHTML = '<p class="error">Please select a file to upload.</p>';
+    if (!cvUpload.files.length) {
+        result.textContent = "Please select a file to upload.";
+        setStatus('No file selected.', 'error');
         return;
     }
-
-    const file = cvUpload.files[0];
-    const maxSize = 10 * 1024 * 1024;
-    if (file.size > maxSize) {
-        resultContainer.innerHTML = '<p class="error">File size exceeds 10MB limit.</p>';
-        return;
-    }
-
-    fileName.textContent = file.name;
-    fileSize.textContent = `Size: ${(file.size / 1024).toFixed(2)} KB`;
-    fileType.textContent = `Type: ${file.type}`;
-    fileInfo.style.display = 'block';
-
-    analyzeBtn.disabled = true;
-    btnText.style.display = 'none';
-    loadingSpinner.style.display = 'flex';
 
     try {
+        result.textContent = `Analyzing ${cvUpload.files[0].name}...`;
+        if (loadingSpinner) loadingSpinner.style.display = 'inline-flex';
+        if (btnText) btnText.style.display = 'none';
+
+        const file = cvUpload.files[0];
         const cvText = await extractTextFromFile(file);
-        const jobDescription = document.getElementById('jobDescription')?.value || '';
-        const analysis = await cvAnalyzer.analyzeCVContent(cvText, jobDescription);
+        const analysis = await cvAnalyzer.analyzeCVContent(cvText);
+
+        const userId = await getUserId();
+        if (!userId) {
+            setStatus('Please sign in to analyze CV.', 'error');
+            return;
+        }
+
+        // Fetch profile data
+        const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('job_title, industry, experience_level, top_skills')
+            .eq('id', userId)
+            .single();
+        if (profileError) throw profileError;
+
+        // Calculate skill score
+        const skillScore = await calculateSkillScore({
+            skills: analysis.skillsAnalysis.skills,
+            industry: analysis.industryMatch.industry
+        }, profileData);
+
+        // Store skill score
+        await storeSkillScore(userId, skillScore);
+
+        // Save CV analysis
         await saveCVAnalysis(analysis, cvText, file.name);
+
+        // Display results
         updateAnalysisResults(analysis);
+        setStatus('CV analysis complete!', 'success');
     } catch (error) {
-        resultContainer.innerHTML = `<p class="error">Error analyzing CV: ${error.message}</p>`;
-        setStatus(`Error analyzing CV: ${error.message}`, 'error');
+        console.error('Error analyzing CV:', error);
+        result.textContent = 'Failed to analyze CV.';
+        setStatus(`Failed to analyze CV: ${error.message}`, 'error');
     } finally {
-        analyzeBtn.disabled = false;
-        btnText.style.display = 'inline';
-        loadingSpinner.style.display = 'none';
+        if (loadingSpinner) loadingSpinner.style.display = 'none';
+        if (btnText) btnText.style.display = 'inline';
     }
 }
 
@@ -617,10 +645,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const cvUpload = document.getElementById('cvUpload');
+    const analyzeBtn = document.getElementById('analyzeBtn');
     if (cvUpload) {
         cvUpload.addEventListener('change', () => {
-            document.getElementById('analyzeBtn').disabled = cvUpload.files.length === 0;
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const fileType = document.getElementById('fileType');
+
+            if (cvUpload.files.length > 0) {
+                const file = cvUpload.files[0];
+                fileName.textContent = file.name;
+                fileSize.textContent = `Size: ${(file.size / 1024).toFixed(2)} KB`;
+                fileType.textContent = `Type: ${file.type}`;
+                fileInfo.style.display = 'block';
+                analyzeBtn.disabled = false;
+            } else {
+                fileInfo.style.display = 'none';
+                analyzeBtn.disabled = true;
+            }
         });
+    }
+
+    if (analyzeBtn) {
+        analyzeBtn.addEventListener('click', uploadCV);
     }
 
     updateProfileWithCVData();

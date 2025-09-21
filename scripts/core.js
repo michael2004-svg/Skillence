@@ -11,6 +11,8 @@ const profileExperience = document.getElementById('profile-experience');
 const profileSkills = document.getElementById('profile-skills');
 const profileGoals = document.getElementById('profile-goals');
 const profileAvatar = document.getElementById('profileAvatar');
+const profileSkillScore = document.getElementById('cv-score');
+const profileSkillProgress = document.getElementById('cv-score-progress');
 const signOutBtn = document.getElementById('sign-out-btn');
 const statusMessage = document.getElementById('status-message');
 const followBtn = document.querySelector('.follow-btn');
@@ -50,7 +52,7 @@ async function fetchUserProfile() {
 
         const { data, error } = await window.supabaseClient
             .from('profiles')
-            .select('job_title, industry, experience_level, profile_picture_url, top_skills, goals')
+            .select('job_title, industry, experience_level, profile_picture_url, top_skills, goals, skill_score')
             .eq('id', userId)
             .single();
         if (error) throw error;
@@ -67,6 +69,8 @@ async function fetchUserProfile() {
         if (profileSkills) profileSkills.textContent = `Skills: ${data.top_skills?.join(', ') || 'None'}`;
         if (profileGoals) profileGoals.textContent = `Goals: ${data.goals?.join(', ') || 'None'}`;
         if (profileAvatar) profileAvatar.src = data.profile_picture_url || '../images/default.jpg';
+        if (profileSkillScore) profileSkillScore.textContent = `${data.skill_score || 0}%`;
+        if (profileSkillProgress) profileSkillProgress.style.width = `${data.skill_score || 0}%`;
         if (createPostAvatar) createPostAvatar.src = data.profile_picture_url || '../images/default.jpg';
         if (createPostName) createPostName.textContent = data.job_title || 'Anonymous';
 
@@ -184,6 +188,48 @@ async function signOut() {
         setTimeout(() => { window.location.href = '../templates/login.html'; }, 1500);
     } catch (error) {
         setStatus(`Sign out failed: ${error.message}`, 'error');
+    }
+}
+
+// Fetch Latest CV Analysis
+async function fetchLatestCVAnalysis() {
+    try {
+        const userId = await getUserId();
+        if (!userId) return null;
+
+        const { data, error } = await window.supabaseClient
+            .from('cv_analysis')
+            .select('score, industry, skills, timestamp')
+            .eq('user_id', userId)
+            .order('timestamp', { ascending: false })
+            .limit(1)
+            .single();
+
+        if (error) throw error;
+        return data;
+    } catch (error) {
+        console.error('CV analysis fetch error:', error);
+        return null;
+    }
+}
+
+// Update Profile with CV Analysis Data
+async function updateProfileWithCVData() {
+    const cvData = await fetchLatestCVAnalysis();
+    if (cvData) {
+        if (cvScoreElement) {
+            cvScoreElement.textContent = `${cvData.score}%`;
+            cvScoreProgress.style.width = `${cvData.score}%`;
+        }
+        if (cvIndustryElement) {
+            cvIndustryElement.textContent = cvData.industry.charAt(0).toUpperCase() + cvData.industry.slice(1);
+        }
+        if (cvSkillsElement) {
+            cvSkillsElement.textContent = cvData.skills.slice(0, 3).join(', ') || 'None listed';
+        }
+        if (cvTimestampElement) {
+            cvTimestampElement.textContent = new Date(cvData.timestamp).toLocaleString();
+        }
     }
 }
 
