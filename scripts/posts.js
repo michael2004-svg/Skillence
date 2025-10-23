@@ -1,135 +1,114 @@
-async function uploadPostImage(file, userId, postId) {
-    if (!file) return null;
-    try {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${userId}_${postId}_${Date.now()}.${fileExt}`;
-        const { error } = await window.supabaseClient.storage
-            .from('post_images')
-            .upload(fileName, file);
-        if (error) throw error;
-
-        const { data } = window.supabaseClient.storage
-            .from('post_images')
-            .getPublicUrl(fileName);
-        return data.publicUrl;
-    } catch (error) {
-        console.error('Error uploading post image:', error);
-        setStatus(`Failed to upload image: ${error.message}`, 'error');
-        return null;
-    }
-}
-
+//post.js
 async function publishPost() {
     try {
         const userId = await getUserId();
-        if (!userId) {
-            setStatus('Please sign in to post.', 'error');
-            return;
-        }
+        if (!userId) return setStatus('Please sign in to post.', 'error');
 
-        const textarea = document.querySelector('.post-textarea');
-        const content = textarea.value.trim();
-        const postImage = document.getElementById('postImage').files[0];
+        const content = document.querySelector('.post-textarea').value.trim();
+        if (!content) return setStatus('Post content cannot be empty.', 'error');
+
+        const imageFile = document.getElementById('postImage').files[0];
         const visibility = document.querySelector('.visibility-select').value;
 
-        if (!content) {
-            setStatus('Post content cannot be empty.', 'error');
-            return;
-        }
+        setStatus('Publishing...', 'info');
 
+        // Generate smart tags
         const profile = await fetchUserProfile();
-        const cvData = await fetchLatestCVAnalysis();
-        const tags = [
-            ...(content.match(/#[^\s]+/g)?.map(tag => tag.slice(1).toLowerCase()) || []),
-            ...(cvData?.skills?.slice(0, 3) || []),
-            ...(profile?.top_skills?.slice(0, 3) || []),
-            profile?.job_title?.toLowerCase() || ''
-        ].filter((v, i, a) => v && a.indexOf(v) === i);
+        const tags = extractTags(content, profile);
 
-        const { data: post, error } = await window.supabaseClient
+        // Create post
+        const { data: post, error } = await supabase
             .from('posts')
-            .insert({
-                user_id: userId,
-                content,
-                tags,
-                visibility
-            })
+            .insert({ user_id: userId, content, tags, visibility })
             .select('id')
             .single();
+
         if (error) throw error;
 
-        let imageUrl = null;
-        if (postImage) {
-            imageUrl = await uploadPostImage(postImage, userId, post.id);
+        // Upload image if present
+        if (imageFile) {
+            const imageUrl = await uploadPostImage(imageFile, userId, post.id);
             if (imageUrl) {
-                const { error: updateError } = await window.supabaseClient
-                    .from('posts')
-                    .update({ image_url: imageUrl })
-                    .eq('id', post.id);
-                if (updateError) throw updateError;
+                await supabase.from('posts').update({ image_url: imageUrl }).eq('id', post.id);
             }
         }
 
-        setStatus('Post published successfully!', 'success');
-        textarea.value = '';
-        document.getElementById('postImage').value = '';
-        document.getElementById('imagePreview').style.display = 'none';
-        document.querySelector('.post-btn').disabled = true;
+        // Reset form
+        resetPostForm();
+        setStatus('Post published! 🎉', 'success');
         switchTab('home');
+        loadTwitterFeed(); // Refresh feed
+
     } catch (error) {
-        console.error('Error publishing post:', error);
-        setStatus(`Failed to publish post: ${error.message}`, 'error');
+        console.error('Post error:', error);
+        setStatus(`Failed to publish: ${error.message}`, 'error');
+    }
+}
+
+function extractTags(content, profile) {
+    const contentTags = (content.match(/#[^\s]+/g) || [])
+        .map(tag => tag.slice(1).toLowerCase())
+        .filter(tag => tag.length > 1);
+
+    const profileTags = [
+        ...(profile?.top_skills || []).slice(0, 3),
+        profile?.job_title?.toLowerCase(),
+        profile?.industry?.toLowerCase()
+    ].filter(Boolean);
+
+    return [...new Set([...contentTags, ...profileTags])].slice(0, 8);
+}
+
+async function uploadPostImage(file, userId, postId) {
+    try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `posts/${userId}/${postId}_${Date.now()}.${fileExt}`;
+        
+        const { error } = await supabase.storage
+            .from('post_images')
+            .upload(fileName, file);
+
+        if (error) throw error;
+
+        const { data } = supabase.storage.from('post_images').getPublicUrl(fileName);
+        return data.publicUrl;
+    } catch (error) {
+        console.error('Image upload failed:', error);
+        throw error;
     }
 }
 
 function updateCharCount(textarea) {
-    const charCounter = document.getElementById('char-counter');
-    const postBtn = document.querySelector('.post-btn');
     const count = textarea.value.length;
-    charCounter.textContent = count;
-    postBtn.disabled = count === 0;
+    document.getElementById('char-counter').textContent = count;
+    document.querySelector('.post-btn').disabled = count === 0;
 }
 
 function previewPostImage(input) {
-    const imagePreview = document.getElementById('imagePreview');
-    const previewImage = document.getElementById('previewImage');
-    const postBtn = document.querySelector('.post-btn');
-    if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            previewImage.src = e.target.result;
-            imagePreview.style.display = 'block';
-            postBtn.disabled = document.querySelector('.post-textarea').value.length === 0;
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
+    if (!input.files[0]) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('previewImage').src = e.target.result;
+        document.getElementById('imagePreview').style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
 }
 
 function removePostImage() {
-    const imagePreview = document.getElementById('imagePreview');
-    const postImage = document.getElementById('postImage');
-    const postBtn = document.querySelector('.post-btn');
-    imagePreview.style.display = 'none';
-    postImage.value = '';
-    postBtn.disabled = document.querySelector('.post-textarea').value.length === 0;
+    document.getElementById('imagePreview').style.display = 'none';
+    document.getElementById('postImage').value = '';
 }
 
-function cancelPost() {
+function resetPostForm() {
     document.querySelector('.post-textarea').value = '';
     document.getElementById('postImage').value = '';
     document.getElementById('imagePreview').style.display = 'none';
     document.querySelector('.post-btn').disabled = true;
+    document.getElementById('char-counter').textContent = '0';
+}
+
+function cancelPost() {
+    resetPostForm();
     switchTab('home');
-}
-
-function handleMediaUpload(type) {
-    setStatus(`${type} upload is not implemented yet.`, 'info');
-}
-
-function addPoll() {
-    setStatus('Poll creation is not implemented yet.', 'info');
-}
-
-function addCelebration() {
-    setStatus('Celebration post is not implemented yet.', 'info');
 }
