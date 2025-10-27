@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Skillence App</title>
     <link rel="stylesheet" href="../styles/style.css">
+    <link rel="stylesheet" href="../styles/profile.css">
     <link rel="stylesheet" href="../styles/cv.css">
+    <link rel="stylesheet" href="../styles/notification.css">
+    <link rel="stylesheet" href="../styles/courses.css">
     <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.min.js"></script>
     <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -23,10 +26,8 @@
         </div>
     </div>
 
-    <!-- Home Tab Content -->
-    <div class="tab-content active" id="home-tab">
-        <div class="home-content" id="feedContainer">
-            <div class="tab-content active" id="home-tab">
+   <!-- Home Tab Content -->
+<div class="tab-content active" id="home-tab">
     <div class="home-content" id="feedContainer">
         <div class="loading-container" id="loadingContainer">
             <div class="spinner"></div>
@@ -34,70 +35,167 @@
         </div>
     </div>
 </div>
+</div>
         </div>
     </div>
 
     <!-- Profile Tab Content -->
-    <div class="tab-content hidden" id="profile-tab">
-        <div class="profile-content">
-            <div class="profile-header">
-                <h1 class="profile-title">Profile</h1>
-                <div class="profile-avatar">
-                    <img src="../images/default.jpg" id="profileAvatar">
+   <!-- Profile Tab Content - UPDATED SOCIAL MEDIA STYLE -->
+<div class="tab-content hidden" id="profile-tab">
+    <div class="profile-content-new">
+        <!-- Cover Image -->
+        <div class="profile-cover">
+            <div class="profile-cover-gradient"></div>
+        </div>
+        
+        <!-- Profile Header -->
+        <div class="profile-header-new">
+            <div class="profile-avatar-container">
+                <img src="../images/default.jpg" id="profileAvatar" class="profile-avatar-large">
+            </div>
+            
+            <div class="profile-info-section">
+                <div class="profile-name-section">
+                    <h2 class="profile-name-large" id="profile-job">Loading...</h2>
+                    <p class="profile-handle" id="profile-industry">Loading...</p>
                 </div>
-                <h2 class="profile-name" id="profile-job">Loading...</h2>
-                <p class="profile-industry" id="profile-industry">Loading...</p>
-                <p class="profile-experience" id="profile-experience">Loading...</p>
-                <p class="profile-skills" id="profile-skills">Skills: Loading...</p>
-                <p class="profile-goals" id="profile-goals">Goals: Loading...</p>
-                <div class="skill-score-section">
-                    <h3 class="skill-score-title">Skill Score: <span id="cv-score">75%</span></h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="cv-score-progress" style="width: 75%;"></div>
+                
+                <div class="profile-actions">
+                    <button class="follow-btn" onclick="toggleFollow()">Follow</button>
+                    <button id="sign-out-btn" class="sign-out-btn">Sign Out</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Profile Stats -->
+        <div class="profile-stats-bar">
+            <div class="stat-item">
+                <div class="stat-number" id="followers-count">0</div>
+                <div class="stat-label">Followers</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <div class="stat-number" id="following-count">0</div>
+                <div class="stat-label">Following</div>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <div class="stat-number" id="cv-score">0%</div>
+                <div class="stat-label">Skill Score</div>
+            </div>
+        </div>
+        
+        <!-- Profile Details -->
+        <div class="profile-details-section">
+            <div class="profile-detail-card">
+                <div class="detail-icon">💼</div>
+                <div class="detail-content">
+                    <div class="detail-label">Experience</div>
+                    <div class="detail-value" id="profile-experience">Loading...</div>
+                </div>
+            </div>
+            
+            <div class="profile-detail-card">
+                <div class="detail-icon">🎯</div>
+                <div class="detail-content">
+                    <div class="detail-label">Skills</div>
+                    <div class="detail-value" id="profile-skills">Loading...</div>
+                </div>
+            </div>
+            
+            <div class="profile-detail-card">
+                <div class="detail-icon">🚀</div>
+                <div class="detail-content">
+                    <div class="detail-label">Goals</div>
+                    <div class="detail-value" id="profile-goals">Loading...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Skill Score Progress -->
+        <div class="skill-score-widget">
+            <div class="skill-score-header">
+                <h3 class="skill-score-title">Professional Skill Score</h3>
+                <div class="skill-score-badge" id="cv-score-display">0%</div>
+            </div>
+            <div class="progress-bar-new">
+                <div class="progress-fill-new" id="cv-score-progress" style="width: 0%;"></div>
+            </div>
+        </div>
+        
+        <!-- Profile Tabs -->
+        <div class="profile-tabs-section">
+            <div class="profile-tabs">
+                <button class="profile-tab-btn active" onclick="switchProfileTab('posts')">
+                    <span class="tab-icon">📝</span>
+                    Posts
+                </button>
+                <button class="profile-tab-btn" onclick="switchProfileTab('about')">
+                    <span class="tab-icon">ℹ️</span>
+                    About
+                </button>
+            </div>
+        </div>
+        
+        <!-- Posts Tab -->
+        <div class="profile-tab-content active" id="profile-posts-tab">
+            <div id="profile-posts-container" class="profile-posts-grid">
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Loading posts...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- About Tab -->
+        <div class="profile-tab-content" id="profile-about-tab">
+            <div class="about-section">
+                <div class="about-card">
+                    <h4 class="about-card-title">Latest CV Analysis</h4>
+                    <div class="about-card-content">
+                        <p><strong>Industry:</strong> <span id="cv-industry">Not analyzed</span></p>
+                        <p><strong>Top Skills:</strong> <span id="cv-skills">None listed</span></p>
+                        <p><strong>Last Updated:</strong> <span id="cv-timestamp">No analysis available</span></p>
                     </div>
                 </div>
-                <div class="cv-info">
-                    <p><strong>Industry:</strong> <span id="cv-industry">Not analyzed</span></p>
-                    <p><strong>Top Skills:</strong> <span id="cv-skills">None listed</span></p>
-                    <p><strong>Latest CV Analysis:</strong> <span id="cv-timestamp">No analysis available</span></p>
-                </div>
-                <div class="stats-container">
-                    <div class="stat">
-                        <div class="stat-number" id="followers-count">0</div>
-                        <div class="stat-label">Followers</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number" id="following-count">0</div>
-                        <div class="stat-label">Following</div>
-                    </div>
-                </div>
-                <button class="follow-btn" onclick="toggleFollow()">Follow</button>
-                <button id="sign-out-btn" class="sign-out-btn">Sign Out</button>
-                <p id="status-message"></p>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Notifications Tab Content -->
-    <div class="tab-content hidden" id="notifications-tab">
-        <div class="notifications-content">
-            <div class="notification-item unread" onclick="markAsRead(this)">
-                <div class="notification-icon like">❤️</div>
-                <div class="notification-content">
-                    <div class="notification-text"><strong>Mike Chen</strong> liked your post about JavaScript frameworks</div>
-                    <div class="notification-time">2 minutes ago</div>
-                </div>
-                <div class="notification-badge"></div>
-            </div>
-            <div class="notification-item" onclick="markAsRead(this)">
-                <div class="notification-icon follow">👤</div>
-                <div class="notification-content">
-                    <div class="notification-text"><strong>Sarah Johnson</strong> started following you</div>
-                    <div class="notification-time">1 hour ago</div>
-                </div>
+<!-- Notifications Tab Content -->
+<div class="tab-content hidden" id="notifications-tab">
+    <div class="notifications-content">
+        <div class="notifications-header">
+            <h2 class="notifications-title">Notifications</h2>
+            <button class="mark-all-read-btn" onclick="window.NotificationsModule.markAllAsRead()">
+                Mark all as read
+            </button>
+        </div>
+        
+        <div class="notification-filters">
+            <button class="notification-filter-btn active" data-filter="all" onclick="window.NotificationsModule.filterNotifications('all')">
+                All
+            </button>
+            <button class="notification-filter-btn" data-filter="like" onclick="window.NotificationsModule.filterNotifications('like')">
+                ❤️ Likes
+            </button>
+            <button class="notification-filter-btn" data-filter="comment" onclick="window.NotificationsModule.filterNotifications('comment')">
+                💬 Comments
+            </button>
+            <button class="notification-filter-btn" data-filter="follow" onclick="window.NotificationsModule.filterNotifications('follow')">
+                👤 Follows
+            </button>
+        </div>
+        
+        <div id="notificationsContainer">
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <div class="loading-text">Loading notifications...</div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Add Post Tab Content -->
     <div class="tab-content hidden" id="add-post-tab">
@@ -170,8 +268,51 @@
                     <div class="feature-title">Mentorship</div>
                 </div>
             </div>
+                        <!-- Courses Section -->
+  <div class="courses-section hidden" id="coursesSection">
+    <div class="courses-header">
+        <button class="section-back-btn" onclick="goBackToCareer()">← Back to Career</button>
+        <h2 class="courses-title">Courses</h2>
+        <div class="courses-tabs">
+            <button class="courses-tab-btn active" onclick="switchCoursesTab('browse')">Browse Courses</button>
+            <button class="courses-tab-btn" onclick="switchCoursesTab('enrolled')">My Courses</button>
+        </div>
+        <div class="courses-search">
+            <input type="text" id="coursesSearchInput" placeholder="Search courses..." class="search-input" oninput="searchCourses(this.value)">
+        </div>
+    </div>
+    
+    <!-- Browse Courses Tab -->
+    <div class="courses-tab-content active" id="browseCoursesTab">
+        <div class="courses-grid" id="coursesGrid">
+            <p>Loading courses...</p>
+        </div>
+    </div>
+    
+    <!-- Enrolled Courses Tab -->
+    <div class="courses-tab-content" id="enrolledCoursesTab">
+        <div class="courses-grid" id="enrolledCoursesGrid">
+            <p>No courses enrolled yet</p>
+        </div>
+    </div>
+</div>
+
+<!-- Mentorship Section -->
+<div class="mentorship-section hidden" id="mentorshipSection">
+    <div class="mentorship-header">
+        <button class="section-back-btn" onclick="goBackToCareer()">← Back to Career</button>
+        <h2 class="mentorship-title">Find Your Mentor</h2>
+        <div class="mentorship-search">
+            <input type="text" id="mentorshipSearchInput" placeholder="Search by expertise..." class="search-input" oninput="searchMentors(this.value)">
+        </div>
+    </div>
+    <div class="mentors-grid" id="mentorsGrid">
+        <p>Loading mentors...</p>
+    </div>
+</div>
             <div class="jobs-section hidden" id="jobsSection">
                 <div class="jobs-header">
+                    <button class="section-back-btn" onclick="goBackToCareer()">← Back to Career</button>
                     <h2 class="jobs-title">Job Opportunities</h2>
                     <div class="jobs-search">
                         <input type="text" id="jobsSearchWhat" placeholder="Job title or keywords (e.g., Software Engineer)" class="search-input">
@@ -186,10 +327,12 @@
         </div>
     </div>
 
+
     <!-- CV Analyzer Tab Content -->
     <div class="tab-content hidden" id="cv-analyzer-tab">
         <div class="cv-analyzer-content">
             <div class="cv-analyzer-header">
+                <button class="section-back-btn" onclick="goBackToCareer()">← Back to Career</button>
                 <h2 class="cv-analyzer-title">CV Analyzer</h2>
                 <p class="cv-analyzer-subtitle">Upload your CV and get instant AI-powered analysis and recommendations</p>
             </div>
@@ -224,7 +367,7 @@
             <div class="template-container hidden"></div>
         </div>
     </div>
-
+     
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('home')" data-tab="home">
@@ -249,5 +392,8 @@
     <script src="../scripts/jobs.js"></script>
     <script src="../scripts/feed.js"></script>
     <script src="../scripts/posts.js"></script>
+    <script src="../scripts/notification.js"></script>
+    <script src="../scripts/courses.js"></script>
+    <script src="../scripts/mentors.js"></script>
 </body>
 </html>

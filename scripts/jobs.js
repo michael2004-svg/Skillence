@@ -80,7 +80,7 @@ async function searchJobs() {
     }
 }
 
-function handleFeatureClick(feature) {
+/* function handleFeatureClick(feature) {
     const featuresGrid = document.querySelector('.features-grid');
     const jobsSection = document.getElementById('jobsSection');
     if (feature === 'cv-analyzer') {
@@ -99,4 +99,4 @@ function handleFeatureClick(feature) {
     } else {
         setStatus(`Opening ${feature}...`, 'info');
     }
-}
+} */

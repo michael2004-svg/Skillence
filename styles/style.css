@@ -1,4 +1,4 @@
-Here's the fixed stylesheet with corrected feed styling:
+//Here's the fixed stylesheet with corrected feed styling:
 /* Your provided stylesheet with additions */
 * {
     margin: 0;
@@ -571,7 +571,7 @@ body {
     z-index: 1;
 }
 
-/* Enhanced Notifications */
+/* Enhanced Notifications 
 .notifications-content {
     max-width: 600px;
     margin: 0 auto;
@@ -659,6 +659,7 @@ body {
     font-size: 13px;
     color: #6c757d;
 }
+*/
 
 /* Enhanced Profile */
 .profile-content {
@@ -781,7 +782,27 @@ body {
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
     animation: shimmer 2s infinite;
 }
+/* Back button for sections */
+.section-back-btn {
+    background: white;
+    border: 2px solid #e9ecef;
+    color: #6c757d;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
 
+.section-back-btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
 @keyframes shimmer {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }

@@ -156,7 +156,8 @@ function switchTab(tab) {
             fetchUserProfile();
             break;
         case 'career':
-            // Load jobs/courses if needed
+            // ADD THIS: Reset career section to show feature cards
+            goBackToCareer();
             break;
     }
 }
@@ -345,7 +346,89 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// Add this function to core.js if it doesn't exist, or update the existing one
+function handleFeatureClick(feature) {
+    const careerContent = document.querySelector('.career-content');
+    const jobsSection = document.getElementById('jobsSection');
+    const coursesSection = document.getElementById('coursesSection');
+    const mentorshipSection = document.getElementById('mentorshipSection');
+    const featuresGrid = document.querySelector('.features-grid');
+
+    // Hide all sections first
+    if (jobsSection) jobsSection.classList.add('hidden');
+    if (coursesSection) coursesSection.classList.add('hidden');
+    if (mentorshipSection) mentorshipSection.classList.add('hidden');
+
+    switch(feature) {
+        case 'cv-analyzer':
+            window.SkillenceCore.switchTab('cv-analyzer');
+            break;
+            
+        case 'jobs':
+            if (featuresGrid) featuresGrid.style.display = 'none';
+            if (jobsSection) {
+                jobsSection.classList.remove('hidden');
+                jobsSection.classList.add('show');
+            }
+            searchJobs();
+            break;
+            
+        case 'courses':
+            if (featuresGrid) featuresGrid.style.display = 'none'; // ADD THIS LINE
+            if (coursesSection) {
+                coursesSection.classList.remove('hidden');
+                if (typeof window.CoursesModule !== 'undefined') {
+                    window.CoursesModule.initializeCourses();
+                }
+            }
+            break;
+            
+        case 'mentorship':
+            if (featuresGrid) featuresGrid.style.display = 'none'; // ADD THIS LINE
+            if (mentorshipSection) {
+                mentorshipSection.classList.remove('hidden');
+                if (typeof window.MentorshipModule !== 'undefined') {
+                    window.MentorshipModule.initializeMentors();
+                }
+            }
+            break;
+    }
+}
+function goBackToCareer() {
+    const jobsSection = document.getElementById('jobsSection');
+    const coursesSection = document.getElementById('coursesSection');
+    const mentorshipSection = document.getElementById('mentorshipSection');
+    const featuresGrid = document.querySelector('.features-grid');
+
+    // Hide all subsections
+    if (jobsSection) jobsSection.classList.add('hidden');
+    if (coursesSection) coursesSection.classList.add('hidden');
+    if (mentorshipSection) mentorshipSection.classList.add('hidden');
+    
+    // Show feature cards again
+    if (featuresGrid) featuresGrid.style.display = 'grid';
+}
+
+function switchProfileTab(tab) {
+    // Remove active from all tabs
+    document.querySelectorAll('.profile-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelectorAll('.profile-tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Activate selected tab
+    const tabBtn = event.target.closest('.profile-tab-btn');
+    if (tabBtn) tabBtn.classList.add('active');
+    
+    const tabContent = document.getElementById(`profile-${tab}-tab`);
+    if (tabContent) tabContent.classList.add('active');
+}
+
 // Export for other modules
+window.goBackToCareer = goBackToCareer;
+window.handleFeatureClick = handleFeatureClick;
 window.SkillenceCore = {
     switchTab,
     fetchUserProfile,

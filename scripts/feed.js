@@ -1,4 +1,4 @@
-// feed.js - ALL 12 FEATURES, NO MISSING TABLES
+// feed.js - COMPLETE WITH PROFILE POSTS
 async function loadTwitterFeed(page = 1, append = false) {
     const feedContainer = document.getElementById('feedContainer');
     const loadingContainer = document.getElementById('loadingContainer');
@@ -22,7 +22,6 @@ async function loadTwitterFeed(page = 1, append = false) {
         const userId = await getUserId();
         const profile = await fetchUserProfile() || {};
 
-        // **FIXED QUERY** - ONLY EXISTING TABLES (posts + profiles)
         const { data: posts, error, count } = await window.supabaseClient
             .from('posts')
             .select(`
@@ -51,7 +50,6 @@ async function loadTwitterFeed(page = 1, append = false) {
             loadingContainer.style.display = 'none';
         }
 
-        // **JOBS** - Page 1 only
         if (page === 1) {
             const jobs = await fetchJobs(profile.top_skills?.join(' ') || '', '') || [];
             if (jobs.length) {
@@ -70,37 +68,38 @@ async function loadTwitterFeed(page = 1, append = false) {
     }
 }
 
-// **RENDER POST** - FIXED (No post_likes dependency)
 function renderPost(post, currentUserId) {
     const timeAgo = formatTimeAgo(post.created_at);
-    const randomLikes = Math.floor(Math.random() * 50); // Mock likes
+    const randomLikes = Math.floor(Math.random() * 50);
 
     return `
         <div class="post-card" data-post-id="${post.id}">
             <div class="post-header">
                 <img src="${post.profiles?.profile_picture_url || '../images/default.jpg'}" 
                      alt="Avatar" class="post-avatar" 
-                     onclick="viewUserProfile('${post.user_id}')" loading="lazy">
-                <div class="post-author-info" onclick="viewUserProfile('${post.user_id}')">
+                     onclick="event.stopPropagation(); viewUserProfile('${post.user_id}')" loading="lazy">
+                <div class="post-author-info" onclick="event.stopPropagation(); viewUserProfile('${post.user_id}')">
                     <div class="post-author">${post.profiles?.job_title || 'Anonymous'}</div>
                     <div class="post-industry">${post.profiles?.industry || ''}</div>
                 </div>
                 <div class="post-time">${timeAgo}</div>
-                <button class="post-options">⋮</button>
+                <button class="post-options" onclick="event.stopPropagation()">⋮</button>
             </div>
 
-            <div class="post-content">${sanitizeHtml(post.content)}</div>
+            <div class="post-content" onclick="toggleComments('${post.id}')" style="cursor: pointer;">
+                ${sanitizeHtml(post.content)}
+            </div>
             
             ${post.image_url ? `
                 <div class="post-media">
                     <img src="${post.image_url}" class="post-image" 
-                         onclick="openImageModal('${post.image_url}')" loading="lazy">
+                         onclick="event.stopPropagation(); openImageModal('${post.image_url}')" loading="lazy">
                 </div>
             ` : ''}
             
             ${post.tags?.length ? `
                 <div class="post-tags">
-                    ${post.tags.map(tag => `<span class="tag" onclick="filterByTag('${tag}')">#${tag}</span>`).join(' ')}
+                    ${post.tags.map(tag => `<span class="tag" onclick="event.stopPropagation(); filterByTag('${tag}')">#${tag}</span>`).join(' ')}
                 </div>
             ` : ''}
 
@@ -110,13 +109,13 @@ function renderPost(post, currentUserId) {
             </div>
 
             <div class="post-actions">
-                <button class="action-btn liked" onclick="toggleLike('${post.id}')">
+                <button class="action-btn liked" onclick="event.stopPropagation(); toggleLike('${post.id}')">
                     ❤️ Unlike
                 </button>
-                <button class="action-btn" onclick="toggleComments('${post.id}')">
+                <button class="action-btn" onclick="event.stopPropagation(); toggleComments('${post.id}')">
                     💬 Comment
                 </button>
-                <button class="action-btn" onclick="sharePost('${post.id}')">
+                <button class="action-btn" onclick="event.stopPropagation(); sharePost('${post.id}')">
                     🔄 Share
                 </button>
             </div>
@@ -125,7 +124,7 @@ function renderPost(post, currentUserId) {
                 <div class="comment-input">
                     <textarea placeholder="Write a comment..." 
                              onkeydown="handleCommentEnter(event, '${post.id}')"></textarea>
-                    <button onclick="addComment('${post.id}')">Post</button>
+                    <button onclick="event.stopPropagation(); addComment('${post.id}')">Post</button>
                 </div>
                 <div class="comments-list" id="comments-list-${post.id}"></div>
             </div>
@@ -133,7 +132,6 @@ function renderPost(post, currentUserId) {
     `;
 }
 
-// **RENDER JOB POST**
 function renderJobPost(job) {
     return `
         <div class="post-card job-post">
@@ -159,7 +157,6 @@ function renderJobPost(job) {
     `;
 }
 
-// **WELCOME POST**
 function renderWelcomePost() {
     return `
         <div class="post-card welcome-post">
@@ -179,7 +176,6 @@ function renderWelcomePost() {
     `;
 }
 
-// **LIKE** - MOCK (No post_likes table needed)
 function toggleLike(postId) {
     const btn = event.target;
     const isLiked = btn.classList.contains('liked');
@@ -194,7 +190,6 @@ function toggleLike(postId) {
     setStatus(isLiked ? 'Unliked' : 'Liked!', 'success', 1000);
 }
 
-// **COMMENTS** - MOCK (Stores in memory)
 const commentsDB = {};
 async function addComment(postId) {
     const textarea = document.querySelector(`#comments-${postId} textarea`);
@@ -236,7 +231,6 @@ function handleCommentEnter(event, postId) {
     }
 }
 
-// **SHARE**
 async function sharePost(postId) {
     if (navigator.share) {
         await navigator.share({ title: 'Skillence Post', url: window.location.href });
@@ -246,7 +240,6 @@ async function sharePost(postId) {
     }
 }
 
-// **INFINITE SCROLL**
 function setupInfiniteScroll() {
     const observer = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && window.page < window.totalPages && !window.isLoading) {
@@ -264,7 +257,6 @@ function setupInfiniteScroll() {
     new MutationObserver(watchLastPost).observe(document.getElementById('feedContainer'), { childList: true });
 }
 
-// **SEARCH**
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
@@ -281,7 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// **TAG FILTER**
 async function filterByTag(tag) {
     const { data } = await window.supabaseClient
         .from('posts')
@@ -292,13 +283,196 @@ async function filterByTag(tag) {
     setStatus(`Showing #${tag} posts`, 'info');
 }
 
-// **USER PROFILE**
 function viewUserProfile(userId) {
     sessionStorage.setItem('viewingUserId', userId);
     window.SkillenceCore.switchTab('profile');
+    loadViewedUserProfile(userId);
 }
 
-// **IMAGE MODAL**
+async function loadViewedUserProfile(userId) {
+    try {
+        const currentUserId = await getUserId();
+        
+        const { data, error } = await window.supabaseClient
+            .from('profiles')
+            .select('job_title, industry, experience_level, profile_picture_url, top_skills, goals, skill_score')
+            .eq('id', userId)
+            .single();
+            
+        if (error) throw error;
+        if (!data) return;
+
+        const elements = {
+            profileJob: document.getElementById('profile-job'),
+            profileIndustry: document.getElementById('profile-industry'),
+            profileExperience: document.getElementById('profile-experience'),
+            profileSkills: document.getElementById('profile-skills'),
+            profileGoals: document.getElementById('profile-goals'),
+            profileAvatar: document.getElementById('profileAvatar'),
+            cvScore: document.getElementById('cv-score'),
+            cvScoreProgress: document.getElementById('cv-score-progress'),
+            followBtn: document.querySelector('.follow-btn'),
+            signOutBtn: document.getElementById('sign-out-btn')
+        };
+
+        if (elements.profileJob) elements.profileJob.textContent = data.job_title || 'No Job Title';
+        if (elements.profileIndustry) elements.profileIndustry.textContent = data.industry || 'No Industry';
+        if (elements.profileExperience) elements.profileExperience.textContent = `${data.experience_level || 'Unknown'} Level`;
+        if (elements.profileSkills) elements.profileSkills.textContent = `${data.top_skills?.join(', ') || 'None'}`;
+        if (elements.profileGoals) elements.profileGoals.textContent = `${data.goals?.join(', ') || 'None'}`;
+        if (elements.profileAvatar) elements.profileAvatar.src = data.profile_picture_url || '../images/default.jpg';
+        if (elements.cvScore) elements.cvScore.textContent = `${data.skill_score || 0}%`;
+        if (elements.cvScoreProgress) elements.cvScoreProgress.style.width = `${data.skill_score || 0}%`;
+
+        const isOwnProfile = userId === currentUserId;
+        if (elements.followBtn) {
+            elements.followBtn.style.display = isOwnProfile ? 'none' : 'block';
+            if (!isOwnProfile) {
+                elements.followBtn.onclick = () => toggleFollowUser(userId);
+            }
+        }
+        if (elements.signOutBtn) {
+            elements.signOutBtn.style.display = isOwnProfile ? 'block' : 'none';
+        }
+
+        if (!isOwnProfile) {
+            checkFollowStatus(userId);
+        }
+
+        const [followersRes, followingRes] = await Promise.all([
+            window.supabaseClient.from('follows').select('follower_id', { count: 'exact' }).eq('followed_id', userId),
+            window.supabaseClient.from('follows').select('followed_id', { count: 'exact' }).eq('follower_id', userId)
+        ]);
+
+        updateFollowCounts(followersRes.count || 0, followingRes.count || 0);
+        
+        // Load user's posts
+        await loadUserPosts(userId);
+        
+    } catch (error) {
+        console.error('Error loading user profile:', error);
+        setStatus(`Failed to load profile: ${error.message}`, 'error');
+    }
+}
+
+async function loadUserPosts(userId) {
+    try {
+        const { data: posts, error } = await window.supabaseClient
+            .from('posts')
+            .select(`
+                id, content, created_at, tags, image_url, visibility, user_id,
+                profiles (job_title, profile_picture_url, industry)
+            `)
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false })
+            .limit(20);
+
+        if (error) throw error;
+
+        const postsContainer = document.getElementById('profile-posts-container');
+        if (!postsContainer) return;
+
+        const currentUserId = await getUserId();
+        
+        if (posts && posts.length > 0) {
+            postsContainer.innerHTML = posts.map(post => renderPost(post, currentUserId)).join('');
+        } else {
+            postsContainer.innerHTML = `
+                <div class="no-posts">
+                    <div class="no-posts-icon">📝</div>
+                    <p class="no-posts-text">No posts yet</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading user posts:', error);
+    }
+}
+
+async function toggleFollowUser(profileUserId) {
+    const followBtn = document.querySelector('.follow-btn');
+    if (!followBtn) return;
+    
+    const userId = await getUserId();
+    if (!userId) {
+        setStatus('Please sign in to follow.', 'error');
+        return;
+    }
+    
+    if (userId === profileUserId) {
+        setStatus('Cannot follow yourself.', 'error');
+        return;
+    }
+
+    const isFollowing = followBtn.textContent.trim() === 'Unfollow';
+    followBtn.disabled = true;
+    
+    try {
+        if (isFollowing) {
+            const { error } = await window.supabaseClient
+                .from('follows')
+                .delete()
+                .eq('follower_id', userId)
+                .eq('followed_id', profileUserId);
+            if (error) throw error;
+            
+            followBtn.textContent = 'Follow';
+            setStatus('Unfollowed.', 'success');
+        } else {
+            const { error } = await window.supabaseClient
+                .from('follows')
+                .insert({ follower_id: userId, followed_id: profileUserId });
+            if (error) throw error;
+            
+            followBtn.textContent = 'Unfollow';
+            setStatus('Followed!', 'success');
+        }
+        
+        // Refresh follow counts
+        loadViewedUserProfile(profileUserId);
+    } catch (error) {
+        setStatus(`Follow action failed: ${error.message}`, 'error');
+    } finally {
+        followBtn.disabled = false;
+    }
+}
+
+async function checkFollowStatus(viewedUserId) {
+    try {
+        const currentUserId = await getUserId();
+        if (!currentUserId) return;
+        
+        const { data, error } = await window.supabaseClient
+            .from('follows')
+            .select('*')
+            .eq('follower_id', currentUserId)
+            .eq('followed_id', viewedUserId)
+            .single();
+        
+        const followBtn = document.querySelector('.follow-btn');
+        if (followBtn) {
+            followBtn.textContent = data ? 'Unfollow' : 'Follow';
+        }
+    } catch (error) {
+        const followBtn = document.querySelector('.follow-btn');
+        if (followBtn) followBtn.textContent = 'Follow';
+    }
+}
+
+function updateFollowCounts(followers, following) {
+    const followersCount = document.getElementById('followers-count');
+    const followingCount = document.getElementById('following-count');
+    
+    if (followersCount) {
+        const displayFollowers = followers >= 1000 ? (followers / 1000).toFixed(1) + 'k' : followers;
+        followersCount.textContent = displayFollowers;
+    }
+    if (followingCount) {
+        const displayFollowing = following >= 1000 ? (following / 1000).toFixed(1) + 'k' : following;
+        followingCount.textContent = displayFollowing;
+    }
+}
+
 function openImageModal(imageUrl) {
     document.body.insertAdjacentHTML('beforeend', `
         <div class="modal-overlay" onclick="this.remove()">
@@ -307,7 +481,6 @@ function openImageModal(imageUrl) {
     `);
 }
 
-// **UTILITIES**
 function sanitizeHtml(str) {
     const div = document.createElement('div');
     div.textContent = str;
@@ -318,7 +491,8 @@ function formatTimeAgo(date) {
     const diff = Date.now() - new Date(date);
     return diff < 60000 ? 'Just now' : 
            diff < 3600000 ? `${Math.floor(diff/60000)}m` : 
-           `${Math.floor(diff/3600000)}h`;
+           diff < 86400000 ? `${Math.floor(diff/3600000)}h` :
+           `${Math.floor(diff/86400000)}d`;
 }
 
 function debounce(fn, ms) {
@@ -329,7 +503,6 @@ function debounce(fn, ms) {
     };
 }
 
-// **INITIALIZE**
 document.addEventListener('DOMContentLoaded', () => {
     window.page = 1;
     window.isLoading = false;
