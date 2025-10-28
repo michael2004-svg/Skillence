@@ -297,3 +297,59 @@
     }
 }
 
+/* dark mode css */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    z-index: 999;
+    transition: all 0.3s ease;
+}
+
+.dark-mode-toggle:hover {
+    transform: scale(1.1);
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #1a1a2e;
+    color: #eee;
+}
+
+body.dark-mode .post-card,
+body.dark-mode .feature-card,
+body.dark-mode .notification-item,
+body.dark-mode .profile-header-new {
+    background: #16213e;
+    color: #eee;
+}
+
+body.dark-mode .post-author,
+body.dark-mode .profile-name-large,
+body.dark-mode .notification-text {
+    color: #eee;
+}
+
+body.dark-mode .post-industry,
+body.dark-mode .post-time,
+body.dark-mode .notification-time {
+    color: #aaa;
+}
+
+body.dark-mode .header {
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+}
+
+body.dark-mode .bottom-nav {
+    background: #16213e;
+    border-top-color: #0f3460;
+}

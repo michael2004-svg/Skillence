@@ -1,4 +1,3 @@
-//post.js
 async function publishPost() {
     try {
         const userId = await getUserId();
@@ -16,8 +15,8 @@ async function publishPost() {
         const profile = await fetchUserProfile();
         const tags = extractTags(content, profile);
 
-        // Create post
-        const { data: post, error } = await supabase
+        // Create post - FIXED: Use window.supabaseClient
+        const { data: post, error } = await window.supabaseClient
             .from('posts')
             .insert({ user_id: userId, content, tags, visibility })
             .select('id')
@@ -29,7 +28,7 @@ async function publishPost() {
         if (imageFile) {
             const imageUrl = await uploadPostImage(imageFile, userId, post.id);
             if (imageUrl) {
-                await supabase.from('posts').update({ image_url: imageUrl }).eq('id', post.id);
+                await window.supabaseClient.from('posts').update({ image_url: imageUrl }).eq('id', post.id);
             }
         }
 
@@ -37,7 +36,9 @@ async function publishPost() {
         resetPostForm();
         setStatus('Post published! 🎉', 'success');
         switchTab('home');
-        loadTwitterFeed(); // Refresh feed
+        if (typeof loadTwitterFeed === 'function') {
+            loadTwitterFeed(); // Refresh feed
+        }
 
     } catch (error) {
         console.error('Post error:', error);
@@ -64,24 +65,28 @@ async function uploadPostImage(file, userId, postId) {
         const fileExt = file.name.split('.').pop();
         const fileName = `posts/${userId}/${postId}_${Date.now()}.${fileExt}`;
         
-        const { error } = await supabase.storage
+        const { error } = await window.supabaseClient.storage
             .from('post_images')
             .upload(fileName, file);
 
         if (error) throw error;
 
-        const { data } = supabase.storage.from('post_images').getPublicUrl(fileName);
+        const { data } = window.supabaseClient.storage.from('post_images').getPublicUrl(fileName);
         return data.publicUrl;
     } catch (error) {
         console.error('Image upload failed:', error);
-        throw error;
+        setStatus('Image upload failed, posting without image', 'warning');
+        return null;
     }
 }
 
 function updateCharCount(textarea) {
     const count = textarea.value.length;
-    document.getElementById('char-counter').textContent = count;
-    document.querySelector('.post-btn').disabled = count === 0;
+    const counter = document.getElementById('char-counter');
+    const postBtn = document.querySelector('.post-btn');
+    
+    if (counter) counter.textContent = count;
+    if (postBtn) postBtn.disabled = count === 0;
 }
 
 function previewPostImage(input) {
@@ -89,26 +94,47 @@ function previewPostImage(input) {
     
     const reader = new FileReader();
     reader.onload = (e) => {
-        document.getElementById('previewImage').src = e.target.result;
-        document.getElementById('imagePreview').style.display = 'block';
+        const previewImage = document.getElementById('previewImage');
+        const imagePreview = document.getElementById('imagePreview');
+        
+        if (previewImage) previewImage.src = e.target.result;
+        if (imagePreview) imagePreview.style.display = 'block';
     };
     reader.readAsDataURL(input.files[0]);
 }
 
 function removePostImage() {
-    document.getElementById('imagePreview').style.display = 'none';
-    document.getElementById('postImage').value = '';
+    const imagePreview = document.getElementById('imagePreview');
+    const postImage = document.getElementById('postImage');
+    
+    if (imagePreview) imagePreview.style.display = 'none';
+    if (postImage) postImage.value = '';
 }
 
 function resetPostForm() {
-    document.querySelector('.post-textarea').value = '';
-    document.getElementById('postImage').value = '';
-    document.getElementById('imagePreview').style.display = 'none';
-    document.querySelector('.post-btn').disabled = true;
-    document.getElementById('char-counter').textContent = '0';
+    const textarea = document.querySelector('.post-textarea');
+    const postImage = document.getElementById('postImage');
+    const imagePreview = document.getElementById('imagePreview');
+    const postBtn = document.querySelector('.post-btn');
+    const charCounter = document.getElementById('char-counter');
+    
+    if (textarea) textarea.value = '';
+    if (postImage) postImage.value = '';
+    if (imagePreview) imagePreview.style.display = 'none';
+    if (postBtn) postBtn.disabled = true;
+    if (charCounter) charCounter.textContent = '0';
 }
 
 function cancelPost() {
     resetPostForm();
-    switchTab('home');
+    if (typeof switchTab === 'function') {
+        switchTab('home');
+    }
 }
+
+// Make functions available globally
+window.publishPost = publishPost;
+window.updateCharCount = updateCharCount;
+window.previewPostImage = previewPostImage;
+window.removePostImage = removePostImage;
+window.cancelPost = cancelPost;

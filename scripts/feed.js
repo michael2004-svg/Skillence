@@ -1,4 +1,4 @@
-// feed.js - COMPLETE WITH PROFILE POSTS
+// feed.js - Updated to show real data from Supabase
 async function loadTwitterFeed(page = 1, append = false) {
     const feedContainer = document.getElementById('feedContainer');
     const loadingContainer = document.getElementById('loadingContainer');
@@ -26,8 +26,8 @@ async function loadTwitterFeed(page = 1, append = false) {
             .from('posts')
             .select(`
                 id, content, created_at, tags, image_url, visibility, user_id,
-                profiles (job_title, profile_picture_url, industry)
-            `)
+                profiles (id, full_name, job_title, profile_picture_url, industry)
+            `, { count: 'exact' })
             .order('created_at', { ascending: false })
             .range((page - 1) * 10, page * 10 - 1);
 
@@ -37,7 +37,25 @@ async function loadTwitterFeed(page = 1, append = false) {
         
         let feedHtml = '';
         if (posts && posts.length > 0) {
-            feedHtml = posts.map(post => renderPost(post, userId)).join('');
+            // Fetch likes, comments, and saves count for each post
+            const postsWithStats = await Promise.all(posts.map(async (post) => {
+                const [likesRes, commentsRes, savesRes, userLikedRes] = await Promise.all([
+                    window.supabaseClient.from('post_likes').select('id', { count: 'exact' }).eq('post_id', post.id),
+                    window.supabaseClient.from('comments').select('id', { count: 'exact' }).eq('post_id', post.id),
+                    window.supabaseClient.from('saved_posts').select('id', { count: 'exact' }).eq('post_id', post.id),
+                    window.supabaseClient.from('post_likes').select('id').eq('post_id', post.id).eq('user_id', userId).single()
+                ]);
+
+                return {
+                    ...post,
+                    likes_count: likesRes.count || 0,
+                    comments_count: commentsRes.count || 0,
+                    saves_count: savesRes.count || 0,
+                    user_liked: !!userLikedRes.data
+                };
+            }));
+
+            feedHtml = postsWithStats.map(post => renderPost(post, userId)).join('');
         } else if (!append) {
             feedHtml = renderWelcomePost();
         }
@@ -50,13 +68,7 @@ async function loadTwitterFeed(page = 1, append = false) {
             loadingContainer.style.display = 'none';
         }
 
-        if (page === 1) {
-            const jobs = await fetchJobs(profile.top_skills?.join(' ') || '', '') || [];
-            if (jobs.length) {
-                feedHtml = jobs.slice(0, 3).map(job => renderJobPost(job)).join('');
-                feedContainer.innerHTML += feedHtml;
-            }
-        }
+        setTimeout(() => setupLazyLoading(), 100);
 
         window.isLoading = false;
         setStatus(`Loaded ${posts?.length || 0} posts!`, 'success', 1500);
@@ -64,36 +76,41 @@ async function loadTwitterFeed(page = 1, append = false) {
     } catch (error) {
         console.error('Feed error:', error);
         setStatus(`Failed to load: ${error.message}`, 'error');
+        feedContainer.innerHTML = '<div class="error-message">Failed to load feed. Please refresh.</div>';
+        loadingContainer.style.display = 'none';
         window.isLoading = false;
     }
 }
 
 function renderPost(post, currentUserId) {
     const timeAgo = formatTimeAgo(post.created_at);
-    const randomLikes = Math.floor(Math.random() * 50);
+    const isSaved = window.savedPostsManager?.isSaved(post.id) || false;
+    const authorName = post.profiles?.full_name || post.profiles?.job_title || 'Anonymous User';
 
     return `
         <div class="post-card" data-post-id="${post.id}">
             <div class="post-header">
-                <img src="${post.profiles?.profile_picture_url || '../images/default.jpg'}" 
-                     alt="Avatar" class="post-avatar" 
-                     onclick="event.stopPropagation(); viewUserProfile('${post.user_id}')" loading="lazy">
-                <div class="post-author-info" onclick="event.stopPropagation(); viewUserProfile('${post.user_id}')">
-                    <div class="post-author">${post.profiles?.job_title || 'Anonymous'}</div>
-                    <div class="post-industry">${post.profiles?.industry || ''}</div>
+                <img data-src="${post.profiles?.profile_picture_url || '../images/default.jpg'}" 
+                     src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50 50'%3E%3Crect fill='%23f0f0f0' width='50' height='50'/%3E%3C/svg%3E"
+                     alt="Avatar" class="post-avatar lazy-image" 
+                     onclick="event.stopPropagation(); viewUserProfile('${post.user_id}')">
+                <div class="post-author-info">
+                    <div class="post-author" onclick="event.stopPropagation(); viewUserProfile('${post.user_id}')">${sanitizeHtml(authorName)}</div>
+                    <div class="post-industry">${sanitizeHtml(post.profiles?.job_title || '')}</div>
                 </div>
                 <div class="post-time">${timeAgo}</div>
-                <button class="post-options" onclick="event.stopPropagation()">⋮</button>
             </div>
-
-            <div class="post-content" onclick="toggleComments('${post.id}')" style="cursor: pointer;">
-                ${sanitizeHtml(post.content)}
+            
+            <div class="post-content">
+                <p>${sanitizeHtml(post.content)}</p>
             </div>
             
             ${post.image_url ? `
                 <div class="post-media">
-                    <img src="${post.image_url}" class="post-image" 
-                         onclick="event.stopPropagation(); openImageModal('${post.image_url}')" loading="lazy">
+                    <img data-src="${post.image_url}" 
+                         src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 400'%3E%3Crect fill='%23f0f0f0' width='800' height='400'/%3E%3C/svg%3E"
+                         class="post-image lazy-image" 
+                         onclick="event.stopPropagation(); openImageModal('${post.image_url}')">
                 </div>
             ` : ''}
             
@@ -104,19 +121,25 @@ function renderPost(post, currentUserId) {
             ` : ''}
 
             <div class="post-stats">
-                <span class="stat">${randomLikes} ❤️</span>
-                <span class="stat">${Math.floor(Math.random() * 10)} 💬</span>
+                <span class="stat">${post.likes_count || 0} ❤️</span>
+                <span class="stat">${post.comments_count || 0} 💬</span>
             </div>
 
             <div class="post-actions">
-                <button class="action-btn liked" onclick="event.stopPropagation(); toggleLike('${post.id}')">
-                    ❤️ Unlike
+                <button class="action-btn ${post.user_liked ? 'liked' : ''}" 
+                        onclick="event.stopPropagation(); toggleLike('${post.id}', this)">
+                    ❤️ ${post.user_liked ? 'Unlike' : 'Like'}
                 </button>
                 <button class="action-btn" onclick="event.stopPropagation(); toggleComments('${post.id}')">
                     💬 Comment
                 </button>
                 <button class="action-btn" onclick="event.stopPropagation(); sharePost('${post.id}')">
                     🔄 Share
+                </button>
+                <button class="action-btn ${isSaved ? 'saved' : ''}" 
+                        data-save-post="${post.id}"
+                        onclick="event.stopPropagation(); toggleSavePost('${post.id}')">
+                    ${isSaved ? '🔖 Saved' : '🔖 Save'}
                 </button>
             </div>
 
@@ -132,96 +155,139 @@ function renderPost(post, currentUserId) {
     `;
 }
 
-function renderJobPost(job) {
-    return `
-        <div class="post-card job-post">
-            <div class="post-header">
-                <div class="job-icon">💼</div>
-                <div class="post-author-info">
-                    <div class="post-author">${job.title}</div>
-                    <div class="post-industry">${job.company?.display_name}</div>
-                </div>
-                <div class="post-time">New</div>
-            </div>
-            <div class="post-content">
-                <p>${job.description?.slice(0, 120)}...</p>
-                <div class="job-details">
-                    📍 ${job.location?.display_name || 'Remote'} | 
-                    💰 ${job.salary_min ? `$${job.salary_min}k - $${job.salary_max}k` : 'Competitive'}
-                </div>
-            </div>
-            <div class="post-actions">
-                <a href="${job.redirect_url}" target="_blank" class="apply-btn">Apply Now</a>
-            </div>
-        </div>
-    `;
+// Toggle Like with real database
+async function toggleLike(postId, button) {
+    try {
+        const userId = await getUserId();
+        if (!userId) {
+            setStatus('Please sign in to like posts', 'error');
+            return;
+        }
+
+        const isLiked = button.classList.contains('liked');
+        
+        if (isLiked) {
+            // Unlike
+            const { error } = await window.supabaseClient
+                .from('post_likes')
+                .delete()
+                .eq('post_id', postId)
+                .eq('user_id', userId);
+
+            if (error) throw error;
+
+            button.classList.remove('liked');
+            button.textContent = '❤️ Like';
+        } else {
+            // Like
+            const { error } = await window.supabaseClient
+                .from('post_likes')
+                .insert({ post_id: postId, user_id: userId });
+
+            if (error) throw error;
+
+            button.classList.add('liked');
+            button.textContent = '❤️ Unlike';
+        }
+
+        // Update count
+        const { count } = await window.supabaseClient
+            .from('post_likes')
+            .select('id', { count: 'exact' })
+            .eq('post_id', postId);
+
+        const statElement = button.closest('.post-card').querySelector('.stat');
+        statElement.textContent = `${count || 0} ❤️`;
+
+        setStatus(isLiked ? 'Unliked' : 'Liked!', 'success', 1000);
+
+    } catch (error) {
+        console.error('Toggle like error:', error);
+        setStatus('Failed to update like', 'error');
+    }
 }
 
-function renderWelcomePost() {
-    return `
-        <div class="post-card welcome-post">
-            <div class="post-header">
-                <div class="logo-icon">S</div>
-                <div class="post-author">Welcome to Skillence! 👋</div>
-            </div>
-            <div class="post-content">
-                <p><strong>Be the first to share your skills!</strong></p>
-                <div class="welcome-actions">
-                    <button onclick="window.SkillenceCore.switchTab('add-post')" class="post-btn">
-                        📝 Create Post
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-function toggleLike(postId) {
-    const btn = event.target;
-    const isLiked = btn.classList.contains('liked');
-    
-    btn.classList.toggle('liked');
-    btn.textContent = isLiked ? '❤️ Like' : '❤️ Unlike';
-    
-    const stat = btn.closest('.post-card').querySelector('.stat');
-    const count = parseInt(stat.textContent);
-    stat.textContent = `${isLiked ? count - 1 : count + 1} ❤️`;
-    
-    setStatus(isLiked ? 'Unliked' : 'Liked!', 'success', 1000);
-}
-
-const commentsDB = {};
+// Add Comment with real database
 async function addComment(postId) {
-    const textarea = document.querySelector(`#comments-${postId} textarea`);
-    const text = textarea.value.trim();
-    if (!text) return;
+    try {
+        const textarea = document.querySelector(`#comments-${postId} textarea`);
+        const content = textarea.value.trim();
+        if (!content) return;
 
-    const userName = (await fetchUserProfile())?.job_title || 'You';
-    const comment = { id: Date.now(), text, user: userName, time: new Date() };
-    
-    if (!commentsDB[postId]) commentsDB[postId] = [];
-    commentsDB[postId].push(comment);
-    
-    textarea.value = '';
-    loadComments(postId);
-    setStatus('Comment added!', 'success');
+        const userId = await getUserId();
+        if (!userId) {
+            setStatus('Please sign in to comment', 'error');
+            return;
+        }
+
+        const { error } = await window.supabaseClient
+            .from('comments')
+            .insert({
+                post_id: postId,
+                user_id: userId,
+                content: content
+            });
+
+        if (error) throw error;
+
+        textarea.value = '';
+        await loadComments(postId);
+        
+        // Update comment count
+        const { count } = await window.supabaseClient
+            .from('comments')
+            .select('id', { count: 'exact' })
+            .eq('post_id', postId);
+
+        const stats = document.querySelector(`[data-post-id="${postId}"] .post-stats`);
+        const commentStat = stats.querySelectorAll('.stat')[1];
+        commentStat.textContent = `${count || 0} 💬`;
+
+        setStatus('Comment added!', 'success');
+
+    } catch (error) {
+        console.error('Add comment error:', error);
+        setStatus('Failed to add comment', 'error');
+    }
 }
 
+// Load Comments from database
 async function loadComments(postId) {
-    const comments = commentsDB[postId] || [];
-    document.getElementById(`comments-list-${postId}`).innerHTML = 
-        comments.map(c => `
-            <div class="comment">
-                <strong>${c.user}:</strong> ${c.text}
-                <small>${formatTimeAgo(c.time)}</small>
-            </div>
-        `).join('');
-}
+    try {
+        const { data: comments, error } = await window.supabaseClient
+            .from('comments')
+            .select(`
+                id, content, created_at,
+                profiles (full_name, job_title, profile_picture_url)
+            `)
+            .eq('post_id', postId)
+            .order('created_at', { ascending: true });
 
+        if (error) throw error;
+
+        const commentsList = document.getElementById(`comments-list-${postId}`);
+        if (commentsList) {
+            commentsList.innerHTML = comments.map(c => `
+                <div class="comment">
+                    <img src="${c.profiles?.profile_picture_url || '../images/default.jpg'}" class="comment-avatar">
+                    <div class="comment-content">
+                        <strong>${sanitizeHtml(c.profiles?.full_name || c.profiles?.job_title || 'Anonymous')}:</strong>
+                        <p>${sanitizeHtml(c.content)}</p>
+                        <small>${formatTimeAgo(c.created_at)}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (error) {
+        console.error('Load comments error:', error);
+    }
+}
 function toggleComments(postId) {
     const section = document.getElementById(`comments-${postId}`);
-    section.classList.toggle('hidden');
-    if (!section.classList.contains('hidden')) loadComments(postId);
+    if (section) {
+        section.classList.toggle('hidden');
+        if (!section.classList.contains('hidden')) loadComments(postId);
+    }
 }
 
 function handleCommentEnter(event, postId) {
@@ -233,7 +299,11 @@ function handleCommentEnter(event, postId) {
 
 async function sharePost(postId) {
     if (navigator.share) {
-        await navigator.share({ title: 'Skillence Post', url: window.location.href });
+        try {
+            await navigator.share({ title: 'Skillence Post', url: window.location.href });
+        } catch (err) {
+            console.log('Share cancelled');
+        }
     } else {
         await navigator.clipboard.writeText(window.location.href);
         setStatus('Link copied!', 'success');
@@ -254,7 +324,10 @@ function setupInfiniteScroll() {
     };
     
     watchLastPost();
-    new MutationObserver(watchLastPost).observe(document.getElementById('feedContainer'), { childList: true });
+    const feedContainer = document.getElementById('feedContainer');
+    if (feedContainer) {
+        new MutationObserver(watchLastPost).observe(feedContainer, { childList: true });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -265,10 +338,15 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const { data } = await window.supabaseClient
                 .from('posts')
-                .select('*')
+                .select(`
+                    id, content, created_at, tags, image_url, visibility, user_id,
+                    profiles (job_title, profile_picture_url, industry)
+                `)
                 .textSearch('content', e.target.value);
             
-            document.getElementById('feedContainer').innerHTML = data.map(post => renderPost(post)).join('');
+            const userId = await getUserId();
+            document.getElementById('feedContainer').innerHTML = data.map(post => renderPost(post, userId)).join('');
+            setupLazyLoading();
         }, 300));
     }
 });
@@ -276,10 +354,15 @@ document.addEventListener('DOMContentLoaded', () => {
 async function filterByTag(tag) {
     const { data } = await window.supabaseClient
         .from('posts')
-        .select('*')
+        .select(`
+            id, content, created_at, tags, image_url, visibility, user_id,
+            profiles (job_title, profile_picture_url, industry)
+        `)
         .contains('tags', [tag]);
     
-    document.getElementById('feedContainer').innerHTML = data.map(post => renderPost(post)).join('');
+    const userId = await getUserId();
+    document.getElementById('feedContainer').innerHTML = data.map(post => renderPost(post, userId)).join('');
+    setupLazyLoading();
     setStatus(`Showing #${tag} posts`, 'info');
 }
 
@@ -346,7 +429,6 @@ async function loadViewedUserProfile(userId) {
 
         updateFollowCounts(followersRes.count || 0, followingRes.count || 0);
         
-        // Load user's posts
         await loadUserPosts(userId);
         
     } catch (error) {
@@ -376,6 +458,7 @@ async function loadUserPosts(userId) {
         
         if (posts && posts.length > 0) {
             postsContainer.innerHTML = posts.map(post => renderPost(post, currentUserId)).join('');
+            setupLazyLoading();
         } else {
             postsContainer.innerHTML = `
                 <div class="no-posts">
@@ -428,7 +511,6 @@ async function toggleFollowUser(profileUserId) {
             setStatus('Followed!', 'success');
         }
         
-        // Refresh follow counts
         loadViewedUserProfile(profileUserId);
     } catch (error) {
         setStatus(`Follow action failed: ${error.message}`, 'error');
@@ -482,6 +564,7 @@ function openImageModal(imageUrl) {
 }
 
 function sanitizeHtml(str) {
+    if (!str) return '';
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
@@ -506,6 +589,7 @@ function debounce(fn, ms) {
 document.addEventListener('DOMContentLoaded', () => {
     window.page = 1;
     window.isLoading = false;
+    window.totalPages = 1;
     setupInfiniteScroll();
     loadTwitterFeed();
     window.loadTwitterFeed = loadTwitterFeed;

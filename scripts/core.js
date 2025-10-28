@@ -1,13 +1,10 @@
-// core.js - PRODUCTION READY
-// Skillence App Core Functionality
-
 // Initialize Supabase client
 window.supabaseClient = window.supabase.createClient(
     'https://anzrbwcextohaatvwvvh.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFuenJid2NleHRvaGFhdHZ3dnZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2NjE2NDgsImV4cCI6MjA3MzIzNzY0OH0.DSJBwubiIAqEXDqVZMuJLUrsgY9vBKDQuPQBPIItHuw'
 );
 
-// DOM Elements - PROPERLY SELECTED
+// DOM Elements
 const elements = {
     profileJob: document.getElementById('profile-job'),
     profileIndustry: document.getElementById('profile-industry'),
@@ -29,7 +26,7 @@ const elements = {
     createPostName: document.getElementById('createPostName')
 };
 
-// UI Helper - ENHANCED WITH LOADING STATES
+// UI Helper
 function setStatus(message, type = 'info', duration = 5000) {
     if (!elements.statusMessage) return;
     
@@ -43,14 +40,14 @@ function setStatus(message, type = 'info', duration = 5000) {
     }
 }
 
-// Sanitize HTML to prevent XSS
+// Sanitize HTML
 function sanitizeHtml(str) {
     const temp = document.createElement('div');
     temp.textContent = str;
     return temp.innerHTML;
 }
 
-// Get current user ID - WITH ERROR HANDLING
+// Get current user ID
 async function getUserId() {
     try {
         const { data: { session }, error } = await window.supabaseClient.auth.getSession();
@@ -62,7 +59,7 @@ async function getUserId() {
     }
 }
 
-// Fetch User Profile - OPTIMIZED WITH CACHING
+// Fetch User Profile
 let profileCache = null;
 async function fetchUserProfile(forceRefresh = false) {
     if (profileCache && !forceRefresh) return profileCache;
@@ -74,8 +71,6 @@ async function fetchUserProfile(forceRefresh = false) {
             setTimeout(() => { window.location.href = '../templates/login.html'; }, 1500);
             return null;
         }
-
-        setStatus('Loading profile...', 'info');
 
         const { data, error } = await window.supabaseClient
             .from('profiles')
@@ -90,19 +85,19 @@ async function fetchUserProfile(forceRefresh = false) {
             return null;
         }
 
-        // Update UI - SAFE PROPERTY CHECKS
+        // Update UI
         if (elements.profileJob) elements.profileJob.textContent = sanitizeHtml(data.job_title || 'No Job Title');
         if (elements.profileIndustry) elements.profileIndustry.textContent = sanitizeHtml(data.industry || 'No Industry');
         if (elements.profileExperience) elements.profileExperience.textContent = `${sanitizeHtml(data.experience_level || 'Unknown')} Level`;
-        if (elements.profileSkills) elements.profileSkills.textContent = `Skills: ${data.top_skills?.join(', ') || 'None'}`;
-        if (elements.profileGoals) elements.profileGoals.textContent = `Goals: ${data.goals?.join(', ') || 'None'}`;
+        if (elements.profileSkills) elements.profileSkills.textContent = `${data.top_skills?.join(', ') || 'None'}`;
+        if (elements.profileGoals) elements.profileGoals.textContent = `${data.goals?.join(', ') || 'None'}`;
         if (elements.profileAvatar) elements.profileAvatar.src = data.profile_picture_url || '../images/default.jpg';
         if (elements.cvScore) elements.cvScore.textContent = `${data.skill_score || 0}%`;
         if (elements.cvScoreProgress) elements.cvScoreProgress.style.width = `${data.skill_score || 0}%`;
         if (elements.createPostAvatar) elements.createPostAvatar.src = data.profile_picture_url || '../images/default.jpg';
         if (elements.createPostName) elements.createPostName.textContent = sanitizeHtml(data.job_title || 'Anonymous');
 
-        // Fetch follow counts PARALLEL
+        // Fetch follow counts
         const [followersRes, followingRes] = await Promise.all([
             window.supabaseClient.from('follows').select('follower_id', { count: 'exact' }).eq('followed_id', userId),
             window.supabaseClient.from('follows').select('followed_id', { count: 'exact' }).eq('follower_id', userId)
@@ -121,8 +116,13 @@ async function fetchUserProfile(forceRefresh = false) {
     }
 }
 
-// Switch Tabs - FIXED FOR ADD POST BUTTON
+// Switch Tabs
 function switchTab(tab) {
+    // Clear viewing user session when switching tabs
+    if (tab !== 'profile') {
+        sessionStorage.removeItem('viewingUserId');
+    }
+    
     // Hide all tab contents
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
@@ -150,59 +150,98 @@ function switchTab(tab) {
     // Trigger tab-specific actions
     switch (tab) {
         case 'home':
-            loadTwitterFeed();
+            if (typeof loadTwitterFeed === 'function') {
+                loadTwitterFeed();
+            }
             break;
         case 'profile':
-            fetchUserProfile();
+            const viewingUserId = sessionStorage.getItem('viewingUserId');
+            if (viewingUserId) {
+                loadViewedUserProfile(viewingUserId);
+            } else {
+                fetchUserProfile(true);
+            }
             break;
         case 'career':
-            // ADD THIS: Reset career section to show feature cards
             goBackToCareer();
+            break;
+        case 'notifications':
+            if (typeof window.NotificationsModule !== 'undefined') {
+                window.NotificationsModule.loadNotifications();
+            }
             break;
     }
 }
 
-// MISSING FUNCTION: Load Twitter Feed - STUB IMPLEMENTATION
-async function loadTwitterFeed() {
-    const feedContainer = document.getElementById('feedContainer');
-    if (!feedContainer) return;
-    
-    // Show loading
-    feedContainer.innerHTML = `
-        <div class="loading-container">
-            <div class="spinner"></div>
-            <div class="loading-text">Loading feed...</div>
-        </div>
-    `;
-    
-    try {
-        // TODO: Implement actual feed loading from feed.js
-        // For now, show placeholder
-        setTimeout(() => {
-            feedContainer.innerHTML = `
-                <div class="post-card">
-                    <div class="post-header">
-                        <img src="../images/default.jpg" class="post-avatar">
-                        <div class="post-author">Welcome to Skillence! 👋</div>
-                    </div>
-                    <div class="post-content">
-                        <p>Start sharing your skills, connect with professionals, and grow your career!</p>
-                    </div>
-                </div>
-            `;
-        }, 1000);
-    } catch (error) {
-        console.error('Feed load error:', error);
-        feedContainer.innerHTML = `<p class="error-message">Failed to load feed</p>`;
+// Handle Feature Click
+function handleFeatureClick(feature) {
+    const featuresGrid = document.querySelector('.features-grid');
+    const jobsSection = document.getElementById('jobsSection');
+    const coursesSection = document.getElementById('coursesSection');
+    const mentorshipSection = document.getElementById('mentorshipSection');
+
+    // Hide all sections first
+    if (jobsSection) jobsSection.classList.add('hidden');
+    if (coursesSection) coursesSection.classList.add('hidden');
+    if (mentorshipSection) mentorshipSection.classList.add('hidden');
+
+    switch(feature) {
+        case 'cv-analyzer':
+            window.SkillenceCore.switchTab('cv-analyzer');
+            break;
+            
+        case 'jobs':
+            if (featuresGrid) featuresGrid.style.display = 'none';
+            if (jobsSection) {
+                jobsSection.classList.remove('hidden');
+                if (typeof searchJobs === 'function') {
+                    searchJobs();
+                }
+            }
+            break;
+            
+        case 'courses':
+            if (featuresGrid) featuresGrid.style.display = 'none';
+            if (coursesSection) {
+                coursesSection.classList.remove('hidden');
+                if (typeof window.CoursesModule !== 'undefined') {
+                    window.CoursesModule.initializeCourses();
+                }
+            }
+            break;
+            
+        case 'mentorship':
+            if (featuresGrid) featuresGrid.style.display = 'none';
+            if (mentorshipSection) {
+                mentorshipSection.classList.remove('hidden');
+                if (typeof window.MentorshipModule !== 'undefined') {
+                    window.MentorshipModule.initializeMentors();
+                }
+            }
+            break;
     }
 }
 
-// Follow/Unfollow - OPTIMIZED
+// Go Back to Career
+function goBackToCareer() {
+    const jobsSection = document.getElementById('jobsSection');
+    const coursesSection = document.getElementById('coursesSection');
+    const mentorshipSection = document.getElementById('mentorshipSection');
+    const featuresGrid = document.querySelector('.features-grid');
+
+    // Hide all subsections
+    if (jobsSection) jobsSection.classList.add('hidden');
+    if (coursesSection) coursesSection.classList.add('hidden');
+    if (mentorshipSection) mentorshipSection.classList.add('hidden');
+    
+    // Show feature cards again
+    if (featuresGrid) featuresGrid.style.display = 'grid';
+}
+
+// Follow/Unfollow
 async function toggleFollow(profileUserId = null) {
-    if (!elements.followBtn) {
-        setStatus('Follow button not found', 'error');
-        return;
-    }
+    const followBtn = document.querySelector('.follow-btn');
+    if (!followBtn) return;
     
     const userId = await getUserId();
     if (!userId) {
@@ -210,14 +249,15 @@ async function toggleFollow(profileUserId = null) {
         return;
     }
     
-    const viewedUserId = profileUserId || userId;
+    const viewedUserId = profileUserId || sessionStorage.getItem('viewingUserId') || userId;
+    
     if (userId === viewedUserId) {
         setStatus('Cannot follow yourself.', 'error');
         return;
     }
 
-    const isFollowing = elements.followBtn.textContent === 'Unfollow';
-    elements.followBtn.disabled = true;
+    const isFollowing = followBtn.textContent.trim() === 'Unfollow';
+    followBtn.disabled = true;
     
     try {
         if (isFollowing) {
@@ -228,8 +268,7 @@ async function toggleFollow(profileUserId = null) {
                 .eq('followed_id', viewedUserId);
             if (error) throw error;
             
-            elements.followBtn.textContent = 'Follow';
-            updateFollowCounts(-1, 0); // Only current user's following changes
+            followBtn.textContent = 'Follow';
             setStatus('Unfollowed.', 'success');
         } else {
             const { error } = await window.supabaseClient
@@ -237,18 +276,22 @@ async function toggleFollow(profileUserId = null) {
                 .insert({ follower_id: userId, followed_id: viewedUserId });
             if (error) throw error;
             
-            elements.followBtn.textContent = 'Unfollow';
-            updateFollowCounts(1, 0); // Only current user's following changes
+            followBtn.textContent = 'Unfollow';
             setStatus('Followed!', 'success');
+        }
+        
+        // Refresh follow counts
+        if (typeof loadViewedUserProfile === 'function') {
+            loadViewedUserProfile(viewedUserId);
         }
     } catch (error) {
         setStatus(`Follow action failed: ${error.message}`, 'error');
     } finally {
-        elements.followBtn.disabled = false;
+        followBtn.disabled = false;
     }
 }
 
-// Update Follow Counts - FIXED PARSING LOGIC
+// Update Follow Counts
 function updateFollowCounts(followers, following) {
     if (elements.followersCount) {
         const displayFollowers = followers >= 1000 ? (followers / 1000).toFixed(1) + 'k' : followers;
@@ -260,7 +303,7 @@ function updateFollowCounts(followers, following) {
     }
 }
 
-// Sign Out - ENHANCED
+// Sign Out
 async function signOut() {
     try {
         setStatus('Signing out...', 'info');
@@ -275,7 +318,7 @@ async function signOut() {
     }
 }
 
-// Fetch Latest CV Analysis - FIXED SELECTORS
+// Fetch Latest CV Analysis
 async function fetchLatestCVAnalysis() {
     try {
         const userId = await getUserId();
@@ -297,7 +340,7 @@ async function fetchLatestCVAnalysis() {
     }
 }
 
-// Update Profile with CV Analysis Data - FIXED SELECTORS
+// Update Profile with CV Analysis Data
 async function updateProfileWithCVData() {
     const cvData = await fetchLatestCVAnalysis();
     if (!cvData) return;
@@ -309,7 +352,7 @@ async function updateProfileWithCVData() {
     if (elements.cvTimestamp) elements.cvTimestamp.textContent = cvData.timestamp ? new Date(cvData.timestamp).toLocaleString() : 'No analysis available';
 }
 
-// Initialize - PRODUCTION READY
+// Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         console.log('Skillence Core: Initializing...');
@@ -329,7 +372,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 setStatus('You have been signed out.', 'info');
                 window.location.href = '../templates/login.html';
             } else if (event === 'SIGNED_IN' && session) {
-                profileCache = null; // Clear cache on sign in
+                profileCache = null;
                 fetchUserProfile();
             }
         });
@@ -346,86 +389,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// Add this function to core.js if it doesn't exist, or update the existing one
-function handleFeatureClick(feature) {
-    const careerContent = document.querySelector('.career-content');
-    const jobsSection = document.getElementById('jobsSection');
-    const coursesSection = document.getElementById('coursesSection');
-    const mentorshipSection = document.getElementById('mentorshipSection');
-    const featuresGrid = document.querySelector('.features-grid');
-
-    // Hide all sections first
-    if (jobsSection) jobsSection.classList.add('hidden');
-    if (coursesSection) coursesSection.classList.add('hidden');
-    if (mentorshipSection) mentorshipSection.classList.add('hidden');
-
-    switch(feature) {
-        case 'cv-analyzer':
-            window.SkillenceCore.switchTab('cv-analyzer');
-            break;
-            
-        case 'jobs':
-            if (featuresGrid) featuresGrid.style.display = 'none';
-            if (jobsSection) {
-                jobsSection.classList.remove('hidden');
-                jobsSection.classList.add('show');
-            }
-            searchJobs();
-            break;
-            
-        case 'courses':
-            if (featuresGrid) featuresGrid.style.display = 'none'; // ADD THIS LINE
-            if (coursesSection) {
-                coursesSection.classList.remove('hidden');
-                if (typeof window.CoursesModule !== 'undefined') {
-                    window.CoursesModule.initializeCourses();
-                }
-            }
-            break;
-            
-        case 'mentorship':
-            if (featuresGrid) featuresGrid.style.display = 'none'; // ADD THIS LINE
-            if (mentorshipSection) {
-                mentorshipSection.classList.remove('hidden');
-                if (typeof window.MentorshipModule !== 'undefined') {
-                    window.MentorshipModule.initializeMentors();
-                }
-            }
-            break;
+class DarkModeManager {
+    constructor() {
+        this.isDark = localStorage.getItem('darkMode') === 'true';
+        this.init();
+    }
+    
+    init() {
+        if (this.isDark) {
+            document.body.classList.add('dark-mode');
+        }
+        this.createToggle();
+    }
+    
+    createToggle() {
+        const toggle = document.createElement('button');
+        toggle.className = 'dark-mode-toggle';
+        toggle.innerHTML = this.isDark ? '☀️' : '🌙';
+        toggle.onclick = () => this.toggle();
+        document.body.appendChild(toggle);
+    }
+    
+    toggle() {
+        this.isDark = !this.isDark;
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', this.isDark);
+        document.querySelector('.dark-mode-toggle').innerHTML = this.isDark ? '☀️' : '🌙';
     }
 }
-function goBackToCareer() {
-    const jobsSection = document.getElementById('jobsSection');
-    const coursesSection = document.getElementById('coursesSection');
-    const mentorshipSection = document.getElementById('mentorshipSection');
-    const featuresGrid = document.querySelector('.features-grid');
 
-    // Hide all subsections
-    if (jobsSection) jobsSection.classList.add('hidden');
-    if (coursesSection) coursesSection.classList.add('hidden');
-    if (mentorshipSection) mentorshipSection.classList.add('hidden');
-    
-    // Show feature cards again
-    if (featuresGrid) featuresGrid.style.display = 'grid';
-}
-
-function switchProfileTab(tab) {
-    // Remove active from all tabs
-    document.querySelectorAll('.profile-tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelectorAll('.profile-tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-    
-    // Activate selected tab
-    const tabBtn = event.target.closest('.profile-tab-btn');
-    if (tabBtn) tabBtn.classList.add('active');
-    
-    const tabContent = document.getElementById(`profile-${tab}-tab`);
-    if (tabContent) tabContent.classList.add('active');
-}
-
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    new DarkModeManager();
+});
 // Export for other modules
 window.goBackToCareer = goBackToCareer;
 window.handleFeatureClick = handleFeatureClick;

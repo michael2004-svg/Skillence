@@ -673,3 +673,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateProfileWithCVData();
 });
+
+// Add back button functionality
+document.addEventListener('DOMContentLoaded', () => {
+    // Existing initialization code...
+    
+    // Add back button click handler
+    const backButtons = document.querySelectorAll('.section-back-btn');
+    backButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const currentTab = e.target.closest('.tab-content');
+            if (currentTab && currentTab.id === 'cv-analyzer-tab') {
+                window.SkillenceCore.switchTab('career');
+            }
+        });
+    });
+});

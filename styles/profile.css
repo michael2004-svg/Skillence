@@ -484,4 +484,83 @@
         font-size: 12px;
     }
 }
+.profile-completion-toast {
+    position: fixed;
+    top: -300px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    z-index: 1001;
+    transition: top 0.3s ease;
+}
 
+.profile-completion-toast.show {
+    top: 80px;
+}
+
+.completion-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.completion-icon {
+    font-size: 32px;
+}
+
+.completion-info {
+    flex: 1;
+}
+
+.completion-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.completion-subtitle {
+    font-size: 13px;
+    color: #6c757d;
+    margin-top: 2px;
+}
+
+.completion-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.completion-progress {
+    margin-bottom: 16px;
+}
+
+.completion-tips {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.completion-tip {
+    font-size: 14px;
+    color: #667eea;
+    font-weight: 500;
+}
+
+body.dark-mode .profile-completion-toast {
+    background: #16213e;
+}
+
+body.dark-mode .completion-title {
+    color: #eee;
+}
