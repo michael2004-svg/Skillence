@@ -1,4 +1,4 @@
-// profile.js - Complete Profile Management
+// profile.js - FIXED VERSION
 class ProfileManager {
     constructor() {
         this.currentUserId = null;
@@ -7,15 +7,20 @@ class ProfileManager {
 
     async init() {
         this.currentUserId = await getUserId();
+        console.log('ProfileManager initialized with userId:', this.currentUserId);
         this.setupEventListeners();
     }
 
     setupEventListeners() {
-        // Profile edit button
-        const editProfileBtn = document.getElementById('editProfileBtn');
-        if (editProfileBtn) {
-            editProfileBtn.addEventListener('click', () => this.showEditModal());
-        }
+        // Set up edit profile button with delegation
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'editProfileBtn' || e.target.closest('#editProfileBtn')) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Edit button clicked!');
+                this.showEditModal();
+            }
+        });
 
         // Followers/Following click handlers
         const followersCount = document.getElementById('followers-count');
@@ -33,8 +38,13 @@ class ProfileManager {
     }
 
     async showEditModal() {
+        console.log('Opening edit modal...');
         const profile = await fetchUserProfile();
-        if (!profile) return;
+        if (!profile) {
+            console.error('No profile data available');
+            setStatus('Could not load profile data', 'error');
+            return;
+        }
 
         const modal = document.createElement('div');
         modal.className = 'profile-edit-modal';
@@ -88,8 +98,8 @@ class ProfileManager {
                     <div class="form-group">
                         <label>Profile Picture</label>
                         <input type="file" id="edit-profile-picture" class="form-input" accept="image/*">
-                        <div class="current-picture" style="margin-top: 10px;">
-                            <img src="${profile.profile_picture_url || '../images/default.jpg'}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                        <div class="current-picture">
+                            <img src="${profile.profile_picture_url || '../images/default.jpg'}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin-top: 10px;">
                         </div>
                     </div>
                     
@@ -105,16 +115,21 @@ class ProfileManager {
                 </div>
                 <div class="modal-footer">
                     <button class="btn-secondary" onclick="this.closest('.profile-edit-modal').remove()">Cancel</button>
-                    <button class="btn-primary" onclick="window.profileManager.saveProfile()">Save Changes</button>
+                    <button class="btn-primary" id="saveProfileBtn">Save Changes</button>
                 </div>
             </div>
         `;
 
         document.body.appendChild(modal);
+        console.log('Edit modal added to DOM');
+
+        // Add event listener to save button
+        document.getElementById('saveProfileBtn').addEventListener('click', () => this.saveProfile());
     }
 
     async saveProfile() {
         try {
+            console.log('Saving profile...');
             setStatus('Saving profile...', 'info');
             
             const fullName = document.getElementById('edit-full-name').value.trim();
@@ -133,6 +148,7 @@ class ProfileManager {
 
             // Upload profile picture if selected
             if (profilePictureFile) {
+                console.log('Uploading profile picture...');
                 profilePictureUrl = await this.uploadProfilePicture(profilePictureFile);
             }
 
@@ -151,6 +167,8 @@ class ProfileManager {
                 updateData.profile_picture_url = profilePictureUrl;
             }
 
+            console.log('Update data:', updateData);
+
             const { error } = await window.supabaseClient
                 .from('profiles')
                 .update(updateData)
@@ -158,10 +176,12 @@ class ProfileManager {
 
             if (error) throw error;
 
+            console.log('Profile updated successfully');
             setStatus('Profile updated successfully! ✨', 'success');
             document.querySelector('.profile-edit-modal')?.remove();
             
-            // Refresh profile display
+            // Force refresh profile data
+            profileCache = null;
             await fetchUserProfile(true);
 
         } catch (error) {
@@ -173,8 +193,10 @@ class ProfileManager {
     async uploadProfilePicture(file) {
         try {
             const fileExt = file.name.split('.').pop();
-            const fileName = `profile_pictures/${this.currentUserId}_${Date.now()}.${fileExt}`;
+            const fileName = `${this.currentUserId}_${Date.now()}.${fileExt}`;
             
+            console.log('Uploading file:', fileName);
+
             const { error: uploadError } = await window.supabaseClient.storage
                 .from('profile_pictures')
                 .upload(fileName, file, { upsert: true });
@@ -185,16 +207,20 @@ class ProfileManager {
                 .from('profile_pictures')
                 .getPublicUrl(fileName);
 
+            console.log('Upload successful:', data.publicUrl);
             return data.publicUrl;
         } catch (error) {
             console.error('Profile picture upload error:', error);
-            throw error;
+            setStatus('Image upload failed, continuing without image', 'warning');
+            return null;
         }
     }
 
     async showFollowersList(type) {
         try {
             const viewingUserId = sessionStorage.getItem('viewingUserId') || this.currentUserId;
+            
+            console.log('Loading', type, 'for user:', viewingUserId);
             
             let data, error;
             
@@ -203,7 +229,7 @@ class ProfileManager {
                     .from('follows')
                     .select(`
                         follower_id,
-                        profiles!follows_follower_id_fkey (
+                        follower:profiles!follows_follower_id_fkey (
                             id,
                             full_name,
                             job_title,
@@ -211,14 +237,16 @@ class ProfileManager {
                         )
                     `)
                     .eq('followed_id', viewingUserId);
-                data = result.data;
+                
+                console.log('Followers query result:', result);
+                data = result.data?.map(item => ({ profiles: item.follower })) || [];
                 error = result.error;
             } else {
                 const result = await window.supabaseClient
                     .from('follows')
                     .select(`
                         followed_id,
-                        profiles!follows_followed_id_fkey (
+                        followed:profiles!follows_followed_id_fkey (
                             id,
                             full_name,
                             job_title,
@@ -226,12 +254,15 @@ class ProfileManager {
                         )
                     `)
                     .eq('follower_id', viewingUserId);
-                data = result.data;
+                
+                console.log('Following query result:', result);
+                data = result.data?.map(item => ({ profiles: item.followed })) || [];
                 error = result.error;
             }
 
             if (error) throw error;
 
+            console.log('Processed data:', data);
             this.renderFollowersModal(data, type);
 
         } catch (error) {
@@ -245,6 +276,8 @@ class ProfileManager {
         modal.className = 'followers-modal';
         
         const users = data.map(item => item.profiles).filter(Boolean);
+        
+        console.log('Rendering modal with users:', users);
         
         modal.innerHTML = `
             <div class="modal-overlay" onclick="this.parentElement.remove()"></div>
@@ -279,48 +312,49 @@ class ProfileManager {
     }
 }
 
-// Initialize
-let profileManager;
-document.addEventListener('DOMContentLoaded', () => {
-    profileManager = new ProfileManager();
-    window.profileManager = profileManager;
-});
-
-// Add Edit Profile button dynamically
-document.addEventListener('DOMContentLoaded', () => {
-    const profileActions = document.querySelector('.profile-actions');
-    if (profileActions) {
-        const editBtn = document.createElement('button');
-        editBtn.id = 'editProfileBtn';
-        editBtn.className = 'edit-profile-btn';
-        editBtn.textContent = '✏️ Edit Profile';
-        editBtn.style.display = 'none'; // Hidden by default
-        profileActions.insertBefore(editBtn, profileActions.firstChild);
-    }
-});
-
-// Show edit button only on own profile
-async function updateEditButtonVisibility() {
+// Update button visibility based on profile ownership
+async function updateProfileButtons() {
     const currentUserId = await getUserId();
     const viewingUserId = sessionStorage.getItem('viewingUserId');
+    const isOwnProfile = !viewingUserId || viewingUserId === currentUserId;
+    
     const editBtn = document.getElementById('editProfileBtn');
+    const followBtn = document.querySelector('.follow-btn');
+    const signOutBtn = document.getElementById('sign-out-btn');
+    
+    console.log('Updating buttons:', { 
+        currentUserId, 
+        viewingUserId, 
+        isOwnProfile, 
+        editBtn: !!editBtn, 
+        followBtn: !!followBtn, 
+        signOutBtn: !!signOutBtn 
+    });
     
     if (editBtn) {
-        if (!viewingUserId || viewingUserId === currentUserId) {
-            editBtn.style.display = 'block';
-        } else {
-            editBtn.style.display = 'none';
-        }
+        editBtn.style.display = isOwnProfile ? 'inline-block' : 'none';
+        console.log('Edit button display set to:', editBtn.style.display);
+    }
+    
+    if (followBtn) {
+        followBtn.style.display = isOwnProfile ? 'none' : 'inline-block';
+        console.log('Follow button display set to:', followBtn.style.display);
+    }
+    
+    if (signOutBtn) {
+        signOutBtn.style.display = isOwnProfile ? 'inline-block' : 'none';
+        console.log('Sign out button display set to:', signOutBtn.style.display);
     }
 }
 
-// Call this when switching to profile tab
+// Initialize
+let profileManager;
 document.addEventListener('DOMContentLoaded', () => {
-    const originalSwitchTab = window.switchTab;
-    window.switchTab = function(tab) {
-        originalSwitchTab(tab);
-        if (tab === 'profile') {
-            setTimeout(updateEditButtonVisibility, 100);
-        }
-    };
+    console.log('Initializing ProfileManager...');
+    profileManager = new ProfileManager();
+    window.profileManager = profileManager;
+    window.updateProfileButtons = updateProfileButtons;
+    
+    // Update buttons when profile tab is accessed
+    setTimeout(updateProfileButtons, 1000);
 });

@@ -40,7 +40,6 @@
     </div>
 
     <!-- Profile Tab Content -->
-   <!-- Profile Tab Content - UPDATED SOCIAL MEDIA STYLE -->
 <div class="tab-content hidden" id="profile-tab">
     <div class="profile-content-new">
         <!-- Cover Image -->
@@ -49,23 +48,31 @@
         </div>
         
         <!-- Profile Header -->
-        <div class="profile-header-new">
-            <div class="profile-avatar-container">
-                <img src="../images/default.jpg" id="profileAvatar" class="profile-avatar-large">
-            </div>
-            
-            <div class="profile-info-section">
-                <div class="profile-name-section">
-                    <h2 class="profile-name-large" id="profile-job">Loading...</h2>
-                    <p class="profile-handle" id="profile-industry">Loading...</p>
-                </div>
-                
-                <div class="profile-actions">
-                    <button class="follow-btn" onclick="toggleFollow()">Follow</button>
-                    <button id="sign-out-btn" class="sign-out-btn">Sign Out</button>
-                </div>
-            </div>
+       <div class="profile-header-new">
+    <div class="profile-avatar-container">
+        <img src="../images/default.jpg" id="profileAvatar" class="profile-avatar-large">
+    </div>
+    
+    <div class="profile-info-section">
+        <div class="profile-name-section">
+            <h2 class="profile-name-large" id="profile-job">Loading...</h2>
+            <p class="profile-handle" id="profile-industry">Loading...</p>
         </div>
+        
+        <!-- PROFILE ACTIONS - WITH EDIT BUTTON -->
+        <div class="profile-actions">
+            <button id="editProfileBtn" class="edit-profile-btn">
+                ✏️ Edit Profile
+            </button>
+            <button class="follow-btn" onclick="toggleFollow()">
+                Follow
+            </button>
+            <button id="sign-out-btn" class="sign-out-btn">
+                Sign Out
+            </button>
+        </div>
+    </div>
+       </div>
         
         <!-- Profile Stats -->
         <div class="profile-stats-bar">

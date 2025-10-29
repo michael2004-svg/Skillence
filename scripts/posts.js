@@ -15,10 +15,15 @@ async function publishPost() {
         const profile = await fetchUserProfile();
         const tags = extractTags(content, profile);
 
-        // Create post - FIXED: Use window.supabaseClient
+        // Create post with proper structure
         const { data: post, error } = await window.supabaseClient
             .from('posts')
-            .insert({ user_id: userId, content, tags, visibility })
+            .insert({ 
+                user_id: userId, 
+                content, 
+                tags, 
+                visibility 
+            })
             .select('id')
             .single();
 
@@ -28,7 +33,10 @@ async function publishPost() {
         if (imageFile) {
             const imageUrl = await uploadPostImage(imageFile, userId, post.id);
             if (imageUrl) {
-                await window.supabaseClient.from('posts').update({ image_url: imageUrl }).eq('id', post.id);
+                await window.supabaseClient
+                    .from('posts')
+                    .update({ image_url: imageUrl })
+                    .eq('id', post.id);
             }
         }
 
@@ -36,8 +44,10 @@ async function publishPost() {
         resetPostForm();
         setStatus('Post published! 🎉', 'success');
         switchTab('home');
+        
+        // Refresh feed
         if (typeof loadTwitterFeed === 'function') {
-            loadTwitterFeed(); // Refresh feed
+            loadTwitterFeed();
         }
 
     } catch (error) {

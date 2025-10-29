@@ -378,7 +378,7 @@ async function loadViewedUserProfile(userId) {
         
         const { data, error } = await window.supabaseClient
             .from('profiles')
-            .select('job_title, industry, experience_level, profile_picture_url, top_skills, goals, skill_score')
+            .select('job_title, industry, experience_level, profile_picture_url, top_skills, goals, skill_score, full_name')
             .eq('id', userId)
             .single();
             
@@ -394,11 +394,11 @@ async function loadViewedUserProfile(userId) {
             profileAvatar: document.getElementById('profileAvatar'),
             cvScore: document.getElementById('cv-score'),
             cvScoreProgress: document.getElementById('cv-score-progress'),
-            followBtn: document.querySelector('.follow-btn'),
-            signOutBtn: document.getElementById('sign-out-btn')
         };
 
-        if (elements.profileJob) elements.profileJob.textContent = data.job_title || 'No Job Title';
+        const displayName = data.full_name || data.job_title || 'Anonymous User';
+
+        if (elements.profileJob) elements.profileJob.textContent = displayName;
         if (elements.profileIndustry) elements.profileIndustry.textContent = data.industry || 'No Industry';
         if (elements.profileExperience) elements.profileExperience.textContent = `${data.experience_level || 'Unknown'} Level`;
         if (elements.profileSkills) elements.profileSkills.textContent = `${data.top_skills?.join(', ') || 'None'}`;
@@ -407,16 +407,20 @@ async function loadViewedUserProfile(userId) {
         if (elements.cvScore) elements.cvScore.textContent = `${data.skill_score || 0}%`;
         if (elements.cvScoreProgress) elements.cvScoreProgress.style.width = `${data.skill_score || 0}%`;
 
+        // UPDATE BUTTONS FOR VIEWED PROFILE
         const isOwnProfile = userId === currentUserId;
-        if (elements.followBtn) {
-            elements.followBtn.style.display = isOwnProfile ? 'none' : 'block';
+        const editBtn = document.getElementById('editProfileBtn');
+        const followBtn = document.querySelector('.follow-btn');
+        const signOutBtn = document.getElementById('sign-out-btn');
+
+        if (editBtn) editBtn.style.display = isOwnProfile ? 'block' : 'none';
+        if (followBtn) {
+            followBtn.style.display = isOwnProfile ? 'none' : 'block';
             if (!isOwnProfile) {
-                elements.followBtn.onclick = () => toggleFollowUser(userId);
+                followBtn.onclick = () => toggleFollowUser(userId);
             }
         }
-        if (elements.signOutBtn) {
-            elements.signOutBtn.style.display = isOwnProfile ? 'block' : 'none';
-        }
+        if (signOutBtn) signOutBtn.style.display = isOwnProfile ? 'block' : 'none';
 
         if (!isOwnProfile) {
             checkFollowStatus(userId);

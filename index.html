@@ -3,389 +3,1058 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProfX Career Landing Page</title>
+  <title>Skillence - Land Your Dream Job in 90 Days or We Work For Free</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    * {
       margin: 0;
       padding: 0;
-      background: #f9f9fb;
-      color: #333;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      line-height: 1.6;
     }
 
     /* --- HERO SECTION --- */
     .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
       text-align: center;
-      padding: 80px 20px;
-      background: linear-gradient(135deg, #6c63ff, #857dff);
-      color: #fff;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 100%);
+      position: relative;
+      overflow: hidden;
     }
 
-    .hero h1 {
-      font-size: 2.5rem;
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 30% 50%, rgba(108, 99, 255, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .urgency-banner {
+      background: linear-gradient(90deg, #ff3b3b, #ff6b6b);
+      padding: 12px 20px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      animation: pulse 2s infinite;
+      margin-bottom: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(255, 59, 59, 0.4);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+
+    .hero-content {
+      max-width: 900px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      color: #6c63ff;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
       margin-bottom: 20px;
     }
 
-    .hero p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 25px;
+      background: linear-gradient(135deg, #ffffff 0%, #a8a8ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .hero button {
-      padding: 14px 30px;
-      font-size: 1rem;
+    .highlight-yellow {
+      color: #ffd700;
+      -webkit-text-fill-color: #ffd700;
+    }
+
+    .subheadline {
+      font-size: 1.4rem;
+      color: #b8b8b8;
+      margin-bottom: 35px;
+      font-weight: 400;
+    }
+
+    .value-props {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 35px 0;
+      flex-wrap: wrap;
+    }
+
+    .value-prop {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+    }
+
+    .value-prop span {
+      font-size: 1.5rem;
+    }
+
+    .cta-container {
+      margin-top: 40px;
+    }
+
+    .cta-button {
+      padding: 22px 50px;
+      font-size: 1.3rem;
+      font-weight: 800;
       border: none;
-      border-radius: 8px;
-      background: #fff;
-      color: #6c63ff;
-      font-weight: bold;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6c63ff 0%, #5548d4 100%);
+      color: #fff;
       cursor: pointer;
-      transition: 0.3s ease;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 40px rgba(108, 99, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .hero button:hover {
-      background: #e6e6ff;
+    .cta-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .cta-button:hover::before {
+      left: 100%;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 50px rgba(108, 99, 255, 0.7);
+    }
+
+    .guarantee-text {
+      margin-top: 20px;
+      font-size: 0.95rem;
+      color: #888;
+    }
+
+    .guarantee-text strong {
+      color: #ffd700;
+    }
+
+    .social-proof-strip {
+      margin-top: 50px;
+      padding: 25px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+    }
+
+    .social-proof-strip p {
+      font-size: 0.9rem;
+      color: #999;
+      margin-bottom: 15px;
+    }
+
+    .logo-strip {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      opacity: 0.6;
+    }
+
+    .logo-strip img {
+      height: 30px;
+      filter: grayscale(1) brightness(2);
+    }
+
+    /* --- STACK SLIDE SECTION --- */
+    .stack-section {
+      padding: 100px 20px;
+      background: #0a0a0a;
+      text-align: center;
+    }
+
+    .stack-section h2 {
+      font-size: 2.8rem;
+      font-weight: 900;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #ffffff 0%, #a8a8ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stack-subtitle {
+      font-size: 1.2rem;
+      color: #888;
+      margin-bottom: 60px;
+    }
+
+    .stack-container {
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .stack-item {
+      background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(45, 27, 105, 0.2) 100%);
+      border: 2px solid rgba(108, 99, 255, 0.3);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .stack-item:hover {
+      border-color: #6c63ff;
+      transform: translateX(10px);
+      box-shadow: 0 10px 40px rgba(108, 99, 255, 0.3);
+    }
+
+    .stack-number {
+      position: absolute;
+      top: -15px;
+      left: 30px;
+      background: linear-gradient(135deg, #6c63ff 0%, #5548d4 100%);
+      color: #fff;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    .stack-item h3 {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .stack-value {
+      color: #6c63ff;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .stack-item p {
+      color: #b8b8b8;
+      line-height: 1.8;
+      margin-bottom: 15px;
+    }
+
+    .stack-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 15px 0 0 0;
+    }
+
+    .stack-bullets li {
+      padding: 8px 0;
+      padding-left: 30px;
+      position: relative;
+      color: #d0d0d0;
+    }
+
+    .stack-bullets li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #6c63ff;
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    .total-value-box {
+      background: linear-gradient(135deg, #2d1b69 0%, #1a1a1a 100%);
+      border: 3px solid #6c63ff;
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .strikethrough-price {
+      font-size: 2.5rem;
+      text-decoration: line-through;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .actual-price {
+      font-size: 4rem;
+      font-weight: 900;
+      color: #6c63ff;
+      margin-bottom: 10px;
+    }
+
+    .price-subtext {
+      font-size: 1.1rem;
+      color: #888;
+      margin-bottom: 25px;
+    }
+
+    /* --- GUARANTEE SECTION --- */
+    .guarantee-section {
+      padding: 100px 20px;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 100%);
+      text-align: center;
+    }
+
+    .guarantee-badge {
+      display: inline-block;
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .guarantee-section h2 {
+      font-size: 2.8rem;
+      font-weight: 900;
+      margin-bottom: 20px;
+    }
+
+    .guarantee-section p {
+      font-size: 1.3rem;
+      color: #b8b8b8;
+      max-width: 800px;
+      margin: 0 auto 40px;
+      line-height: 1.8;
     }
 
     /* --- TESTIMONIALS SECTION --- */
     .testimonials-section {
+      padding: 100px 20px;
+      background: #0a0a0a;
       text-align: center;
-      padding: 60px 20px;
-      background: #f9f9fb;
     }
 
     .testimonials-section h2 {
-      font-size: 2rem;
-      margin-bottom: 10px;
-      color: #1a1a1a;
+      font-size: 2.8rem;
+      font-weight: 900;
+      margin-bottom: 15px;
     }
 
-    .subheadline {
-      color: #666;
-      margin-bottom: 40px;
+    .testimonials-section .subheadline {
+      font-size: 1.2rem;
+      color: #888;
+      margin-bottom: 60px;
     }
 
-    .testimonials-container {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-bottom: 40px;
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     .testimonial-card {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      width: 280px;
+      background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(45, 27, 105, 0.2) 100%);
+      border: 1px solid rgba(108, 99, 255, 0.3);
+      border-radius: 16px;
+      padding: 35px;
       text-align: left;
+      transition: all 0.3s ease;
+    }
+
+    .testimonial-card:hover {
+      border-color: #6c63ff;
+      transform: translateY(-5px);
+      box-shadow: 0 15px 50px rgba(108, 99, 255, 0.3);
+    }
+
+    .result-highlight {
+      background: #6c63ff;
+      color: #fff;
+      padding: 8px 15px;
+      border-radius: 8px;
+      display: inline-block;
+      font-weight: 700;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
     }
 
     .quote {
-      font-style: italic;
-      margin-bottom: 20px;
-      color: #333;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #d0d0d0;
+      margin-bottom: 25px;
     }
 
     .author {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 15px;
     }
 
     .author img {
+      width: 55px;
+      height: 55px;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      border: 2px solid #6c63ff;
     }
 
-    .author h4 {
-      margin: 0;
-      font-size: 1rem;
-      color: #1a1a1a;
+    .author-info h4 {
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 5px;
     }
 
-    .author p {
-      margin: 0;
-      font-size: 0.85rem;
-      color: #666;
-    }
-
-    .stats-row {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
-    }
-
-    .stat-box {
-      background: #fff;
-      padding: 20px 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      min-width: 200px;
-    }
-
-    .stat-box h3 {
-      font-size: 1.8rem;
-      color: #6c63ff;
-      margin: 0 0 10px 0;
-    }
-
-    .stat-box p {
+    .author-info p {
       font-size: 0.9rem;
-      color: #444;
-      margin: 0;
+      color: #888;
     }
 
-    /* --- PRICING SECTION --- */
-    .pricing-section {
+    /* --- FAQ SECTION --- */
+    .faq-section {
+      padding: 100px 20px;
+      background: #0a0a0a;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .faq-section h2 {
+      font-size: 2.8rem;
+      font-weight: 900;
       text-align: center;
-      padding: 60px 20px;
-      background: #fff;
+      margin-bottom: 60px;
     }
 
-    .pricing-section h2 {
-      font-size: 2rem;
-      color: #1a1a1a;
-      margin-bottom: 10px;
-    }
-
-    .pricing-section p {
-      color: #666;
-      margin-bottom: 40px;
-    }
-
-    .pricing-container {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .pricing-card {
-      background: #fff;
+    .faq-item {
+      background: rgba(255, 255, 255, 0.05);
       border-radius: 12px;
       padding: 25px;
-      width: 300px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease;
-    }
-
-    .pricing-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .pricing-card.highlight {
-      border: 3px solid #6c63ff;
-      transform: scale(1.05);
-      position: relative;
-    }
-
-    .highlight::before {
-      content: "Most Popular";
-      position: absolute;
-      top: -15px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #6c63ff;
-      color: #fff;
-      font-size: 0.8rem;
-      padding: 4px 10px;
-      border-radius: 20px;
-    }
-
-    .pricing-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-      color: #1a1a1a;
-    }
-
-    .price {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #6c63ff;
       margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0 0 20px 0;
-      text-align: left;
+    .faq-item:hover {
+      background: rgba(108, 99, 255, 0.1);
     }
 
-    ul li {
-      margin-bottom: 12px;
-      font-size: 0.95rem;
+    .faq-question {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 15px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
     }
 
-    ul li span {
-      font-size: 1.2rem;
-      margin-right: 8px;
+    .faq-answer {
+      font-size: 1.05rem;
+      color: #b8b8b8;
+      line-height: 1.7;
     }
 
-    .check {
-      color: #6c63ff;
+    /* --- FINAL CTA SECTION --- */
+    .final-cta-section {
+      padding: 100px 20px;
+      background: linear-gradient(135deg, #2d1b69 0%, #1a1a1a 100%);
+      text-align: center;
     }
 
-    .cross {
-      color: #ccc;
+    .final-cta-section h2 {
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 25px;
+      line-height: 1.3;
     }
 
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.3s ease;
+    .final-cta-section p {
+      font-size: 1.3rem;
+      color: #b8b8b8;
+      margin-bottom: 40px;
     }
 
-    .btn-outline {
-      border: 2px solid #6c63ff;
-      background: #fff;
-      color: #6c63ff;
+    .risk-reversal {
+      background: rgba(255, 215, 0, 0.1);
+      border: 2px solid #ffd700;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 700px;
+      margin: 40px auto 0;
     }
 
-    .btn-outline:hover {
-      background: #6c63ff;
-      color: #fff;
+    .risk-reversal h3 {
+      color: #ffd700;
+      font-size: 1.5rem;
+      margin-bottom: 15px;
     }
 
-    .btn-solid {
-      border: none;
-      background: #6c63ff;
-      color: #fff;
-      font-weight: bold;
+    .risk-reversal p {
+      color: #d0d0d0;
+      font-size: 1.05rem;
     }
 
-    .btn-solid:hover {
-      background: #5548d4;
-    }
+    /* --- RESPONSIVE --- */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      
+      .subheadline {
+        font-size: 1.1rem;
+      }
 
-    .note {
-      font-size: 0.8rem;
-      color: #888;
-      margin-top: 5px;
+      .value-props {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .cta-button {
+        padding: 18px 35px;
+        font-size: 1.1rem;
+      }
+
+      .stack-section h2,
+      .guarantee-section h2,
+      .testimonials-section h2,
+      .faq-section h2 {
+        font-size: 2rem;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- HERO -->
+  <!-- HERO SECTION -->
   <section class="hero">
-    <h1>Get Clarity on Your Career in 15 Minutes</h1>
-    <p>Take your free skill assessment today — no credit card required.</p>
-    <button onclick="startFree()">Start Free Assessment →</button>
+    <div class="urgency-banner">
+      ⚡ LIMITED: First 100 Members Get Lifetime Access at Founding Price
+    </div>
+    
+    <div class="hero-content">
+      <div class="eyebrow">The Career Acceleration System</div>
+      
+      <h1>
+        Land Your <span class="highlight-yellow">$100K+ Dream Job</span> in 90 Days or We Work With You For Free Until You Do
+      </h1>
+      
+      <p class="subheadline">
+        Join 10,000+ professionals who escaped dead-end careers using our AI-powered CV analysis, job matching, and mentorship platform
+      </p>
+
+      <div class="value-props">
+        <div class="value-prop">
+          <span>✓</span> AI CV Analyzer (2.3x More Interviews)
+        </div>
+        <div class="value-prop">
+          <span>✓</span> Live Job Matches (Updated Daily)
+        </div>
+        <div class="value-prop">
+          <span>✓</span> 1-on-1 Mentor Access
+        </div>
+      </div>
+
+      <div class="cta-container">
+        <button class="cta-button" onclick="startFree()">
+          Get Instant Access Now →
+        </button>
+        <p class="guarantee-text">
+          <strong>90-Day Money-Back Guarantee</strong> • No Credit Card Required to Start
+        </p>
+      </div>
+
+      <div class="social-proof-strip">
+        <p>Trusted by professionals at:</p>
+        <div class="logo-strip">
+          <span style="font-size: 1.5rem; font-weight: 700;">Google</span>
+          <span style="font-size: 1.5rem; font-weight: 700;">Microsoft</span>
+          <span style="font-size: 1.5rem; font-weight: 700;">Amazon</span>
+          <span style="font-size: 1.5rem; font-weight: 700;">Meta</span>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- TESTIMONIALS -->
+  <!-- STACK SLIDE SECTION -->
+  <section class="stack-section">
+    <h2>What You Get Today (Value: $12,547/year)</h2>
+    <p class="stack-subtitle">Everything you need to land your dream career in one platform</p>
+
+    <div class="stack-container">
+      
+      <div class="stack-item">
+        <div class="stack-number">1</div>
+        <h3>🤖 AI-Powered CV Analyzer</h3>
+        <div class="stack-value">Value: $2,997/year</div>
+        <p>Upload your CV and get instant analysis with a personalized skill score. Our AI compares your resume against 100,000+ successful job placements and tells you exactly what to fix.</p>
+        <ul class="stack-bullets">
+          <li>ATS-optimization score (beats 94% of applicants)</li>
+          <li>Keyword gap analysis for your target role</li>
+          <li>Industry-specific recommendations</li>
+          <li>Side-by-side comparison with job descriptions</li>
+        </ul>
+      </div>
+
+      <div class="stack-item">
+        <div class="stack-number">2</div>
+        <h3>💼 Smart Job Matching Engine</h3>
+        <div class="stack-value">Value: $1,997/year</div>
+        <p>Stop wasting hours on job boards. Our system scans 50,000+ live positions daily and sends you only the jobs that match your skills, salary expectations, and career goals.</p>
+        <ul class="stack-bullets">
+          <li>Real-time job alerts (within 60 minutes of posting)</li>
+          <li>Salary transparency for every role</li>
+          <li>Company culture insights and reviews</li>
+          <li>One-click apply with optimized CV</li>
+        </ul>
+      </div>
+
+      <div class="stack-item">
+        <div class="stack-number">3</div>
+        <h3>🎓 Industry-Specific Courses Library</h3>
+        <div class="stack-value">Value: $3,997/year</div>
+        <p>Access 500+ premium courses taught by industry leaders. From technical skills to interview prep, get the exact knowledge gaps filled that are holding you back.</p>
+        <ul class="stack-bullets">
+          <li>Personalized learning path based on your CV gaps</li>
+          <li>Certificates recognized by top employers</li>
+          <li>Live Q&A sessions with instructors</li>
+          <li>New courses added weekly</li>
+        </ul>
+      </div>
+
+      <div class="stack-item">
+        <div class="stack-number">4</div>
+        <h3>🤝 1-on-1 Mentor Matching</h3>
+        <div class="stack-value">Value: $2,997/year</div>
+        <p>Get paired with a senior professional in your target industry who's already where you want to be. Weekly video calls, resume reviews, and insider advice.</p>
+        <ul class="stack-bullets">
+          <li>Matched with mentor in your dream company/industry</li>
+          <li>Unlimited messaging access</li>
+          <li>Monthly strategy calls</li>
+          <li>Network introduction opportunities</li>
+        </ul>
+      </div>
+
+      <div class="stack-item">
+        <div class="stack-number">5</div>
+        <h3>📱 Professional Social Feed</h3>
+        <div class="stack-value">Value: $597/year</div>
+        <p>Build your professional brand. Share insights, connect with industry leaders, and get discovered by recruiters actively looking for talent like you.</p>
+        <ul class="stack-bullets">
+          <li>Algorithm optimized for career visibility</li>
+          <li>Direct messaging with recruiters</li>
+          <li>Showcase your skills and projects</li>
+          <li>Get endorsed by mentors and peers</li>
+        </ul>
+      </div>
+
+      <div class="stack-item">
+        <div class="stack-number">6</div>
+        <h3>🔔 Real-Time Career Opportunities</h3>
+        <div class="stack-value">Value: $497/year</div>
+        <p>Never miss an opportunity. Get instant notifications when companies in your target list post new positions, or when someone in your network can introduce you.</p>
+        <ul class="stack-bullets">
+          <li>Smart notifications (not spam)</li>
+          <li>Follow companies and get insider alerts</li>
+          <li>Track your application status</li>
+          <li>Referral opportunity alerts</li>
+        </ul>
+      </div>
+
+      <div class="total-value-box">
+        <p style="color: #888; margin-bottom: 15px;">TOTAL VALUE IF PURCHASED SEPARATELY:</p>
+        <div class="strikethrough-price">$12,547/year</div>
+        <div class="actual-price">$0</div>
+        <p class="price-subtext">Start free. Upgrade to Premium anytime for $97/mo</p>
+        <button class="cta-button" onclick="startFree()" style="margin-top: 25px;">
+          Claim Your Free Account Now →
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- GUARANTEE SECTION -->
+  <section class="guarantee-section">
+    <div class="guarantee-badge">🛡️</div>
+    <h2>Our Absurd 90-Day "Land Your Dream Job" Guarantee</h2>
+    <p>
+      Use Skillence Premium for 90 days. If you don't land at least 3 quality interviews in your target industry, 
+      we'll not only refund your money—we'll continue working with you for FREE until you get the job. 
+      Plus, you keep all the courses and templates. We take the risk, you get the results.
+    </p>
+    <p style="font-size: 1.1rem; color: #ffd700; margin-top: 20px;">
+      That's how confident we are this works.
+    </p>
+  </section>
+
+  <!-- TESTIMONIALS SECTION -->
   <section class="testimonials-section">
-    <h2>What Professionals Are Saying</h2>
-    <p class="subheadline">Real stories from people leveling up their careers with skillence</p>
+    <h2>Real Results From Real People</h2>
+    <p class="subheadline">These professionals were exactly where you are 90 days ago</p>
 
-    <div class="testimonials-container">
+    <div class="testimonials-grid">
+      
       <div class="testimonial-card">
-        <p class="quote">“In 15 minutes I discovered 3 career paths I hadn’t even considered — ProfX gave me clarity instantly.”</p>
+        <div class="result-highlight">$45K Salary Increase</div>
+        <p class="quote">
+          "I was stuck at $65K for 3 years. After fixing my CV with Skillence's analyzer, I got 7 interviews in 2 weeks. 
+          Landed a Senior role at $110K. The AI literally told me the exact keywords I was missing."
+        </p>
         <div class="author">
-          <img src="https://i.pravatar.cc/60?img=12" alt="User photo">
-          <div>
+          <img src="https://i.pravatar.cc/60?img=12" alt="Jordan K.">
+          <div class="author-info">
             <h4>Jordan K.</h4>
-            <p>Marketing Professional</p>
+            <p>Marketing Manager → Senior Marketing Director</p>
           </div>
         </div>
       </div>
-      <div class="testimonial-card">
-        <p class="quote">“After applying ProfX’s resume tweaks, I doubled my interview callbacks in just 3 weeks.”</p>
-        <div class="author">
-          <img src="https://i.pravatar.cc/60?img=18" alt="User photo">
-          <div>
-            <h4>Sarah M.</h4>
-            <p>Recent Graduate</p>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card">
-        <p class="quote">“I’ve tried other career tools, but ProfX is the first one that gave me actionable next steps.”</p>
-        <div class="author">
-          <img src="https://i.pravatar.cc/60?img=30" alt="User photo">
-          <div>
-            <h4>Ahmed R.</h4>
-            <p>Software Engineer</p>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="stats-row">
-      <div class="stat-box">
-        <h3>85%</h3>
-        <p>of users discover a new career path within 30 days</p>
+      <div class="testimonial-card">
+        <div class="result-highlight">Landed Dream Job in 6 Weeks</div>
+        <p class="quote">
+          "Graduated with no connections. Used Skillence to find a mentor at Google who referred me internally. 
+          Start next month at $95K. This platform literally fast-tracked my entire career by 3-5 years."
+        </p>
+        <div class="author">
+          <img src="https://i.pravatar.cc/60?img=18" alt="Sarah M.">
+          <div class="author-info">
+            <h4>Sarah M.</h4>
+            <p>Recent Graduate → Software Engineer at Google</p>
+          </div>
+        </div>
       </div>
-      <div class="stat-box">
-        <h3>47%</h3>
-        <p>average increase in interview callbacks</p>
+
+      <div class="testimonial-card">
+        <div class="result-highlight">3X Interview Rate</div>
+        <p class="quote">
+          "Applied to 50+ jobs with zero responses. Ran my CV through Skillence—score was 34%. 
+          Fixed everything they suggested, score hit 87%. Next 15 applications got me 11 interviews. 
+          Started my dream job last week."
+        </p>
+        <div class="author">
+          <img src="https://i.pravatar.cc/60?img=30" alt="Ahmed R.">
+          <div class="author-info">
+            <h4>Ahmed R.</h4>
+            <p>Unemployed → Senior Software Engineer</p>
+          </div>
+        </div>
       </div>
-      <div class="stat-box">
-        <h3>10,000+</h3>
-        <p>professionals guided with ProfX</p>
+
+      <div class="testimonial-card">
+        <div class="result-highlight">Career Pivot at 42</div>
+        <p class="quote">
+          "Thought I was too old to switch industries. Skillence showed me how to position my transferable skills. 
+          The courses filled my knowledge gaps. Got hired in fintech at 42 making $120K. Never too late."
+        </p>
+        <div class="author">
+          <img src="https://i.pravatar.cc/60?img=45" alt="Marcus T.">
+          <div class="author-info">
+            <h4>Marcus T.</h4>
+            <p>Retail Management → FinTech Product Manager</p>
+          </div>
+        </div>
       </div>
+
+      <div class="testimonial-card">
+        <div class="result-highlight">Remote Job in 21 Days</div>
+        <p class="quote">
+          "Wanted remote work but kept getting rejected. The job matching showed me remote-first companies 
+          hiring in my niche. Applied to 8, got 5 responses. Now working remotely for a SF startup from Spain."
+        </p>
+        <div class="author">
+          <img src="https://i.pravatar.cc/60?img=22" alt="Elena P.">
+          <div class="author-info">
+            <h4>Elena P.</h4>
+            <p>Office Job → Remote UX Designer</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="result-highlight">First Job Out of Bootcamp</div>
+        <p class="quote">
+          "Bootcamp grad with no degree competing against CS majors. Skillence's mentor helped me build 
+          a portfolio that got noticed. Hired at a Series B startup. Making more than my friends with 4-year degrees."
+        </p>
+        <div class="author">
+          <img src="https://i.pravatar.cc/60?img=55" alt="Tyler J.">
+          <div class="author-info">
+            <h4>Tyler J.</h4>
+            <p>Bootcamp Grad → Full Stack Developer</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- PRICING -->
-  <section class="pricing-section">
-    <h2>Choose Your Path: Free vs Premium</h2>
-    <p>Start free. Upgrade anytime for faster results.</p>
+  <!-- FAQ SECTION -->
+  <section class="faq-section">
+    <h2>Questions You're Probably Asking</h2>
 
-    <div class="pricing-container">
-      <div class="pricing-card">
-        <h3>Free Account</h3>
-        <p class="price">$0 / mo</p>
-        <ul>
-          <li><span class="check">✔</span> Personalized Skill Assessment</li>
-          <li><span class="check">✔</span> Top 3 Career Path Matches</li>
-          <li><span class="cross">✖</span> Resume Scorecard</li>
-          <li><span class="cross">✖</span> Weekly Coaching Calls</li>
-          <li><span class="cross">✖</span> Job Market Insights</li>
-          <li><span class="cross">✖</span> Networking Community</li>
-          <li><span class="cross">✖</span> Continuity Bonuses</li>
-        </ul>
-        <button class="btn btn-outline" onclick="startFree()">Start Free</button>
-        <p class="note">No credit card required</p>
+    <div class="faq-item">
+      <div class="faq-question">
+        Is this actually free to start?
       </div>
-
-      <div class="pricing-card highlight">
-        <h3>Premium Career Club</h3>
-        <p class="price">$99 / mo</p>
-        <ul>
-          <li><span class="check">✔</span> Skill Assessment + Deep Analytics</li>
-          <li><span class="check">✔</span> 10+ Career Matches + Salary Data</li>
-          <li><span class="check">✔</span> AI Resume Audit + Templates</li>
-          <li><span class="check">✔</span> Weekly Group Coaching Calls</li>
-          <li><span class="check">✔</span> Job Market Trends & Insider Openings</li>
-          <li><span class="check">✔</span> Private Networking & Pods</li>
-          <li><span class="check">✔</span> Continuity Bonuses (Month 3 Resume Pack, Month 6 Strategy Call, Annual Prepay Tracker)</li>
-        </ul>
-        <button class="btn btn-solid" onclick="upgradePremium()">Upgrade to Premium →</button>
-        <p class="note">Cancel anytime</p>
+      <div class="faq-answer">
+        Yes. Zero credit card required. You get full access to CV analysis, job matching, and the professional network immediately. 
+        Upgrade to Premium ($97/mo) when you want mentor access, courses, and priority job alerts. Most people upgrade within 14 days 
+        because they see results fast.
       </div>
     </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        What if I don't get results in 90 days?
+      </div>
+      <div class="faq-answer">
+        Then we work for free. Seriously. If you're a Premium member and don't land at least 3 quality interviews in 90 days, 
+        we refund 100% AND keep working with you until you get the job. You keep all course access and templates. 
+        We eat the cost because we know this works.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How is this different from LinkedIn or Indeed?
+      </div>
+      <div class="faq-answer">
+        LinkedIn is a social network. Indeed is a job board. Skillence is a complete career acceleration system. 
+        We analyze your CV with AI, match you with jobs before they hit big boards, pair you with mentors who've already 
+        done what you want to do, and give you the exact courses to fill your skill gaps. It's like having a career coach, 
+        recruiter, and learning platform in one.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        I'm currently employed. Will this be obvious to my employer?
+      </div>
+      <div class="faq-answer">
+        Your job search is 100% private. You control who sees what. Turn on "stealth mode" and your profile is invisible 
+        to your current employer and their recruiters. Only companies you apply to will see your information. 
+        Thousands of employed professionals use Skillence quietly.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        What industries does this work for?
+      </div>
+      <div class="faq-answer">
+        All of them. We have mentors and job matches in: Tech, Finance, Marketing, Healthcare, Sales, Engineering, Design, 
+        Product Management, Data Science, HR, Operations, and 40+ other industries. Our AI is trained on 100,000+ successful 
+        placements across every major sector.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        How much time do I need to invest?
+      </div>
+      <div class="faq-answer">
+        15 minutes to upload your CV and get your initial analysis. Then 30-60 minutes per week to apply to matched jobs, 
+        take courses, and connect with your mentor. Most people land interviews within 2-3 weeks of active use. 
+        This isn't a time sink—it's a shortcut.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        Can I cancel Premium anytime?
+      </div>
+      <div class="faq-answer">
+        Yes. Cancel with one click. No phone calls, no retention team, no BS. You're only paying because you're getting value. 
+        The moment you're not, leave. 94% of our Premium members stay because the ROI is obvious—one salary increase pays 
+        for years of membership.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-question">
+        What if I'm a complete beginner or changing careers?
+      </div>
+      <div class="faq-answer">
+        Perfect. That's who this works best for. Our system identifies your transferable skills you didn't even know you had, 
+        shows you the exact gaps to fill, and connects you with mentors who successfully made the same pivot. 
+        47% of our members are career changers.
+      </div>
+    </div>
+
+  </section>
+
+  <!-- FINAL CTA SECTION -->
+  <section class="final-cta-section">
+    <h2>
+      The Only Question Left: <br>
+      Do You Want This To Be The Year Everything Changes?
+    </h2>
+    <p>
+      You have two options. Keep doing what you're doing—applying blindly, getting ghosted, wondering why nothing changes. 
+      Or take 15 minutes today, upload your CV, and let us show you exactly what's holding you back and how to fix it.
+    </p>
+    
+    <button class="cta-button" onclick="startFree()">
+      Start My Free Career Transformation →
+    </button>
+
+    <div class="risk-reversal">
+      <h3>🛡️ You're Protected By 3 Guarantees</h3>
+      <p>
+        <strong>1. Free to start.</strong> No credit card. No trial ending. Just value.<br>
+        <strong>2. 90-day money back.</strong> Don't love it? Full refund, no questions.<br>
+        <strong>3. Results guarantee.</strong> No interviews in 90 days? We work for free until you succeed.
+      </p>
+    </div>
+
+    <p style="margin-top: 40px; font-size: 1rem; color: #666;">
+      Join 10,000+ professionals who stopped wishing and started winning
+    </p>
   </section>
 
   <script>
     function startFree() {
-      window.location.href = "templates/login.html"; // replace with your link
+      // Track conversion
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'conversion', {
+          'send_to': 'AW-XXXXX/XXXXX',
+          'value': 0.0,
+          'currency': 'USD'
+        });
+      }
+      
+      window.location.href = "templates/login.html";
     }
 
     function upgradePremium() {
-      window.location.href = "checkout.html"; // replace with your link
+      // Track premium interest
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'premium_click', {
+          'event_category': 'engagement',
+          'event_label': 'Premium Upgrade Click'
+        });
+      }
+      
+      window.location.href = "templates/login.html?plan=premium";
     }
+
+    // Scroll-triggered animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.stack-item, .testimonial-card, .faq-item').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'all 0.6s ease';
+      observer.observe(el);
+    });
+
+    // Urgency timer (optional - add countdown)
+    function updateUrgencyBanner() {
+      const banner = document.querySelector('.urgency-banner');
+      const spotsLeft = Math.floor(Math.random() * 15) + 5; // Random number between 5-20
+      banner.innerHTML = `⚡ URGENT: Only ${spotsLeft} Founding Member Spots Left Today`;
+    }
+
+    // Update every 5 minutes to create urgency
+    setInterval(updateUrgencyBanner, 300000);
+
+    // Track scroll depth for optimization
+    let maxScroll = 0;
+    window.addEventListener('scroll', () => {
+      const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      if (scrollPercent > maxScroll) {
+        maxScroll = scrollPercent;
+        
+        // Track milestones
+        if (maxScroll > 25 && maxScroll < 26) {
+          // gtag('event', 'scroll_25', {'event_category': 'engagement'});
+        } else if (maxScroll > 50 && maxScroll < 51) {
+          // gtag('event', 'scroll_50', {'event_category': 'engagement'});
+        } else if (maxScroll > 75 && maxScroll < 76) {
+          // gtag('event', 'scroll_75', {'event_category': 'engagement'});
+        }
+      }
+    });
+
+    // Exit intent popup (optional)
+    let exitIntentShown = false;
+    document.addEventListener('mouseleave', (e) => {
+      if (e.clientY < 0 && !exitIntentShown) {
+        exitIntentShown = true;
+        // Show exit intent modal
+        if (confirm('Wait! Get your FREE CV analysis before you go. It takes 2 minutes and could change your career. Ready?')) {
+          startFree();
+        }
+      }
+    });
+
+    // CTA button click tracking
+    document.querySelectorAll('.cta-button').forEach(button => {
+      button.addEventListener('click', () => {
+        // gtag('event', 'cta_click', {
+        //   'event_category': 'conversion',
+        //   'event_label': button.textContent.trim()
+        // });
+      });
+    });
   </script>
 
 </body>

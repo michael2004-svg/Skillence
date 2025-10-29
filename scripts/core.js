@@ -61,8 +61,10 @@ async function getUserId() {
 
 // Fetch User Profile
 let profileCache = null;
+window.profileCache = null;
 async function fetchUserProfile(forceRefresh = false) {
-    if (profileCache && !forceRefresh) return profileCache;
+    if (window.profileCache && !forceRefresh) return window.profileCache;
+    
     
     try {
         const userId = await getUserId();
@@ -74,7 +76,7 @@ async function fetchUserProfile(forceRefresh = false) {
 
         const { data, error } = await window.supabaseClient
             .from('profiles')
-            .select('job_title, industry, experience_level, profile_picture_url, top_skills, goals, skill_score')
+            .select('*') // Select all fields including full_name
             .eq('id', userId)
             .single();
             
@@ -85,8 +87,10 @@ async function fetchUserProfile(forceRefresh = false) {
             return null;
         }
 
-        // Update UI
-        if (elements.profileJob) elements.profileJob.textContent = sanitizeHtml(data.job_title || 'No Job Title');
+        // Update UI - prioritize full_name over job_title for display
+        const displayName = data.full_name || data.job_title || 'Anonymous User';
+        
+        if (elements.profileJob) elements.profileJob.textContent = sanitizeHtml(displayName);
         if (elements.profileIndustry) elements.profileIndustry.textContent = sanitizeHtml(data.industry || 'No Industry');
         if (elements.profileExperience) elements.profileExperience.textContent = `${sanitizeHtml(data.experience_level || 'Unknown')} Level`;
         if (elements.profileSkills) elements.profileSkills.textContent = `${data.top_skills?.join(', ') || 'None'}`;
@@ -95,9 +99,9 @@ async function fetchUserProfile(forceRefresh = false) {
         if (elements.cvScore) elements.cvScore.textContent = `${data.skill_score || 0}%`;
         if (elements.cvScoreProgress) elements.cvScoreProgress.style.width = `${data.skill_score || 0}%`;
         if (elements.createPostAvatar) elements.createPostAvatar.src = data.profile_picture_url || '../images/default.jpg';
-        if (elements.createPostName) elements.createPostName.textContent = sanitizeHtml(data.job_title || 'Anonymous');
+        if (elements.createPostName) elements.createPostName.textContent = sanitizeHtml(displayName);
 
-        // Fetch follow counts
+        // Fetch follow counts from database
         const [followersRes, followingRes] = await Promise.all([
             window.supabaseClient.from('follows').select('follower_id', { count: 'exact' }).eq('followed_id', userId),
             window.supabaseClient.from('follows').select('followed_id', { count: 'exact' }).eq('follower_id', userId)
@@ -106,7 +110,6 @@ async function fetchUserProfile(forceRefresh = false) {
         updateFollowCounts(followersRes.count || 0, followingRes.count || 0);
         
         profileCache = data;
-        setStatus('Profile loaded successfully', 'success', 2000);
         return data;
         
     } catch (error) {
@@ -161,6 +164,12 @@ function switchTab(tab) {
             } else {
                 fetchUserProfile(true);
             }
+            // UPDATE BUTTON VISIBILITY
+            setTimeout(() => {
+                if (typeof updateProfileButtons === 'function') {
+                    updateProfileButtons();
+                }
+            }, 100);
             break;
         case 'career':
             goBackToCareer();
@@ -172,7 +181,6 @@ function switchTab(tab) {
             break;
     }
 }
-
 // Handle Feature Click
 function handleFeatureClick(feature) {
     const featuresGrid = document.querySelector('.features-grid');
