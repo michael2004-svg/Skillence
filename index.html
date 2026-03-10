@@ -1,832 +1,918 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Skillence - Land Your Dream Job in 90 Days or We Work For Free</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skillence — Building Greatness</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #05060a;
+      --deep: #0a0c14;
+      --surface: #0f1120;
+      --card: #131629;
+      --border: rgba(255,255,255,0.07);
+      --white: #f0f2ff;
+      --muted: rgba(240,242,255,0.45);
+      --accent-pink: #ff3cac;
+      --accent-blue: #2bd2ff;
+      --accent-orange: #ff6b35;
+      --accent-yellow: #ffd166;
+      --accent-green: #06d6a0;
+      --gradient-brand: linear-gradient(135deg, #ff3cac, #ff6b35, #ffd166, #06d6a0, #2bd2ff);
     }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: #0a0a0a;
-      color: #fff;
-      line-height: 1.6;
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      cursor: none;
     }
 
-    /* --- HERO SECTION --- */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 60px 20px;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 100%);
-      position: relative;
-      overflow: hidden;
+    /* CURSOR */
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--accent-blue);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transition: transform 0.15s ease, background 0.2s ease;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(43,210,255,0.4);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transition: transform 0.35s ease, width 0.3s, height 0.3s, border-color 0.3s;
     }
 
-    .hero::before {
+    /* NOISE */
+    body::before {
       content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at 30% 50%, rgba(108, 99, 255, 0.1) 0%, transparent 50%);
-      pointer-events: none;
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 200px; pointer-events: none; z-index: 1000; opacity: 0.5;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+      padding: 0 5vw; height: 72px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(5,6,10,0.8); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; cursor: none; }
+    .nav-logo-text {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.08em;
+      background: var(--gradient-brand); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.82rem;
+      letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
+      transition: color 0.2s; cursor: none;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta {
+      padding: 8px 20px; border: 1px solid rgba(43,210,255,0.3); border-radius: 4px;
+      color: var(--accent-blue) !important; transition: background 0.2s, border-color 0.2s !important;
+    }
+    .nav-cta:hover { background: rgba(43,210,255,0.08) !important; border-color: var(--accent-blue) !important; }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; }
+    .nav-hamburger span { width: 24px; height: 1.5px; background: var(--white); }
+    .mobile-menu {
+      display: none; position: fixed; top: 72px; left: 0; right: 0; z-index: 850;
+      background: rgba(5,6,10,0.97); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border); padding: 2rem 5vw;
+      flex-direction: column; gap: 1.5rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: var(--muted); text-decoration: none; font-size: 1rem;
+      letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; cursor: none;
     }
-
-    .urgency-banner {
-      background: linear-gradient(90deg, #ff3b3b, #ff6b6b);
-      padding: 12px 20px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      letter-spacing: 0.5px;
-      animation: pulse 2s infinite;
-      margin-bottom: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 20px rgba(255, 59, 59, 0.4);
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
-    }
-
-    .hero-content {
-      max-width: 900px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .eyebrow {
-      color: #6c63ff;
-      font-size: 0.95rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 20px;
-    }
-
-    .hero h1 {
-      font-size: 3.5rem;
-      font-weight: 900;
-      line-height: 1.2;
-      margin-bottom: 25px;
-      background: linear-gradient(135deg, #ffffff 0%, #a8a8ff 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .highlight-yellow {
-      color: #ffd700;
-      -webkit-text-fill-color: #ffd700;
-    }
-
-    .subheadline {
-      font-size: 1.4rem;
-      color: #b8b8b8;
-      margin-bottom: 35px;
-      font-weight: 400;
-    }
-
-    .value-props {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin: 35px 0;
-      flex-wrap: wrap;
-    }
-
-    .value-prop {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.1rem;
-    }
-
-    .value-prop span {
-      font-size: 1.5rem;
-    }
-
-    .cta-container {
-      margin-top: 40px;
-    }
-
-    .cta-button {
-      padding: 22px 50px;
-      font-size: 1.3rem;
-      font-weight: 800;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #6c63ff 0%, #5548d4 100%);
-      color: #fff;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 40px rgba(108, 99, 255, 0.5);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cta-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-      transition: left 0.5s;
-    }
-
-    .cta-button:hover::before {
-      left: 100%;
-    }
-
-    .cta-button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 50px rgba(108, 99, 255, 0.7);
-    }
-
-    .guarantee-text {
-      margin-top: 20px;
-      font-size: 0.95rem;
-      color: #888;
-    }
-
-    .guarantee-text strong {
-      color: #ffd700;
-    }
-
-    .social-proof-strip {
-      margin-top: 50px;
-      padding: 25px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-    }
-
-    .social-proof-strip p {
-      font-size: 0.9rem;
-      color: #999;
-      margin-bottom: 15px;
-    }
-
-    .logo-strip {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 40px;
-      flex-wrap: wrap;
-      opacity: 0.6;
-    }
-
-    .logo-strip img {
-      height: 30px;
-      filter: grayscale(1) brightness(2);
-    }
-
-    /* --- STACK SLIDE SECTION --- */
-    .stack-section {
-      padding: 100px 20px;
-      background: #0a0a0a;
-      text-align: center;
-    }
-
-    .stack-section h2 {
-      font-size: 2.8rem;
-      font-weight: 900;
-      margin-bottom: 15px;
-      background: linear-gradient(135deg, #ffffff 0%, #a8a8ff 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .stack-subtitle {
-      font-size: 1.2rem;
-      color: #888;
-      margin-bottom: 60px;
-    }
-
-    .stack-container {
-      max-width: 700px;
-      margin: 0 auto;
-      text-align: left;
-    }
-
-    .stack-item {
-      background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(45, 27, 105, 0.2) 100%);
-      border: 2px solid rgba(108, 99, 255, 0.3);
-      border-radius: 16px;
-      padding: 30px;
-      margin-bottom: 20px;
-      position: relative;
-      transition: all 0.3s ease;
-    }
-
-    .stack-item:hover {
-      border-color: #6c63ff;
-      transform: translateX(10px);
-      box-shadow: 0 10px 40px rgba(108, 99, 255, 0.3);
-    }
-
-    .stack-number {
-      position: absolute;
-      top: -15px;
-      left: 30px;
-      background: linear-gradient(135deg, #6c63ff 0%, #5548d4 100%);
-      color: #fff;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 900;
-      font-size: 1.2rem;
-    }
-
-    .stack-item h3 {
-      font-size: 1.6rem;
-      margin-bottom: 10px;
-      color: #fff;
-    }
-
-    .stack-value {
-      color: #6c63ff;
-      font-size: 1.3rem;
-      font-weight: 700;
-      margin-bottom: 15px;
-    }
-
-    .stack-item p {
-      color: #b8b8b8;
-      line-height: 1.8;
-      margin-bottom: 15px;
-    }
-
-    .stack-bullets {
-      list-style: none;
-      padding: 0;
-      margin: 15px 0 0 0;
-    }
-
-    .stack-bullets li {
-      padding: 8px 0;
-      padding-left: 30px;
-      position: relative;
-      color: #d0d0d0;
-    }
-
-    .stack-bullets li::before {
-      content: '✓';
-      position: absolute;
-      left: 0;
-      color: #6c63ff;
-      font-weight: 900;
-      font-size: 1.2rem;
-    }
-
-    .total-value-box {
-      background: linear-gradient(135deg, #2d1b69 0%, #1a1a1a 100%);
-      border: 3px solid #6c63ff;
-      border-radius: 16px;
-      padding: 40px;
-      text-align: center;
-      margin-top: 40px;
-    }
-
-    .strikethrough-price {
-      font-size: 2.5rem;
-      text-decoration: line-through;
-      color: #666;
-      margin-bottom: 10px;
-    }
-
-    .actual-price {
-      font-size: 4rem;
-      font-weight: 900;
-      color: #6c63ff;
-      margin-bottom: 10px;
-    }
-
-    .price-subtext {
-      font-size: 1.1rem;
-      color: #888;
-      margin-bottom: 25px;
-    }
-
-    /* --- GUARANTEE SECTION --- */
-    .guarantee-section {
-      padding: 100px 20px;
-      background: linear-gradient(135deg, #1a1a1a 0%, #2d1b69 100%);
-      text-align: center;
-    }
-
-    .guarantee-badge {
-      display: inline-block;
-      width: 150px;
-      height: 150px;
-      background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 3rem;
-      margin-bottom: 30px;
-      box-shadow: 0 10px 40px rgba(255, 215, 0, 0.5);
-      animation: rotate 20s linear infinite;
-    }
-
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    .guarantee-section h2 {
-      font-size: 2.8rem;
-      font-weight: 900;
-      margin-bottom: 20px;
-    }
-
-    .guarantee-section p {
-      font-size: 1.3rem;
-      color: #b8b8b8;
-      max-width: 800px;
-      margin: 0 auto 40px;
-      line-height: 1.8;
-    }
-
-    /* --- TESTIMONIALS SECTION --- */
-    .testimonials-section {
-      padding: 100px 20px;
-      background: #0a0a0a;
-      text-align: center;
-    }
-
-    .testimonials-section h2 {
-      font-size: 2.8rem;
-      font-weight: 900;
-      margin-bottom: 15px;
-    }
-
-    .testimonials-section .subheadline {
-      font-size: 1.2rem;
-      color: #888;
-      margin-bottom: 60px;
-    }
-
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 30px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .testimonial-card {
-      background: linear-gradient(135deg, rgba(108, 99, 255, 0.1) 0%, rgba(45, 27, 105, 0.2) 100%);
-      border: 1px solid rgba(108, 99, 255, 0.3);
-      border-radius: 16px;
-      padding: 35px;
-      text-align: left;
-      transition: all 0.3s ease;
-    }
-
-    .testimonial-card:hover {
-      border-color: #6c63ff;
-      transform: translateY(-5px);
-      box-shadow: 0 15px 50px rgba(108, 99, 255, 0.3);
-    }
-
-    .result-highlight {
-      background: #6c63ff;
-      color: #fff;
-      padding: 8px 15px;
-      border-radius: 8px;
-      display: inline-block;
-      font-weight: 700;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
-    }
-
-    .quote {
-      font-size: 1.05rem;
-      line-height: 1.7;
-      color: #d0d0d0;
-      margin-bottom: 25px;
-    }
-
-    .author {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .author img {
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      border: 2px solid #6c63ff;
-    }
-
-    .author-info h4 {
-      font-size: 1.1rem;
-      color: #fff;
-      margin-bottom: 5px;
-    }
-
-    .author-info p {
-      font-size: 0.9rem;
-      color: #888;
-    }
-
-    /* --- FAQ SECTION --- */
-    .faq-section {
-      padding: 100px 20px;
-      background: #0a0a0a;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .faq-section h2 {
-      font-size: 2.8rem;
-      font-weight: 900;
-      text-align: center;
-      margin-bottom: 60px;
-    }
-
-    .faq-item {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 12px;
-      padding: 25px;
-      margin-bottom: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .faq-item:hover {
-      background: rgba(108, 99, 255, 0.1);
-    }
-
-    .faq-question {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .faq-answer {
-      font-size: 1.05rem;
-      color: #b8b8b8;
-      line-height: 1.7;
-    }
-
-    /* --- FINAL CTA SECTION --- */
-    .final-cta-section {
-      padding: 100px 20px;
-      background: linear-gradient(135deg, #2d1b69 0%, #1a1a1a 100%);
-      text-align: center;
-    }
-
-    .final-cta-section h2 {
-      font-size: 3rem;
-      font-weight: 900;
-      margin-bottom: 25px;
-      line-height: 1.3;
-    }
-
-    .final-cta-section p {
-      font-size: 1.3rem;
-      color: #b8b8b8;
-      margin-bottom: 40px;
-    }
-
-    .risk-reversal {
-      background: rgba(255, 215, 0, 0.1);
-      border: 2px solid #ffd700;
-      border-radius: 12px;
-      padding: 30px;
-      max-width: 700px;
-      margin: 40px auto 0;
-    }
-
-    .risk-reversal h3 {
-      color: #ffd700;
-      font-size: 1.5rem;
-      margin-bottom: 15px;
-    }
-
-    .risk-reversal p {
-      color: #d0d0d0;
-      font-size: 1.05rem;
-    }
-
-    /* --- RESPONSIVE --- */
     @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2.2rem;
-      }
-      
-      .subheadline {
-        font-size: 1.1rem;
-      }
-
-      .value-props {
-        flex-direction: column;
-        gap: 15px;
-      }
-
-      .cta-button {
-        padding: 18px 35px;
-        font-size: 1.1rem;
-      }
-
-      .stack-section h2,
-      .guarantee-section h2,
-      .testimonials-section h2,
-      .faq-section h2 {
-        font-size: 2rem;
-      }
-
-      .testimonials-grid {
-        grid-template-columns: 1fr;
-      }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
     }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 72px 5vw 0; position: relative; overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 70% 50%, rgba(255,60,172,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 20% 60%, rgba(43,210,255,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 50% 10%, rgba(255,107,53,0.05) 0%, transparent 60%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 900px; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--muted); font-weight: 500; margin-bottom: 2rem;
+      opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards;
+    }
+    .hero-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--accent-blue); }
+    .hero-headline {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 12vw, 11rem);
+      line-height: 0.9; letter-spacing: 0.02em; margin-bottom: 2rem;
+      opacity: 0; animation: fadeUp 0.9s ease 0.4s forwards;
+    }
+    .hero-headline .line-1 { display: block; color: var(--white); }
+    .hero-headline .line-2 {
+      display: block;
+      background: var(--gradient-brand); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+      background-size: 300% 100%;
+      animation: gradientShift 5s ease infinite 1.3s, fadeUp 0.9s ease 0.4s forwards;
+    }
+    @keyframes gradientShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.15rem); color: var(--muted); max-width: 500px;
+      line-height: 1.7; margin-bottom: 2.5rem;
+      opacity: 0; animation: fadeUp 0.9s ease 0.6s forwards;
+    }
+
+    /* WAITLIST IN HERO */
+    .hero-waitlist {
+      display: flex; gap: 0; margin-bottom: 2rem; max-width: 440px;
+      opacity: 0; animation: fadeUp 0.9s ease 0.75s forwards;
+    }
+    .hero-waitlist input {
+      flex: 1; padding: 13px 18px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+      border-right: none; border-radius: 4px 0 0 4px;
+      color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+      outline: none; cursor: none;
+      transition: border-color 0.2s;
+    }
+    .hero-waitlist input:focus { border-color: rgba(43,210,255,0.4); }
+    .hero-waitlist input::placeholder { color: rgba(240,242,255,0.25); }
+    .hero-waitlist button {
+      padding: 13px 22px;
+      background: var(--accent-blue); color: var(--black);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.8rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border: none; border-radius: 0 4px 4px 0; cursor: none;
+      transition: background 0.2s, transform 0.2s; white-space: nowrap;
+    }
+    .hero-waitlist button:hover { background: #52daff; transform: translateX(2px); }
+
+    .hero-actions {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0; animation: fadeUp 0.9s ease 0.9s forwards;
+    }
+    .btn-primary {
+      padding: 13px 28px; background: var(--white); color: var(--black);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.83rem;
+      letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 4px;
+      text-decoration: none; cursor: none; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(240,242,255,0.15); }
+    .btn-ghost {
+      padding: 13px 28px; background: transparent; color: var(--white);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.83rem;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      border: 1px solid var(--border); border-radius: 4px;
+      text-decoration: none; cursor: none; transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
+    .hero-scroll {
+      position: absolute; bottom: 40px; left: 5vw;
+      display: flex; align-items: center; gap: 12px;
+      color: var(--muted); font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+      opacity: 0; animation: fadeUp 1s ease 1.2s forwards;
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--accent-blue), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+    @keyframes scrollPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+    /* STATS */
+    .stats-bar {
+      padding: 36px 5vw; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      display: flex; gap: 3rem; flex-wrap: wrap; background: var(--deep);
+    }
+    .stat { display: flex; flex-direction: column; gap: 4px; }
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem;
+      background: var(--gradient-brand); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;
+    }
+    .stat-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* SECTION COMMON */
+    section { padding: 110px 5vw; }
+    .section-label {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent-blue); font-weight: 500; margin-bottom: 1.5rem;
+    }
+    .section-label::before { content: ''; width: 24px; height: 1px; background: currentColor; }
+    .section-title {
+      font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+      font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem;
+    }
+    .section-desc { color: var(--muted); max-width: 560px; line-height: 1.8; font-size: 1rem; }
+
+    /* PRODUCTS */
+    .products { background: var(--deep); }
+    .products-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3.5rem; flex-wrap: wrap; gap: 2rem; }
+    .products-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5px; background: var(--border); border: 1px solid var(--border);
+    }
+
+    /* STATUS BADGE - Feature 1 */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 20px; font-weight: 600; width: fit-content;
+    }
+    .status-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .status-live { background: rgba(6,214,160,0.1); color: #06d6a0; border: 1px solid rgba(6,214,160,0.25); }
+    .status-live::before { background: #06d6a0; animation: pulseDot 1.5s ease infinite; }
+    .status-beta { background: rgba(255,209,102,0.1); color: #ffd166; border: 1px solid rgba(255,209,102,0.25); }
+    .status-beta::before { background: #ffd166; }
+    .status-soon { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border); }
+    .status-soon::before { background: var(--muted); }
+    @keyframes pulseDot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .product-card {
+      background: var(--card); padding: 2.2rem;
+      position: relative; overflow: hidden;
+      transition: background 0.3s; text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; gap: 1rem; cursor: none;
+    }
+    .product-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--card-accent, var(--accent-blue));
+      transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+    }
+    .product-card:hover::before { transform: scaleX(1); }
+    .product-card:hover { background: #161930; }
+    .product-card-glow {
+      position: absolute; width: 200px; height: 200px; border-radius: 50%;
+      background: var(--card-accent, var(--accent-blue));
+      opacity: 0; top: -100px; right: -100px; filter: blur(60px);
+      transition: opacity 0.4s ease; pointer-events: none;
+    }
+    .product-card:hover .product-card-glow { opacity: 0.06; }
+    .product-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+    .product-icon {
+      width: 52px; height: 52px; border-radius: 13px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.6rem;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      overflow: hidden; flex-shrink: 0;
+    }
+    .product-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 11px; }
+    .product-tag {
+      font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--card-accent, var(--accent-blue)); font-weight: 500;
+      background: rgba(255,255,255,0.04); padding: 3px 9px;
+      border-radius: 2px; border: 1px solid currentColor; width: fit-content; opacity: 0.8;
+    }
+    .product-name { font-family: 'Syne', sans-serif; font-size: 1.35rem; font-weight: 700; }
+    .product-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.7; flex: 1; }
+
+    /* METRICS - Feature 5 */
+    .product-metrics {
+      display: flex; gap: 1rem; padding-top: 0.8rem;
+      border-top: 1px solid var(--border); flex-wrap: wrap;
+    }
+    .p-metric { display: flex; flex-direction: column; gap: 2px; }
+    .p-metric-val {
+      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+      color: var(--card-accent, var(--accent-blue));
+    }
+    .p-metric-key { font-size: 0.64rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+    .product-link {
+      display: flex; align-items: center; gap: 8px; font-size: 0.78rem;
+      font-weight: 500; color: var(--card-accent, var(--accent-blue));
+      letter-spacing: 0.05em; transition: gap 0.2s; margin-top: auto; padding-top: 0.5rem;
+    }
+    .product-card:hover .product-link { gap: 14px; }
+    .product-link svg { width: 13px; height: 13px; transition: transform 0.2s; }
+    .product-card:hover .product-link svg { transform: translateX(3px); }
+
+    .card-coming {
+      border: 1.5px dashed rgba(255,255,255,0.08); background: transparent !important;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; gap: 1rem; min-height: 260px;
+    }
+    .card-coming:hover { background: rgba(255,255,255,0.02) !important; }
+    .plus-icon {
+      width: 48px; height: 48px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--muted);
+    }
+
+    /* CHANGELOG - Feature 3 */
+    .changelog { background: var(--black); }
+    .changelog-inner { display: grid; grid-template-columns: 300px 1fr; gap: 5rem; align-items: start; }
+    @media (max-width: 900px) { .changelog-inner { grid-template-columns: 1fr; gap: 3rem; } }
+    .changelog-entries { display: flex; flex-direction: column; gap: 0; }
+    .changelog-entry {
+      display: grid; grid-template-columns: 120px 1fr; gap: 2rem;
+      padding: 1.8rem 0; border-bottom: 1px solid var(--border); position: relative;
+    }
+    .changelog-entry:first-child { padding-top: 0; }
+    .changelog-entry::before {
+      content: ''; position: absolute; left: 120px; top: 0; bottom: 0;
+      width: 1px; background: var(--border);
+      transform: translateX(calc(-2rem - 0.5px));
+    }
+    .changelog-date {
+      font-size: 0.72rem; color: var(--muted); letter-spacing: 0.1em;
+      text-transform: uppercase; padding-top: 3px; line-height: 1.4;
+    }
+    .changelog-content { padding-left: 0; }
+    .changelog-version {
+      display: inline-block; font-size: 0.65rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--accent-blue);
+      background: rgba(43,210,255,0.08); border: 1px solid rgba(43,210,255,0.2);
+      padding: 2px 9px; border-radius: 2px; margin-bottom: 8px; font-weight: 600;
+    }
+    .changelog-title {
+      font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700;
+      margin-bottom: 6px; color: var(--white);
+    }
+    .changelog-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.7; }
+    .changelog-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .changelog-tag {
+      font-size: 0.62rem; padding: 2px 8px; border-radius: 2px;
+      background: rgba(255,255,255,0.05); color: var(--muted);
+      border: 1px solid var(--border); letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
+    /* TESTIMONIALS - Feature 4 */
+    .testimonials { background: var(--deep); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5px; background: var(--border); border: 1px solid var(--border); margin-top: 3.5rem; }
+    .testimonial-card { background: var(--card); padding: 2rem; display: flex; flex-direction: column; gap: 1.2rem; }
+    .testimonial-quote {
+      font-size: 1.8rem; color: var(--accent-blue); opacity: 0.4;
+      font-family: Georgia, serif; line-height: 1; margin-bottom: -0.5rem;
+    }
+    .testimonial-text { font-size: 0.92rem; color: var(--white); line-height: 1.8; font-style: italic; flex: 1; }
+    .testimonial-author { display: flex; align-items: center; gap: 12px; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .testimonial-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .testimonial-name { font-size: 0.88rem; font-weight: 500; color: var(--white); }
+    .testimonial-role { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; }
+    .testimonial-product {
+      font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--card-accent, var(--accent-blue)); font-weight: 600;
+    }
+
+    /* BLOG - Feature 6 */
+    .blog { background: var(--black); }
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5px; background: var(--border); border: 1px solid var(--border); margin-top: 3.5rem; }
+    .blog-card {
+      background: var(--card); padding: 2rem;
+      text-decoration: none; color: inherit; cursor: none;
+      display: flex; flex-direction: column; gap: 1rem;
+      transition: background 0.3s; position: relative; overflow: hidden;
+    }
+    .blog-card:hover { background: #161930; }
+    .blog-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--accent-pink); transform: scaleX(0); transform-origin: left; transition: transform 0.4s;
+    }
+    .blog-card:hover::before { transform: scaleX(1); }
+    .blog-category {
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent-pink); font-weight: 600;
+    }
+    .blog-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; line-height: 1.3; }
+    .blog-excerpt { font-size: 0.86rem; color: var(--muted); line-height: 1.7; flex: 1; }
+    .blog-meta { display: flex; align-items: center; justify-content: space-between; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .blog-date { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; }
+    .blog-read { font-size: 0.72rem; color: var(--accent-pink); font-weight: 500; letter-spacing: 0.06em; display: flex; align-items: center; gap: 5px; }
+    .blog-read svg { width: 11px; height: 11px; }
+
+    /* ABOUT */
+    .about { background: var(--surface); }
+    .about-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+    @media (max-width: 768px) { .about-inner { grid-template-columns: 1fr; gap: 3rem; } }
+    .about-visual { position: relative; height: 420px; }
+    .about-box { position: absolute; border: 1px solid var(--border); border-radius: 8px; background: var(--card); padding: 1.5rem; }
+    .about-box-main {
+      inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
+      background: linear-gradient(135deg, var(--card), #0d1028); overflow: hidden;
+    }
+    .about-box-main::before {
+      content: ''; position: absolute; top: -80px; right: -80px; width: 300px; height: 300px;
+      border-radius: 50%; background: radial-gradient(circle, rgba(255,60,172,0.12), transparent 70%);
+    }
+    .about-metric { display: flex; gap: 2rem; margin-bottom: 1rem; position: relative; z-index: 1; }
+    .metric-item { display: flex; flex-direction: column; gap: 2px; }
+    .metric-val { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .metric-key { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .float-bar { height: 4px; border-radius: 2px; background: var(--border); overflow: hidden; }
+    .float-bar-fill { height: 100%; border-radius: 2px; animation: barGrow 2s ease 1s both; }
+    @keyframes barGrow { from { width: 0; } }
+    .about-text { display: flex; flex-direction: column; gap: 1.5rem; }
+    .about-text p { color: var(--muted); line-height: 1.9; font-size: 0.98rem; }
+    .about-text strong { color: var(--white); font-weight: 400; }
+    .values-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem; }
+    .value-item { display: flex; align-items: flex-start; gap: 14px; padding: 1rem 1.2rem; background: var(--card); border: 1px solid var(--border); border-radius: 6px; }
+    .value-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .value-item p { font-size: 0.86rem; color: var(--muted); line-height: 1.6; }
+    .value-item strong { color: var(--white); }
+
+    /* PARTNERS - Feature 8 */
+    .partners { background: var(--deep); }
+    .partners-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5px; background: var(--border); border: 1px solid var(--border); margin-top: 3.5rem; }
+    .partner-card { background: var(--card); padding: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+    .partner-icon { font-size: 2rem; }
+    .partner-type {
+      font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+      font-weight: 600; color: var(--card-accent, var(--accent-yellow));
+    }
+    .partner-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; }
+    .partner-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.7; flex: 1; }
+    .partner-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em;
+      color: var(--card-accent, var(--accent-yellow)); text-decoration: none; cursor: none;
+      transition: gap 0.2s;
+    }
+    .partner-card:hover .partner-cta { gap: 14px; }
+
+    /* REFERRAL - Feature 9 */
+    .referral { background: var(--black); }
+    .referral-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+    @media (max-width: 768px) { .referral-inner { grid-template-columns: 1fr; gap: 3rem; } }
+    .referral-steps { display: flex; flex-direction: column; gap: 0; margin-top: 2rem; }
+    .referral-step { display: flex; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid var(--border); position: relative; }
+    .referral-step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; line-height: 1;
+      background: var(--gradient-brand); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+      flex-shrink: 0; width: 40px;
+    }
+    .step-content { display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
+    .step-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+    .step-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.6; }
+    .referral-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+      padding: 2.5rem; display: flex; flex-direction: column; gap: 1.5rem;
+      position: relative; overflow: hidden;
+    }
+    .referral-card::before {
+      content: ''; position: absolute; top: -100px; right: -100px;
+      width: 300px; height: 300px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,209,102,0.08), transparent 70%);
+    }
+    .referral-earn {
+      font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1;
+      background: var(--gradient-brand); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .referral-earn-sub { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+    .referral-form { display: flex; flex-direction: column; gap: 1rem; }
+    .referral-form input {
+      padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      border-radius: 4px; color: var(--white); font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem; outline: none; transition: border-color 0.2s; cursor: none;
+    }
+    .referral-form input:focus { border-color: rgba(255,209,102,0.4); }
+    .referral-form input::placeholder { color: rgba(240,242,255,0.25); }
+    .referral-form button {
+      padding: 13px 24px; background: var(--accent-yellow); color: var(--black);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.82rem;
+      letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 4px;
+      cursor: none; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .referral-form button:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,209,102,0.2); }
+    .referral-products { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ref-product {
+      font-size: 0.7rem; padding: 4px 10px; border-radius: 3px;
+      background: rgba(255,209,102,0.08); color: var(--accent-yellow);
+      border: 1px solid rgba(255,209,102,0.2); letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
+    /* UNIFIED ACCOUNT - Feature 7 */
+    .unified { background: var(--surface); }
+    .unified-inner { text-align: center; max-width: 700px; margin: 0 auto; }
+    .unified-inner .section-label { justify-content: center; }
+    .unified-inner .section-label::before { display: none; }
+    .unified-inner .section-desc { margin: 0 auto; text-align: left; }
+    .unified-apps {
+      display: flex; justify-content: center; align-items: center; gap: -12px;
+      margin: 2.5rem 0;
+    }
+    .unified-app {
+      width: 56px; height: 56px; border-radius: 14px; border: 2px solid var(--black);
+      overflow: hidden; margin-left: -12px; background: var(--card);
+      display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+      transition: transform 0.2s;
+    }
+    .unified-app:first-child { margin-left: 0; }
+    .unified-app:hover { transform: translateY(-6px); z-index: 2; }
+    .unified-app img { width: 100%; height: 100%; object-fit: cover; }
+    .unified-arrow {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--muted);
+      margin: 0 1rem; letter-spacing: 0.05em;
+    }
+    .unified-one {
+      width: 64px; height: 64px; border-radius: 16px; margin-left: -12px;
+      background: linear-gradient(135deg, #ff3cac, #2bd2ff); border: 2px solid var(--black);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--black); font-weight: 900;
+    }
+    .unified-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 2.5rem 0; }
+    @media (max-width: 600px) { .unified-features { grid-template-columns: 1fr; } }
+    .unified-feat {
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      padding: 1.2rem; text-align: left; display: flex; flex-direction: column; gap: 6px;
+    }
+    .unified-feat-icon { font-size: 1.3rem; }
+    .unified-feat-title { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; }
+    .unified-feat-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; }
+    .waitlist-btn {
+      padding: 14px 36px; background: var(--white); color: var(--black);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 4px;
+      cursor: none; transition: transform 0.2s, box-shadow 0.2s; display: inline-block;
+    }
+    .waitlist-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(240,242,255,0.15); }
+
+    /* CONTACT */
+    .contact { background: var(--deep); }
+    .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    @media (max-width: 768px) { .contact-inner { grid-template-columns: 1fr; gap: 3rem; } }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+    .form-group input, .form-group textarea, .form-group select {
+      background: var(--card); border: 1px solid var(--border); border-radius: 4px;
+      padding: 12px 16px; color: var(--white); font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem; outline: none; transition: border-color 0.2s; width: 100%; cursor: none;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: rgba(43,210,255,0.4); }
+    .form-group textarea { resize: vertical; min-height: 110px; }
+    .form-group select option { background: var(--card); }
+    .form-submit {
+      padding: 13px 28px; background: var(--white); color: var(--black);
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.83rem;
+      letter-spacing: 0.08em; text-transform: uppercase; border: none; border-radius: 4px;
+      cursor: none; width: fit-content; transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .form-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(240,242,255,0.12); }
+    .contact-info { display: flex; flex-direction: column; gap: 2rem; }
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+    .contact-link-item {
+      display: flex; align-items: center; gap: 16px; padding: 1.1rem 1.4rem;
+      background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+      text-decoration: none; color: inherit; transition: border-color 0.2s, background 0.2s; cursor: none;
+    }
+    .contact-link-item:hover { border-color: rgba(255,255,255,0.15); background: #161930; }
+    .contact-link-icon { width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .contact-link-text { display: flex; flex-direction: column; gap: 2px; }
+    .contact-link-label { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .contact-link-val { font-size: 0.9rem; font-weight: 500; color: var(--white); }
+
+    /* FOOTER */
+    footer {
+      padding: 36px 5vw; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 0.08em; background: var(--gradient-brand); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .footer-links { display: flex; gap: 1.8rem; list-style: none; flex-wrap: wrap; }
+    .footer-links a { font-size: 0.76rem; color: var(--muted); text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; cursor: none; }
+    .footer-links a:hover { color: var(--white); }
+    .footer-copy { font-size: 0.72rem; color: rgba(240,242,255,0.25); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 30px; right: 30px; z-index: 9997;
+      background: var(--card); border: 1px solid rgba(6,214,160,0.3); border-radius: 8px;
+      padding: 1rem 1.5rem; display: flex; align-items: center; gap: 12px;
+      transform: translateY(100px); opacity: 0; transition: all 0.4s ease;
+      max-width: 320px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .toast-text { font-size: 0.85rem; color: var(--white); line-height: 1.5; }
+    .toast-text strong { color: var(--accent-green); }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: rgba(43,210,255,0.3); border-radius: 2px; }
   </style>
 </head>
 <body>
 
-  <!-- HERO SECTION -->
-  <section class="hero">
-    <div class="urgency-banner">
-      ⚡ LIMITED: First 100 Members Get Lifetime Access at Founding Price
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <div class="toast-icon">✅</div>
+    <div class="toast-text" id="toastText"><strong>You're on the list!</strong> We'll reach out when it's ready.</div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <defs>
+          <linearGradient id="lg1" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ff3cac"/>
+            <stop offset="50%" stop-color="#2bd2ff"/>
+            <stop offset="100%" stop-color="#06d6a0"/>
+          </linearGradient>
+        </defs>
+        <polygon points="18,3 33,30 3,30" fill="none" stroke="url(#lg1)" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="18" cy="21" r="4" fill="url(#lg1)"/>
+      </svg>
+      <span class="nav-logo-text">Skillence</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#products">Products</a></li>
+      <li><a href="#changelog">Changelog</a></li>
+      <li><a href="#blog">Insights</a></li>
+      <li><a href="#partners">Partners</a></li>
+      <li><a href="#referral">Earn</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact" class="nav-cta">Contact</a></li>
+    </ul>
+    <div class="nav-hamburger" id="hamburger">
+      <span></span><span></span><span></span>
     </div>
-    
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#products" onclick="closeMobile()">Products</a>
+    <a href="#changelog" onclick="closeMobile()">Changelog</a>
+    <a href="#blog" onclick="closeMobile()">Insights</a>
+    <a href="#partners" onclick="closeMobile()">Partners</a>
+    <a href="#referral" onclick="closeMobile()">Earn</a>
+    <a href="#about" onclick="closeMobile()">About</a>
+    <a href="#contact" onclick="closeMobile()">Contact</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
     <div class="hero-content">
-      <div class="eyebrow">The Career Acceleration System</div>
-      
-      <h1>
-        Land Your <span class="highlight-yellow">100K+ Dream Job</span> in 90 Days or We Work With You For Free Until You Do
+      <div class="hero-eyebrow">Skillence · Product Studio · Built in Kenya 🇰🇪</div>
+      <h1 class="hero-headline">
+        <span class="line-1">Building</span>
+        <span class="line-2">Greatness</span>
       </h1>
-      
-      <p class="subheadline">
-        Join 10,000+ professionals who escaped dead-end careers using our AI-powered CV analysis, job matching, and mentorship platform
-      </p>
+      <p class="hero-sub">A portfolio of tools, apps, and systems built for real people with real problems — from education to local commerce.</p>
 
-      <div class="value-props">
-        <div class="value-prop">
-          <span>✓</span> AI CV Analyzer (2.3x More Interviews)
-        </div>
-        <div class="value-prop">
-          <span>✓</span> Live Job Matches (Updated Daily)
-        </div>
-        <div class="value-prop">
-          <span>✓</span> 1-on-1 Mentor Access
-        </div>
-      </div>
+      <!-- WAITLIST - Feature 2 -->
+      <form class="hero-waitlist" onsubmit="handleWaitlist(event)">
+        <input type="email" placeholder="Enter your email for early access" required />
+        <button type="submit">Join Waitlist</button>
+      </form>
 
-      <div class="cta-container">
-        <button class="cta-button" onclick="startFree()">
-          Get Instant Access Now →
-        </button>
-        <p class="guarantee-text">
-          <strong>90-Day Money-Back Guarantee</strong> • No Credit Card Required to Start
-        </p>
-      </div>
-
-      <div class="social-proof-strip">
-        <p>Trusted by professionals at:</p>
-        <div class="logo-strip">
-          <span style="font-size: 1.5rem; font-weight: 700;">Google</span>
-          <span style="font-size: 1.5rem; font-weight: 700;">Microsoft</span>
-          <span style="font-size: 1.5rem; font-weight: 700;">Amazon</span>
-          <span style="font-size: 1.5rem; font-weight: 700;">Meta</span>
-        </div>
+      <div class="hero-actions">
+        <a href="#products" class="btn-primary">Explore Products</a>
+        <a href="#contact" class="btn-ghost">Work With Us</a>
       </div>
     </div>
+    <div class="hero-scroll"><div class="scroll-line"></div> Scroll</div>
   </section>
 
-  <!-- STACK SLIDE SECTION -->
-  <section class="stack-section">
-    <h2>What You Get Today (Value: 12,547/year)</h2>
-    <p class="stack-subtitle">Everything you need to land your dream career in one platform</p>
+  <!-- STATS -->
+  <div class="stats-bar reveal">
+    <div class="stat"><span class="stat-number">5+</span><span class="stat-label">Products Built</span></div>
+    <div class="stat"><span class="stat-number">3+</span><span class="stat-label">Industries</span></div>
+    <div class="stat"><span class="stat-number">2K+</span><span class="stat-label">Users Across Apps</span></div>
+    <div class="stat"><span class="stat-number">100%</span><span class="stat-label">Independent</span></div>
+    <div class="stat"><span class="stat-number">KE</span><span class="stat-label">Built in Kenya</span></div>
+  </div>
 
-    <div class="stack-container">
-      
-      <div class="stack-item">
-        <div class="stack-number">1</div>
-        <h3>🤖 AI-Powered CV Analyzer</h3>
-        <div class="stack-value">Value: 2,997/year</div>
-        <p>Upload your CV and get instant analysis with a personalized skill score. Our AI compares your resume against 100,000+ successful job placements and tells you exactly what to fix.</p>
-        <ul class="stack-bullets">
-          <li>ATS-optimization score (beats 94% of applicants)</li>
-          <li>Keyword gap analysis for your target role</li>
-          <li>Industry-specific recommendations</li>
-          <li>Side-by-side comparison with job descriptions</li>
-        </ul>
+  <!-- PRODUCTS - Features 1 & 5 -->
+  <section class="products" id="products">
+    <div class="products-header reveal">
+      <div>
+        <div class="section-label">Our Products</div>
+        <h2 class="section-title">Tools Built for<br>the Real World</h2>
       </div>
+      <p class="section-desc">Each product independently designed, built, and operated — solving a specific problem with no fluff.</p>
+    </div>
+    <div class="products-grid reveal">
 
-      <div class="stack-item">
-        <div class="stack-number">2</div>
-        <h3>💼 Smart Job Matching Engine</h3>
-        <div class="stack-value">Value: 1,997/year</div>
-        <p>Stop wasting hours on job boards. Our system scans 50,000+ live positions daily and sends you only the jobs that match your skills, salary expectations, and career goals.</p>
-        <ul class="stack-bullets">
-          <li>Real-time job alerts (within 60 minutes of posting)</li>
-          <li>Salary transparency for every role</li>
-          <li>Company culture insights and reviews</li>
-          <li>One-click apply with optimized CV</li>
-        </ul>
-      </div>
+      <!-- Bookverse -->
+      <a href="https://bookverse.skillence.top" class="product-card" style="--card-accent:#2bd2ff;">
+        <div class="product-card-glow"></div>
+        <div class="product-card-header">
+          <div class="product-icon"><img src="splash.png" alt="Bookverse" /></div>
+          <span class="status-badge status-live">Live</span>
+        </div>
+        <div class="product-tag">Education · Mobile App</div>
+        <div class="product-name">Bookverse</div>
+        <p class="product-desc">Kenya's digital book platform for students, teachers, and parents. CBC-aligned content, chapter quizzes, study groups, and family subscriptions.</p>
+        <div class="product-metrics">
+          <div class="p-metric"><span class="p-metric-val">500+</span><span class="p-metric-key">Students</span></div>
+          <div class="p-metric"><span class="p-metric-val">200+</span><span class="p-metric-key">Books</span></div>
+          <div class="p-metric"><span class="p-metric-val">50+</span><span class="p-metric-key">Schools</span></div>
+        </div>
+        <div class="product-link">Visit Bookverse <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h12M7 1l6 6-6 6"/></svg></div>
+      </a>
 
-      <div class="stack-item">
-        <div class="stack-number">3</div>
-        <h3>🎓 Industry-Specific Courses Library</h3>
-        <div class="stack-value">Value: 3,997/year</div>
-        <p>Access 500+ premium courses taught by industry leaders. From technical skills to interview prep, get the exact knowledge gaps filled that are holding you back.</p>
-        <ul class="stack-bullets">
-          <li>Personalized learning path based on your CV gaps</li>
-          <li>Certificates recognized by top employers</li>
-          <li>Live Q&A sessions with instructors</li>
-          <li>New courses added weekly</li>
-        </ul>
-      </div>
+      <!-- Creator OS -->
+      <a href="https://content.skillence.top" class="product-card" style="--card-accent:#ff3cac;">
+        <div class="product-card-glow"></div>
+        <div class="product-card-header">
+          <div class="product-icon"><img src="icon.png" alt="Creator OS" /></div>
+          <span class="status-badge status-beta">Beta</span>
+        </div>
+        <div class="product-tag">Productivity · Creator Tools</div>
+        <div class="product-name">Creator OS</div>
+        <p class="product-desc">A supercharged operating system for content creators. Manage your pipeline, ideas, schedule, and analytics from a single command centre.</p>
+        <div class="product-metrics">
+          <div class="p-metric"><span class="p-metric-val">120+</span><span class="p-metric-key">Creators</span></div>
+          <div class="p-metric"><span class="p-metric-val">4.8★</span><span class="p-metric-key">Rating</span></div>
+        </div>
+        <div class="product-link">Visit Creator OS <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h12M7 1l6 6-6 6"/></svg></div>
+      </a>
 
-      <div class="stack-item">
-        <div class="stack-number">4</div>
-        <h3>🤝 1-on-1 Mentor Matching</h3>
-        <div class="stack-value">Value: 2,997/year</div>
-        <p>Get paired with a senior professional in your target industry who's already where you want to be. Weekly video calls, resume reviews, and insider advice.</p>
-        <ul class="stack-bullets">
-          <li>Matched with mentor in your dream company/industry</li>
-          <li>Unlimited messaging access</li>
-          <li>Monthly strategy calls</li>
-          <li>Network introduction opportunities</li>
-        </ul>
-      </div>
+      <!-- NearbyRadar -->
+      <a href="https://nearbyradar.skillence.top" class="product-card" style="--card-accent:#06d6a0;">
+        <div class="product-card-glow"></div>
+        <div class="product-card-header">
+          <div class="product-icon">📍</div>
+          <span class="status-badge status-beta">Beta</span>
+        </div>
+        <div class="product-tag">Local Commerce · Maps</div>
+        <div class="product-name">NearbyRadar</div>
+        <p class="product-desc">Discover shops near you, browse their products, and see exact distances on a live map. Connecting local businesses to customers already looking for them.</p>
+        <div class="product-metrics">
+          <div class="p-metric"><span class="p-metric-val">80+</span><span class="p-metric-key">Shops</span></div>
+          <div class="p-metric"><span class="p-metric-val">3 cities</span><span class="p-metric-key">Coverage</span></div>
+        </div>
+        <div class="product-link">Visit NearbyRadar <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h12M7 1l6 6-6 6"/></svg></div>
+      </a>
 
-      <div class="stack-item">
-        <div class="stack-number">5</div>
-        <h3>📱 Professional Social Feed</h3>
-        <div class="stack-value">Value: 597/year</div>
-        <p>Build your professional brand. Share insights, connect with industry leaders, and get discovered by recruiters actively looking for talent like you.</p>
-        <ul class="stack-bullets">
-          <li>Algorithm optimized for career visibility</li>
-          <li>Direct messaging with recruiters</li>
-          <li>Showcase your skills and projects</li>
-          <li>Get endorsed by mentors and peers</li>
-        </ul>
-      </div>
+      <!-- Systems -->
+      <a href="https://systems.skillence.top" class="product-card" style="--card-accent:#ffd166;">
+        <div class="product-card-glow"></div>
+        <div class="product-card-header">
+          <div class="product-icon">⚙️</div>
+          <span class="status-badge status-live">Live</span>
+        </div>
+        <div class="product-tag">Systems · Templates</div>
+        <div class="product-name">Skillence Systems</div>
+        <p class="product-desc">A curated library of systems, templates, and frameworks we've built and battle-tested. Plug them in and skip months of trial and error.</p>
+        <div class="product-metrics">
+          <div class="p-metric"><span class="p-metric-val">30+</span><span class="p-metric-key">Systems</span></div>
+          <div class="p-metric"><span class="p-metric-val">Free → Paid</span><span class="p-metric-key">Pricing</span></div>
+        </div>
+        <div class="product-link">Browse Systems <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h12M7 1l6 6-6 6"/></svg></div>
+      </a>
 
-      <div class="stack-item">
-        <div class="stack-number">6</div>
-        <h3>🔔 Real-Time Career Opportunities</h3>
-        <div class="stack-value">Value: 497/year</div>
-        <p>Never miss an opportunity. Get instant notifications when companies in your target list post new positions, or when someone in your network can introduce you.</p>
-        <ul class="stack-bullets">
-          <li>Smart notifications (not spam)</li>
-          <li>Follow companies and get insider alerts</li>
-          <li>Track your application status</li>
-          <li>Referral opportunity alerts</li>
-        </ul>
-      </div>
-
-      <div class="total-value-box">
-        <p style="color: #888; margin-bottom: 15px;">TOTAL VALUE IF PURCHASED SEPARATELY:</p>
-        <div class="strikethrough-price">12,547/year</div>
-        <div class="actual-price">$0</div>
-        <p class="price-subtext">Start free. Upgrade to Premium anytime for $97/mo</p>
-        <button class="cta-button" onclick="startFree()" style="margin-top: 25px;">
-          Claim Your Free Account Now →
-        </button>
+      <!-- Coming Soon -->
+      <div class="product-card card-coming">
+        <span class="status-badge status-soon" style="margin:0 auto;">Coming Soon</span>
+        <div class="plus-icon">+</div>
+        <div style="font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:var(--white);">More Products</div>
+        <div style="font-size:0.8rem;color:rgba(240,242,255,0.3);">We build in public. Stay tuned.</div>
       </div>
 
     </div>
   </section>
 
-  <!-- GUARANTEE SECTION -->
-  <section class="guarantee-section">
-    <div class="guarantee-badge">🛡️</div>
-    <h2>Our Absurd 90-Day "Land Your Dream Job" Guarantee</h2>
-    <p>
-      Use Skillence Premium for 90 days. If you don't land at least 3 quality interviews in your target industry, 
-      we'll not only refund your money—we'll continue working with you for FREE until you get the job. 
-      Plus, you keep all the courses and templates. We take the risk, you get the results.
-    </p>
-    <p style="font-size: 1.1rem; color: #ffd700; margin-top: 20px;">
-      That's how confident we are this works.
-    </p>
+  <!-- CHANGELOG - Feature 3 -->
+  <section class="changelog" id="changelog">
+    <div class="changelog-inner">
+      <div class="reveal">
+        <div class="section-label">Build Log</div>
+        <h2 class="section-title">What We've Shipped</h2>
+        <p class="section-desc">We build in public. Every launch, feature, and milestone — documented here.</p>
+        <div style="margin-top:2rem;">
+          <a href="#contact" class="btn-ghost" style="font-size:0.78rem;padding:10px 22px;">Subscribe to Updates →</a>
+        </div>
+      </div>
+      <div class="changelog-entries reveal">
+        <div class="changelog-entry">
+          <div class="changelog-date">Mar 2025</div>
+          <div class="changelog-content">
+            <span class="changelog-version">v2.1 · Bookverse</span>
+            <div class="changelog-title">Family Subscriptions & Parent Dashboard</div>
+            <p class="changelog-desc">Parents can now manage up to 5 children under one subscription, track reading progress, and set content restrictions per child.</p>
+            <div class="changelog-tags"><span class="changelog-tag">Subscriptions</span><span class="changelog-tag">Dashboard</span><span class="changelog-tag">Mobile</span></div>
+          </div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">Feb 2025</div>
+          <div class="changelog-content">
+            <span class="changelog-version">v1.0 · Creator OS</span>
+            <div class="changelog-title">Creator OS Public Beta Launch</div>
+            <p class="changelog-desc">After 3 months of private testing with 20 creators, Creator OS is now open for public beta access. Content pipeline, scheduling, and analytics all live.</p>
+            <div class="changelog-tags"><span class="changelog-tag">Launch</span><span class="changelog-tag">Beta</span></div>
+          </div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">Jan 2025</div>
+          <div class="changelog-content">
+            <span class="changelog-version">v1.2 · NearbyRadar</span>
+            <div class="changelog-title">Google Maps Integration & Distance Sorting</div>
+            <p class="changelog-desc">Live map view with real-time shop locations, walking/driving distance estimates, and product search within a radius.</p>
+            <div class="changelog-tags"><span class="changelog-tag">Maps</span><span class="changelog-tag">Search</span></div>
+          </div>
+        </div>
+        <div class="changelog-entry">
+          <div class="changelog-date">Dec 2024</div>
+          <div class="changelog-content">
+            <span class="changelog-version">v1.0 · Skillence</span>
+            <div class="changelog-title">Skillence Studio Launched</div>
+            <p class="changelog-desc">The mothership is live. All products now live under the Skillence brand with a unified identity and subdomain structure.</p>
+            <div class="changelog-tags"><span class="changelog-tag">Brand</span><span class="changelog-tag">Launch</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <!-- TESTIMONIALS SECTION -->
-  <section class="testimonials-section">
-    <h2>Real Results From Real People</h2>
-    <p class="subheadline">These professionals were exactly where you are 90 days ago</p>
+  <!-- TESTIMONIALS - Feature 4 -->
+  <section class="testimonials" id="testimonials">
+    <div class="reveal">
+      <div class="section-label">Social Proof</div>
+      <h2 class="section-title">What People Are Saying</h2>
+      <p class="section-desc">Real feedback from real users across our products.</p>
+    </div>
+    <div class="testimonials-grid reveal">
 
-    <div class="testimonials-grid">
-      
-      <div class="testimonial-card">
-        <div class="result-highlight">$45K Salary Increase</div>
-        <p class="quote">
-          "I was stuck at $65K for 3 years. After fixing my CV with Skillence's analyzer, I got 7 interviews in 2 weeks. 
-          Landed a Senior role at $110K. The AI literally told me the exact keywords I was missing."
-        </p>
-        <div class="author">
-          <img src="https://i.pravatar.cc/60?img=12" alt="Jordan K.">
-          <div class="author-info">
-            <h4>Jordan K.</h4>
-            <p>Marketing Manager → Senior Marketing Director</p>
+      <div class="testimonial-card" style="--card-accent:#2bd2ff;">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">Bookverse has completely changed how my students engage with reading. The CBC alignment means I spend less time searching and more time teaching.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:rgba(43,210,255,0.15);color:var(--accent-blue);">SM</div>
+          <div>
+            <div class="testimonial-name">Sarah M.</div>
+            <div class="testimonial-role">Primary School Teacher, Nairobi</div>
+            <div class="testimonial-product">Bookverse</div>
           </div>
         </div>
       </div>
 
-      <div class="testimonial-card">
-        <div class="result-highlight">Landed Dream Job in 6 Weeks</div>
-        <p class="quote">
-          "Graduated with no connections. Used Skillence to find a mentor at Google who referred me internally. 
-          Start next month at $95K. This platform literally fast-tracked my entire career by 3-5 years."
-        </p>
-        <div class="author">
-          <img src="https://i.pravatar.cc/60?img=18" alt="Sarah M.">
-          <div class="author-info">
-            <h4>Sarah M.</h4>
-            <p>Recent Graduate → Software Engineer at Google</p>
+      <div class="testimonial-card" style="--card-accent:#ff3cac;">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">Creator OS is the first tool that actually fits how I work. My content backlog went from chaos to a clean pipeline in one afternoon.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:rgba(255,60,172,0.15);color:var(--accent-pink);">DJ</div>
+          <div>
+            <div class="testimonial-name">David J.</div>
+            <div class="testimonial-role">YouTuber & Podcast Host</div>
+            <div class="testimonial-product">Creator OS</div>
           </div>
         </div>
       </div>
 
-      <div class="testimonial-card">
-        <div class="result-highlight">3X Interview Rate</div>
-        <p class="quote">
-          "Applied to 50+ jobs with zero responses. Ran my CV through Skillence—score was 34%. 
-          Fixed everything they suggested, score hit 87%. Next 15 applications got me 11 interviews. 
-          Started my dream job last week."
-        </p>
-        <div class="author">
-          <img src="https://i.pravatar.cc/60?img=30" alt="Ahmed R.">
-          <div class="author-info">
-            <h4>Ahmed R.</h4>
-            <p>Unemployed → Senior Software Engineer</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="result-highlight">Career Pivot at 42</div>
-        <p class="quote">
-          "Thought I was too old to switch industries. Skillence showed me how to position my transferable skills. 
-          The courses filled my knowledge gaps. Got hired in fintech at 42 making $120K. Never too late."
-        </p>
-        <div class="author">
-          <img src="https://i.pravatar.cc/60?img=45" alt="Marcus T.">
-          <div class="author-info">
-            <h4>Marcus T.</h4>
-            <p>Retail Management → FinTech Product Manager</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="result-highlight">Remote Job in 21 Days</div>
-        <p class="quote">
-          "Wanted remote work but kept getting rejected. The job matching showed me remote-first companies 
-          hiring in my niche. Applied to 8, got 5 responses. Now working remotely for a SF startup from Spain."
-        </p>
-        <div class="author">
-          <img src="https://i.pravatar.cc/60?img=22" alt="Elena P.">
-          <div class="author-info">
-            <h4>Elena P.</h4>
-            <p>Office Job → Remote UX Designer</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="testimonial-card">
-        <div class="result-highlight">First Job Out of Bootcamp</div>
-        <p class="quote">
-          "Bootcamp grad with no degree competing against CS majors. Skillence's mentor helped me build 
-          a portfolio that got noticed. Hired at a Series B startup. Making more than my friends with 4-year degrees."
-        </p>
-        <div class="author">
-          <img src="https://i.pravatar.cc/60?img=55" alt="Tyler J.">
-          <div class="author-info">
-            <h4>Tyler J.</h4>
-            <p>Bootcamp Grad → Full Stack Developer</p>
+      <div class="testimonial-card" style="--card-accent:#06d6a0;">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">I listed my shop on NearbyRadar and got three new customers in the first week just from people who had no idea I existed nearby.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar" style="background:rgba(6,214,160,0.15);color:var(--accent-green);">AN</div>
+          <div>
+            <div class="testimonial-name">Amina N.</div>
+            <div class="testimonial-role">Shop Owner, Westlands</div>
+            <div class="testimonial-product">NearbyRadar</div>
           </div>
         </div>
       </div>
@@ -834,228 +920,338 @@
     </div>
   </section>
 
-  <!-- FAQ SECTION -->
-  <section class="faq-section">
-    <h2>Questions You're Probably Asking</h2>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        Is this actually free to start?
-      </div>
-      <div class="faq-answer">
-        Yes. Zero credit card required. You get full access to CV analysis, job matching, and the professional network immediately. 
-        Upgrade to Premium ($97/mo) when you want mentor access, courses, and priority job alerts. Most people upgrade within 14 days 
-        because they see results fast.
-      </div>
+  <!-- BLOG - Feature 6 -->
+  <section class="blog" id="blog">
+    <div class="reveal">
+      <div class="section-label">Insights</div>
+      <h2 class="section-title">Thoughts from<br>the Build</h2>
+      <p class="section-desc">What we're learning, observing, and thinking about as we build for Africa.</p>
     </div>
+    <div class="blog-grid reveal">
 
-    <div class="faq-item">
-      <div class="faq-question">
-        What if I don't get results in 90 days?
-      </div>
-      <div class="faq-answer">
-        Then we work for free. Seriously. If you're a Premium member and don't land at least 3 quality interviews in 90 days, 
-        we refund 100% AND keep working with you until you get the job. You keep all course access and templates. 
-        We eat the cost because we know this works.
-      </div>
+      <a href="#" class="blog-card">
+        <div class="blog-category">Product</div>
+        <div class="blog-title">Why We Build for Kenya First (and the World Second)</div>
+        <p class="blog-excerpt">Local context isn't a constraint — it's a competitive advantage. Building with proximity to the problem is the most underrated edge in software.</p>
+        <div class="blog-meta">
+          <span class="blog-date">Mar 5, 2025</span>
+          <span class="blog-read">4 min read <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 5.5h9M5.5 1l4.5 4.5-4.5 4.5"/></svg></span>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card">
+        <div class="blog-category">Education</div>
+        <div class="blog-title">The CBC Curriculum Gap Nobody Is Talking About</div>
+        <p class="blog-excerpt">Kenya's new curriculum is ambitious, but the digital tools haven't caught up. Here's what we discovered building Bookverse and what it means for students.</p>
+        <div class="blog-meta">
+          <span class="blog-date">Feb 18, 2025</span>
+          <span class="blog-read">6 min read <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 5.5h9M5.5 1l4.5 4.5-4.5 4.5"/></svg></span>
+        </div>
+      </a>
+
+      <a href="#" class="blog-card">
+        <div class="blog-category">Indie Building</div>
+        <div class="blog-title">How to Ship 5 Products Without a Team or VC Funding</div>
+        <p class="blog-excerpt">Systems, ruthless prioritization, and a bias for shipping over perfecting. The exact playbook we use at Skillence to stay lean and move fast.</p>
+        <div class="blog-meta">
+          <span class="blog-date">Jan 30, 2025</span>
+          <span class="blog-read">8 min read <svg viewBox="0 0 11 11" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 5.5h9M5.5 1l4.5 4.5-4.5 4.5"/></svg></span>
+        </div>
+      </a>
+
     </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        How is this different from LinkedIn or Indeed?
-      </div>
-      <div class="faq-answer">
-        LinkedIn is a social network. Indeed is a job board. Skillence is a complete career acceleration system. 
-        We analyze your CV with AI, match you with jobs before they hit big boards, pair you with mentors who've already 
-        done what you want to do, and give you the exact courses to fill your skill gaps. It's like having a career coach, 
-        recruiter, and learning platform in one.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        I'm currently employed. Will this be obvious to my employer?
-      </div>
-      <div class="faq-answer">
-        Your job search is 100% private. You control who sees what. Turn on "stealth mode" and your profile is invisible 
-        to your current employer and their recruiters. Only companies you apply to will see your information. 
-        Thousands of employed professionals use Skillence quietly.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        What industries does this work for?
-      </div>
-      <div class="faq-answer">
-        All of them. We have mentors and job matches in: Tech, Finance, Marketing, Healthcare, Sales, Engineering, Design, 
-        Product Management, Data Science, HR, Operations, and 40+ other industries. Our AI is trained on 100,000+ successful 
-        placements across every major sector.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        How much time do I need to invest?
-      </div>
-      <div class="faq-answer">
-        15 minutes to upload your CV and get your initial analysis. Then 30-60 minutes per week to apply to matched jobs, 
-        take courses, and connect with your mentor. Most people land interviews within 2-3 weeks of active use. 
-        This isn't a time sink—it's a shortcut.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        Can I cancel Premium anytime?
-      </div>
-      <div class="faq-answer">
-        Yes. Cancel with one click. No phone calls, no retention team, no BS. You're only paying because you're getting value. 
-        The moment you're not, leave. 94% of our Premium members stay because the ROI is obvious—one salary increase pays 
-        for years of membership.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <div class="faq-question">
-        What if I'm a complete beginner or changing careers?
-      </div>
-      <div class="faq-answer">
-        Perfect. That's who this works best for. Our system identifies your transferable skills you didn't even know you had, 
-        shows you the exact gaps to fill, and connects you with mentors who successfully made the same pivot. 
-        47% of our members are career changers.
-      </div>
-    </div>
-
   </section>
 
-  <!-- FINAL CTA SECTION -->
-  <section class="final-cta-section">
-    <h2>
-      The Only Question Left: <br>
-      Do You Want This To Be The Year Everything Changes?
-    </h2>
-    <p>
-      You have two options. Keep doing what you're doing—applying blindly, getting ghosted, wondering why nothing changes. 
-      Or take 15 minutes today, upload your CV, and let us show you exactly what's holding you back and how to fix it.
-    </p>
-    
-    <button class="cta-button" onclick="startFree()">
-      Start My Free Career Transformation →
-    </button>
-
-    <div class="risk-reversal">
-      <h3>🛡️ You're Protected By 3 Guarantees</h3>
-      <p>
-        <strong>1. Free to start.</strong> No credit card. No trial ending. Just value.<br>
-        <strong>2. 90-day money back.</strong> Don't love it? Full refund, no questions.<br>
-        <strong>3. Results guarantee.</strong> No interviews in 90 days? We work for free until you succeed.
-      </p>
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-visual reveal">
+        <div class="about-box about-box-main">
+          <div class="about-metric">
+            <div class="metric-item"><span class="metric-val">5+</span><span class="metric-key">Products</span></div>
+            <div class="metric-item"><span class="metric-val">3+</span><span class="metric-key">Industries</span></div>
+            <div class="metric-item"><span class="metric-val">∞</span><span class="metric-key">Ambition</span></div>
+          </div>
+          <div style="position:relative;z-index:1;">
+            <div style="font-size:0.68rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">Stack depth</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:0.7rem;color:var(--muted);">Mobile (React Native)</span><span style="font-size:0.7rem;color:var(--accent-blue);">90%</span></div>
+                <div class="float-bar"><div class="float-bar-fill" style="width:90%;background:var(--accent-blue);"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:0.7rem;color:var(--muted);">Backend (Node/Supabase)</span><span style="font-size:0.7rem;color:var(--accent-pink);">85%</span></div>
+                <div class="float-bar"><div class="float-bar-fill" style="width:85%;background:var(--accent-pink);"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:0.7rem;color:var(--muted);">Web & Platforms</span><span style="font-size:0.7rem;color:var(--accent-green);">80%</span></div>
+                <div class="float-bar"><div class="float-bar-fill" style="width:80%;background:var(--accent-green);"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="about-text reveal">
+        <div class="section-label">About Skillence</div>
+        <h2 class="section-title">We Build.<br>We Ship.<br>We Repeat.</h2>
+        <p>Skillence is an independent product studio based in Kenya. We don't do fluff — we <strong>identify real problems</strong> and build software that solves them, whether that's helping a student access quality education, a local shop owner get discovered, or a creator stay on top of their content game.</p>
+        <p>Every product is independently designed, built, and maintained. We are builders first — and we believe the best software comes from people who are <strong>close to the problem</strong>.</p>
+        <div class="values-list">
+          <div class="value-item"><div class="value-dot" style="background:var(--accent-blue);"></div><p><strong>Ship fast, iterate faster.</strong> We launch early and improve constantly based on real usage.</p></div>
+          <div class="value-item"><div class="value-dot" style="background:var(--accent-pink);"></div><p><strong>Built for Africa, ready for the world.</strong> Local context, global quality standards.</p></div>
+          <div class="value-item"><div class="value-dot" style="background:var(--accent-green);"></div><p><strong>Independence is a feature.</strong> Every product is self-sustaining, not dependent on VC validation.</p></div>
+        </div>
+      </div>
     </div>
-
-    <p style="margin-top: 40px; font-size: 1rem; color: #666;">
-      Join 10,000+ professionals who stopped wishing and started winning
-    </p>
   </section>
+
+  <!-- UNIFIED ACCOUNT - Feature 7 -->
+  <section class="unified" id="unified">
+    <div class="unified-inner reveal">
+      <div class="section-label">Coming Soon</div>
+      <h2 class="section-title">One Account.<br>Every Product.</h2>
+      <p class="section-desc" style="text-align:center;margin:0 auto 2rem;">A single Skillence login that works across all our apps. Sign up once, unlock everything — no more separate accounts, no friction.</p>
+
+      <div class="unified-apps">
+        <div class="unified-app"><img src="splash.png" alt="Bookverse" /></div>
+        <div class="unified-app"><img src="icon.png" alt="Creator OS" /></div>
+        <div class="unified-app">📍</div>
+        <div class="unified-app">⚙️</div>
+        <div class="unified-arrow">→</div>
+        <div class="unified-one">S</div>
+      </div>
+
+      <div class="unified-features">
+        <div class="unified-feat">
+          <div class="unified-feat-icon">🔑</div>
+          <div class="unified-feat-title">Single Sign-On</div>
+          <div class="unified-feat-desc">One account, one password. Access every Skillence product instantly.</div>
+        </div>
+        <div class="unified-feat">
+          <div class="unified-feat-icon">⚡</div>
+          <div class="unified-feat-title">Cross-App Discovery</div>
+          <div class="unified-feat-desc">Using Bookverse? Discover Creator OS without leaving your flow.</div>
+        </div>
+        <div class="unified-feat">
+          <div class="unified-feat-icon">📊</div>
+          <div class="unified-feat-title">Unified Dashboard</div>
+          <div class="unified-feat-desc">See all your activity, subscriptions, and data in one place.</div>
+        </div>
+      </div>
+
+      <form onsubmit="handleWaitlistUnified(event)" style="display:flex;gap:0;max-width:400px;margin:0 auto;">
+        <input type="email" placeholder="Get notified when it launches" required style="flex:1;padding:13px 18px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-right:none;border-radius:4px 0 0 4px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;cursor:none;" />
+        <button type="submit" class="waitlist-btn" style="border-radius:0 4px 4px 0;padding:13px 22px;font-size:0.78rem;">Notify Me</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- PARTNERS - Feature 8 -->
+  <section class="partners" id="partners">
+    <div class="reveal">
+      <div class="section-label">Partnerships</div>
+      <h2 class="section-title">Build With Us</h2>
+      <p class="section-desc">Whether you're a school, a business, or a developer — there's a way to integrate Skillence products into what you do.</p>
+    </div>
+    <div class="partners-grid reveal">
+
+      <div class="partner-card" style="--card-accent:#ffd166;">
+        <div class="partner-icon">🏫</div>
+        <div class="partner-type">Schools & Institutions</div>
+        <div class="partner-title">Bookverse for Schools</div>
+        <p class="partner-desc">Deploy Bookverse across your entire school. Bulk licensing, teacher dashboards, CBC-aligned content, and custom branding available.</p>
+        <a href="#contact" class="partner-cta">Get a school demo <svg style="width:12px;height:12px;" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h12M7 1l6 6-6 6"/></svg></a>
+      </div>
+
+      <div class="partner-card" style="--card-accent:#ff3cac;">
+        <div class="partner-icon">🔌</div>
+        <div class="partner-type">Developers</div>
+        <div class="partner-title">API & Integrations</div>
+        <p class="partner-desc">Integrate NearbyRadar's shop discovery or Bookverse's content into your own app. Developer docs, sandbox access, and support included.</p>
+        <a href="#contact" class="partner-cta">Request API access <svg style="width:12px;height:12px;" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h12M7 1l6 6-6 6"/></svg></a>
+      </div>
+
+      <div class="partner-card" style="--card-accent:#06d6a0;">
+        <div class="partner-icon">🤝</div>
+        <div class="partner-type">Businesses</div>
+        <div class="partner-title">Strategic Partnerships</div>
+        <p class="partner-desc">Co-marketing, white-labelling, or building on top of our platforms. Let's find a structure that works for both sides.</p>
+        <a href="#contact" class="partner-cta">Start a conversation <svg style="width:12px;height:12px;" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 7h12M7 1l6 6-6 6"/></svg></a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- REFERRAL - Feature 9 -->
+  <section class="referral" id="referral">
+    <div class="referral-inner">
+      <div class="reveal">
+        <div class="section-label">Referral Program</div>
+        <h2 class="section-title">Refer &<br>Earn Real Money</h2>
+        <p class="section-desc">Share any Skillence product with someone who needs it. When they subscribe, you earn a cut — forever, for as long as they stay.</p>
+        <div class="referral-steps">
+          <div class="referral-step"><div class="step-num">01</div><div class="step-content"><div class="step-title">Sign up as an affiliate</div><div class="step-desc">Takes 2 minutes. No approval required. Get your unique link immediately.</div></div></div>
+          <div class="referral-step"><div class="step-num">02</div><div class="step-content"><div class="step-title">Share with your network</div><div class="step-desc">Teachers, creators, shop owners, developers — if they'd benefit, share the link.</div></div></div>
+          <div class="referral-step"><div class="step-num">03</div><div class="step-content"><div class="step-title">Earn on every payment</div><div class="step-desc">Get 20–30% commission on every subscription payment they make. Monthly, recurring.</div></div></div>
+        </div>
+        <div style="margin-top:1.5rem;display:flex;gap:8px;flex-wrap:wrap;">
+          <div class="ref-product">Bookverse</div>
+          <div class="ref-product">Creator OS</div>
+          <div class="ref-product">NearbyRadar</div>
+          <div class="ref-product">Systems</div>
+        </div>
+      </div>
+      <div class="referral-card reveal">
+        <div class="referral-earn">20–30%</div>
+        <p class="referral-earn-sub">Recurring commission on every payment your referral makes. No cap, no expiry.</p>
+        <form class="referral-form" onsubmit="handleReferral(event)">
+          <input type="text" placeholder="Your full name" required />
+          <input type="email" placeholder="Your email address" required />
+          <select style="padding:12px 16px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:4px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.88rem;outline:none;cursor:none;">
+            <option value="">Which product will you promote?</option>
+            <option>Bookverse</option>
+            <option>Creator OS</option>
+            <option>NearbyRadar</option>
+            <option>All of them</option>
+          </select>
+          <button type="submit">Join the Affiliate Program →</button>
+        </form>
+        <p style="font-size:0.72rem;color:rgba(240,242,255,0.25);line-height:1.6;">Payouts via M-Pesa or bank transfer. Minimum payout: KES 500. Terms apply.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="contact-inner">
+      <div class="reveal">
+        <div class="section-label">Get in Touch</div>
+        <h2 class="section-title">Let's Build<br>Something Real</h2>
+        <p class="section-desc" style="margin-bottom:2rem;">Whether you want to collaborate, integrate a product, or just say hello — we're easy to reach.</p>
+        <div class="contact-links">
+          <a href="mailto:hello@skillence.top" class="contact-link-item">
+            <div class="contact-link-icon" style="background:rgba(43,210,255,0.08);">✉️</div>
+            <div class="contact-link-text"><span class="contact-link-label">Email</span><span class="contact-link-val">hello@skillence.top</span></div>
+          </a>
+          <a href="https://x.com/skillence" target="_blank" class="contact-link-item">
+            <div class="contact-link-icon" style="background:rgba(255,255,255,0.04);">𝕏</div>
+            <div class="contact-link-text"><span class="contact-link-label">X / Twitter</span><span class="contact-link-val">@skillence</span></div>
+          </a>
+          <a href="https://skillence.top" class="contact-link-item">
+            <div class="contact-link-icon" style="background:rgba(6,214,160,0.08);">🌐</div>
+            <div class="contact-link-text"><span class="contact-link-label">Website</span><span class="contact-link-val">skillence.top</span></div>
+          </a>
+        </div>
+      </div>
+      <div class="reveal">
+        <form class="contact-form" onsubmit="handleContact(event)">
+          <div class="form-row">
+            <div class="form-group"><label>First Name</label><input type="text" placeholder="John" required /></div>
+            <div class="form-group"><label>Last Name</label><input type="text" placeholder="Doe" /></div>
+          </div>
+          <div class="form-group"><label>Email</label><input type="email" placeholder="john@example.com" required /></div>
+          <div class="form-group">
+            <label>Interested In</label>
+            <select>
+              <option value="">Select a product or topic</option>
+              <option>Bookverse</option><option>Creator OS</option><option>NearbyRadar</option>
+              <option>Skillence Systems</option><option>Partnership / Integration</option>
+              <option>Referral Program</option><option>Other</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Message</label><textarea placeholder="Tell us what you're looking to build or solve..."></textarea></div>
+          <button type="submit" class="form-submit">Send Message →</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-logo">Skillence</span>
+    <ul class="footer-links">
+      <li><a href="#products">Products</a></li>
+      <li><a href="#changelog">Changelog</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#partners">Partners</a></li>
+      <li><a href="#referral">Earn</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <span class="footer-copy">© 2025 Skillence · Built in Kenya 🇰🇪</span>
+  </footer>
 
   <script>
-    function startFree() {
-      // Track conversion
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'conversion', {
-          'send_to': 'AW-XXXXX/XXXXX',
-          'value': 0.0,
-          'currency': 'USD'
-        });
-      }
-      
-      window.location.href = "templates/login.html";
-    }
-
-    function upgradePremium() {
-      // Track premium interest
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'premium_click', {
-          'event_category': 'engagement',
-          'event_label': 'Premium Upgrade Click'
-        });
-      }
-      
-      window.location.href = "templates/login.html?plan=premium";
-    }
-
-    // Scroll-triggered animations
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll('.stack-item, .testimonial-card, .faq-item').forEach(el => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(30px)';
-      el.style.transition = 'all 0.6s ease';
-      observer.observe(el);
+    // CURSOR
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.transform = `translate(${mx-6}px,${my-6}px)`;
+    });
+    (function animRing() {
+      rx += (mx-rx)*0.12; ry += (my-ry)*0.12;
+      ring.style.transform = `translate(${rx-18}px,${ry-18}px)`;
+      requestAnimationFrame(animRing);
+    })();
+    document.querySelectorAll('a,button,.product-card,.contact-link-item,.blog-card,.partner-card,.testimonial-card').forEach(el => {
+      el.addEventListener('mouseenter', () => { ring.style.width='56px'; ring.style.height='56px'; ring.style.borderColor='rgba(43,210,255,0.6)'; });
+      el.addEventListener('mouseleave', () => { ring.style.width='36px'; ring.style.height='36px'; ring.style.borderColor='rgba(43,210,255,0.4)'; });
     });
 
-    // Urgency timer (optional - add countdown)
-    function updateUrgencyBanner() {
-      const banner = document.querySelector('.urgency-banner');
-      const spotsLeft = Math.floor(Math.random() * 15) + 5; // Random number between 5-20
-      banner.innerHTML = `⚡ URGENT: Only ${spotsLeft} Founding Member Spots Left Today`;
+    // SCROLL REVEAL
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry,i) => { if(entry.isIntersecting) setTimeout(()=>entry.target.classList.add('visible'),i*80); });
+    }, {threshold:0.08});
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // TOAST
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastText').innerHTML = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4000);
     }
 
-    // Update every 5 minutes to create urgency
-    setInterval(updateUrgencyBanner, 300000);
+    // FORMS
+    function handleWaitlist(e) {
+      e.preventDefault();
+      showToast("<strong>You're on the list!</strong> We'll notify you on every new launch.");
+      e.target.reset();
+    }
+    function handleWaitlistUnified(e) {
+      e.preventDefault();
+      showToast("<strong>Noted!</strong> We'll let you know when Skillence One Account launches.");
+      e.target.reset();
+    }
+    function handleReferral(e) {
+      e.preventDefault();
+      showToast("<strong>Welcome, affiliate!</strong> Check your email for your referral link.");
+      e.target.reset();
+    }
+    function handleContact(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.form-submit');
+      btn.textContent = 'Message Sent ✓';
+      btn.style.background = '#06d6a0'; btn.style.color = '#000';
+      showToast("<strong>Message received!</strong> We'll get back to you within 24 hours.");
+      setTimeout(() => { btn.textContent='Send Message →'; btn.style.background=''; btn.style.color=''; e.target.reset(); }, 3500);
+    }
 
-    // Track scroll depth for optimization
-    let maxScroll = 0;
-    window.addEventListener('scroll', () => {
-      const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-      if (scrollPercent > maxScroll) {
-        maxScroll = scrollPercent;
-        
-        // Track milestones
-        if (maxScroll > 25 && maxScroll < 26) {
-          // gtag('event', 'scroll_25', {'event_category': 'engagement'});
-        } else if (maxScroll > 50 && maxScroll < 51) {
-          // gtag('event', 'scroll_50', {'event_category': 'engagement'});
-        } else if (maxScroll > 75 && maxScroll < 76) {
-          // gtag('event', 'scroll_75', {'event_category': 'engagement'});
-        }
-      }
-    });
-
-    // Exit intent popup (optional)
-    let exitIntentShown = false;
-    document.addEventListener('mouseleave', (e) => {
-      if (e.clientY < 0 && !exitIntentShown) {
-        exitIntentShown = true;
-        // Show exit intent modal
-        if (confirm('Wait! Get your FREE CV analysis before you go. It takes 2 minutes and could change your career. Ready?')) {
-          startFree();
-        }
-      }
-    });
-
-    // CTA button click tracking
-    document.querySelectorAll('.cta-button').forEach(button => {
-      button.addEventListener('click', () => {
-        // gtag('event', 'cta_click', {
-        //   'event_category': 'conversion',
-        //   'event_label': button.textContent.trim()
-        // });
+    // SMOOTH NAV
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if(target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth'}); }
       });
     });
+
+    // MOBILE MENU
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    });
+    function closeMobile() { document.getElementById('mobileMenu').classList.remove('open'); }
   </script>
-
 </body>
 </html>
